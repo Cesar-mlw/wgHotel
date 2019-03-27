@@ -13,9 +13,7 @@ describe('checkStore', () => {
       subscribe: () => {},
       getState: () => {},
       replaceReducer: () => {},
-      runSaga: () => {},
       injectedReducers: {},
-      injectedSagas: {},
     };
   });
 
