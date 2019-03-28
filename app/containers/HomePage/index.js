@@ -34,10 +34,6 @@ const styles = {
     flexGrow: 1,
     marginLeft: "45vw",
   },
-  test:{
-    maxWidth: 135,
-    maxHeight: 96
-  },
   socialMedias:{
     flexGrow: 1,
     width:45,
@@ -73,7 +69,7 @@ class HomePage extends React.PureComponent {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <div className={classes.test}>
+            <div>
               <img src={tripad} className={classes.socialMedias}/>
             </div>
             <div className={classes.grow}>
