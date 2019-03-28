@@ -20,8 +20,11 @@ import {
   IconButton,
   MenuItem,
   Menu,
+  withStyles,
 } from '@material-ui/core';
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
+import tripad from '../../images/tripad.png'
+import faceb from '../../images/faceb.png'
 
 const styles = {
   root: {
@@ -29,6 +32,17 @@ const styles = {
   },
   grow: {
     flexGrow: 1,
+    marginLeft: "45vw",
+  },
+  test:{
+    maxWidth: 135,
+    maxHeight: 96
+  },
+  socialMedias:{
+    flexGrow: 1,
+    width:45,
+    height:32,
+    marginLeft: "0.5vw",
   },
   menuButton: {
     marginLeft: -12,
@@ -37,7 +51,7 @@ const styles = {
 };
 
 /* eslint-disable react/prefer-stateless-function */
-export default class HomePage extends React.PureComponent {
+class HomePage extends React.PureComponent {
   state = {
     anchorEl: null,
   };
@@ -52,34 +66,34 @@ export default class HomePage extends React.PureComponent {
 
   render() {
     const { classes } = this.props;
-    const open = Boolean(this.state.anchorEl);
-    const anchorEl = this.state;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
+
     return (
-      <div className={styles.root}>
+      <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <IconButton
-              className={styles.menuButton}
-              color="inherit"
-              aria-label="Menu"
-            >
-              <MenuOutlined />
-            </IconButton>
-            <Typography variant="h6" color="inherit" className={styles.grow}>
-              wgHotel
-            </Typography>
+            <div className={classes.test}>
+              <img src={tripad} className={classes.socialMedias}/>
+            </div>
+            <div className={classes.grow}>
+              <Typography variant="h6" color="inherit">
+                wgHotel
+              </Typography>
+            </div>
             <div>
               <IconButton
                 aria-owns="menu-appbar"
                 aria-haspopup="true"
                 onClick={this.handleMenu}
                 color="inherit"
+                className={classes.menuButton}
               >
                 <AccountCircleOutlined />
               </IconButton>
               <Menu
                 id="menu-appbar"
-                anchorEl={anchorEl}
+                anchorEl={this.state.anchorEl}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
@@ -91,8 +105,9 @@ export default class HomePage extends React.PureComponent {
                 open={open}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>My Account</MenuItem>
+                <MenuItem onClick={this.handleClose}>Crie uma Conta</MenuItem>
+                <MenuItem onClick={this.handleClose}>Já Possuo uma Conta</MenuItem>
+                <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
               </Menu>
             </div>
           </Toolbar>
@@ -101,3 +116,5 @@ export default class HomePage extends React.PureComponent {
     );
   }
 }
+
+export default withStyles(styles)(HomePage);
