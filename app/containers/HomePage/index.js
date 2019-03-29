@@ -25,24 +25,36 @@ import {
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
 import tripad from '../../images/tripad.png'
 import faceb from '../../images/faceb.png'
+import instaIcon from '../../images/instaIcon.jpg'
+import placeholderLogo from '../../images/placeholderLogo.png'
+import hotelMainImage from '../../images/hotelMainImage.jpg'
 
 const styles = {
   root: {
     flexGrow: 1,
+    overflow: "hidden"
   },
   grow: {
     flexGrow: 1,
-    marginLeft: "45vw",
+    width: 60,
+    height: 50,
+    marginLeft: "17vw"
   },
   socialMedias:{
     flexGrow: 1,
-    width:45,
+    width:55,
     height:32,
-    marginLeft: "0.5vw",
+    paddingLeft: "0.5vw",
+    
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
+  },
+  carousel:{
+    maxWidth: "100vw",
+    maxHeight: "70vh",
+    
   },
 };
 
@@ -69,15 +81,15 @@ class HomePage extends React.PureComponent {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <div>
-              <img src={tripad} className={classes.socialMedias}/>
+            <div id="socialMedias">
+                <img src={tripad} className={classes.socialMedias}/>
+                <img src={faceb} className={classes.socialMedias}/>
+                <img src={instaIcon} className={classes.socialMedias}/>
             </div>
-            <div className={classes.grow}>
-              <Typography variant="h6" color="inherit">
-                wgHotel
-              </Typography>
+            <div className={classes.grow} id="logo">
+              <img src={placeholderLogo} className={classes.grow}/>
             </div>
-            <div>
+            <div id="menu">
               <IconButton
                 aria-owns="menu-appbar"
                 aria-haspopup="true"
@@ -108,6 +120,9 @@ class HomePage extends React.PureComponent {
             </div>
           </Toolbar>
         </AppBar>
+        <div id="carrousel" className={classes.carousel}>
+          <img src={hotelMainImage}/>
+        </div>
       </div>
     );
   }
