@@ -21,13 +21,19 @@ import {
   MenuItem,
   Menu,
   withStyles,
+  TextField,
+  Button,
 } from '@material-ui/core';
+import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
 import tripad from '../../images/tripad.png'
 import faceb from '../../images/faceb.png'
 import instaIcon from '../../images/instaIcon.jpg'
 import placeholderLogo from '../../images/placeholderLogo.png'
 import hotelMainImage from '../../images/hotelMainImage.jpg'
+import infoImage from '../../images/infoImage.jpg'
+
+const restText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris scelerisque viverra orci sit amet volutpat. Maecenas egestas egestas mi eu tincidunt. Phasellus consectetur velit ultricies dui consequat, ut pretium mi rhoncus. Suspendisse tempus libero in auctor volutpat. Aenean tincidunt leo egestas tellus egestas lacinia. Donec neque augue, porttitor a tincidunt sit amet, posuere id quam. Aenean ultrices lorem orci, non sagittis nunc hendrerit at. Ut tempus tortor eu turpis luctus, a condimentum risus suscipit. Sed quis est sit amet libero convallis lacinia sit amet eu leo. Ut lacinia sollicitudin mauris, sit amet eleifend ante vulputate vitae. Aliquam erat volutpat."
 
 const styles = {
   root: {
@@ -52,16 +58,82 @@ const styles = {
     marginRight: 20,
   },
   carousel:{
-    maxWidth: "100vw",
-    maxHeight: "70vh",
+    width: "100vw",
+    height: "70vh",
     
   },
+  reservations:{
+    width:"100vw",
+    height:"15vh",
+    marginTop: "3vh",
+    marginLeft: "15vw",
+    float: "left",
+  },
+  datePicker:{
+    marginTop: "2vh",
+    marginLeft: "8vw",
+    color: '#ADA788',
+    textColor: '#ADA788'
+  },
+  reservationButton:{
+    marginTop: "3.5vh",
+    marginLeft: "8vw",
+    background: '#ADA788',
+    borderRadius: 3,
+    border: 0,
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+  },
+  appBar: {
+    backgroundColor: "#BAB392"
+  },
+  infoRoot:{
+    width: "100vw",
+    height: "20vh",
+  },
+  infoImgs:{
+    width: "50vw",
+    height: "50vh",
+    marginTop: "3vh",
+    float: "left"
+  },
+  infoText: {
+    marginLeft: "64vw",
+    color: "#ABA586"
+  },
+  infoParagraph: {
+    width:"45vw",
+    marginTop: "6vh",
+    marginLeft: "53vw",
+    color: "#ABA586",
+  }
 };
 
+const room = [
+  {
+    value:"standard",
+    label: "New York"
+  },
+  {
+    value: "lightLuxury",
+    label: "Milan"
+  },
+  {
+    value: "ultraLuxury",
+    label: "Dubai"
+  }
+]
+room.map(option=>{
+  console.log(option)
+})
 /* eslint-disable react/prefer-stateless-function */
 class HomePage extends React.PureComponent {
   state = {
     anchorEl: null,
+    acomodacao: "normal",
+    chegada: null,
+    saida: null
   };
 
   handleMenu = event => {
@@ -72,14 +144,26 @@ class HomePage extends React.PureComponent {
     this.setState({ anchorEl: null });
   };
 
+  handleAcomodacaoChange = event => {
+    this.setState({acomodacao: event.target.value})
+  };
+
+  handleChegadaChange = event => {
+    this.setState({chegada: event.target.value})
+  };
+
+  handleSaidaChange = event => {
+    this.setState({saida: event.target.value})
+  };
+
   render() {
     const { classes } = this.props;
-    const { anchorEl } = this.state;
+    const { anchorEl, acomodacao, saida, chegada } = this.state;
     const open = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static" color="default" className={classes.appBar}>
           <Toolbar>
             <div id="socialMedias">
                 <img src={tripad} className={classes.socialMedias}/>
@@ -120,8 +204,58 @@ class HomePage extends React.PureComponent {
             </div>
           </Toolbar>
         </AppBar>
-        <div id="carrousel" className={classes.carousel}>
-          <img src={hotelMainImage}/>
+        <div id = "carrousel">
+          <img src = {hotelMainImage} className = {classes.carousel}/>
+        </div>
+        <div id = "reservations" className = {classes.reservations}>
+          <TextField
+            id = "tpAcomodacao"
+            select
+            label = "Acomodação"
+            value = {acomodacao}
+            onChange = {this.handleAcomodacaoChange}
+            helperText = "Selecione o tipo de acomodação"
+            margin = "normal"
+            color = "inherit"
+          >
+            {room.map(option => (
+            <MenuItem key = {option.value} value = {option.value} style = {{textColor: '#ADA788'}}>
+              {option.label}
+            </MenuItem>
+          ))}
+          </TextField>
+          <DatePicker 
+            autoOk
+            label = "Data de Chegada"
+            clearable
+            disablePast
+            value = {chegada}
+            onChange = {this.handleChegadaChange}
+            className = {classes.datePicker}
+            color = "inherit"
+          />
+          <DatePicker 
+            autoOk
+            label = "Data de Saída"
+            clearable
+            disablePast
+            value = {saida}
+            onChange = {this.handleSaidaChange}
+            className = {classes.datePicker}
+            color = "inherit"
+          />
+          <Button
+            variant = "flat"
+            color = "inherit"
+            className = {classes.reservationButton}
+          >
+            Reservar
+          </Button>
+        </div>
+        <div id="hotelInfo" className = {classes.infoRoot}>
+          <img src = {infoImage} className = {classes.infoImgs}/>
+          <Typography variant = "display1" className = {classes.infoText}>Nosso Restaurante</Typography>
+          <Typography variant = 'overline' className = {classes.infoParagraph}>{restText}</Typography>
         </div>
       </div>
     );

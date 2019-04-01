@@ -32,21 +32,32 @@ import configureStore from './configureStore';
 
 // Import i18n messages
 import { translationMessages } from './i18n';
+import LuxonUtils from "@date-io/luxon"
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 
 // Create redux store with history
 const initialState = {};
 const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
+const theme = createMuiTheme({
+  
+})
+
 const render = messages => {
   ReactDOM.render(
-    <Provider store={store}>
-      <LanguageProvider messages={messages}>
-        <ConnectedRouter history={history}>
-          <App />
-        </ConnectedRouter>
-      </LanguageProvider>
-    </Provider>,
+    <MuiThemeProvider theme={theme}>
+      <MuiPickersUtilsProvider utils={LuxonUtils}>
+        <Provider store={store}>
+          <LanguageProvider messages={messages}>
+            <ConnectedRouter history={history}>
+              <App />
+            </ConnectedRouter>
+          </LanguageProvider>
+        </Provider>
+      </MuiPickersUtilsProvider>
+    </MuiThemeProvider>,
     MOUNT_NODE,
   );
 };
