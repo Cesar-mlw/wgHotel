@@ -90,24 +90,48 @@ const styles = {
   },
   infoRoot:{
     width: "100vw",
-    height: "20vh",
+    height: "75vh",
   },
-  infoImgs:{
+  infoBlock:{
+    width:"100vw",
+    height: "25vh"
+  },
+  infoImgsLeft:{
     width: "50vw",
     height: "50vh",
     marginTop: "3vh",
-    float: "left"
+    float: "left",
+    zIndex: 0
   },
   infoText: {
     marginLeft: "64vw",
-    color: "#ABA586"
+    color: "#ABA586",
   },
-  infoParagraph: {
+  infoParagraphRight: {
     width:"45vw",
     marginTop: "6vh",
     marginLeft: "53vw",
     color: "#ABA586",
-  }
+  },
+  infoTextLeft:{
+    color: "#ABA586",
+    marginTop: "50vh",
+    marginLeft: "17vw"
+  },
+  infoImgsRight:{
+    width: "50vw",
+    height: "50vh",
+    marginTop: "-47vh",
+    marginLeft:"50vw",
+    float: "left",
+    zIndex: 0
+  },
+  infoParagraphLeft: {
+    width:"45vw",
+    marginLeft: "2vw",
+    marginTop: "2vh",
+    color: "#ABA586",
+  },
 };
 
 const room = [
@@ -149,11 +173,11 @@ class HomePage extends React.PureComponent {
   };
 
   handleChegadaChange = event => {
-    this.setState({chegada: event.target.value})
+    this.setState({chegada: new Date(event)}) 
   };
 
   handleSaidaChange = event => {
-    this.setState({saida: event.target.value})
+    this.setState({saida: new Date(event)}) 
   };
 
   render() {
@@ -252,10 +276,18 @@ class HomePage extends React.PureComponent {
             Reservar
           </Button>
         </div>
-        <div id="hotelInfo" className = {classes.infoRoot}>
-          <img src = {infoImage} className = {classes.infoImgs}/>
-          <Typography variant = "display1" className = {classes.infoText}>Nosso Restaurante</Typography>
-          <Typography variant = 'overline' className = {classes.infoParagraph}>{restText}</Typography>
+        
+        <div id="hotelInfoRes" className = {classes.infoRoot}>
+            <div id="info_block_restaurant" className={classes.infoBlock}>
+              <img src = {infoImage} className = {classes.infoImgsLeft}/>
+              <Typography id="nss_restaurante" variant = "display1" className = {classes.infoText}>Nosso Restaurante</Typography>
+              <Typography variant = 'overline' className = {classes.infoParagraphRight}>{restText}</Typography>
+            </div>
+            <div id="info_block_loja" className={classes.infoBlock}>
+              <Typography variant = "display1" className={classes.infoTextLeft}>Nossas Lojas</Typography>
+              <Typography variant = 'overline' className = {classes.infoParagraphLeft}>{restText}</Typography>
+              <img src = {infoImage} className = {classes.infoImgsRight}/>
+            </div>
         </div>
       </div>
     );
