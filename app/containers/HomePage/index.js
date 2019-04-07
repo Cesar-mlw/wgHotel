@@ -23,6 +23,7 @@ import {
   withStyles,
   TextField,
   Button,
+  Link,
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
@@ -46,36 +47,36 @@ const styles = {
     height: 50,
     marginLeft: "17vw"
   },
-  socialMedias:{
+  socialMedias: {
     flexGrow: 1,
-    width:55,
-    height:32,
+    width: 55,
+    height: 32,
     paddingLeft: "0.5vw",
-    
+
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
   },
-  carousel:{
+  carousel: {
     width: "100vw",
     height: "70vh",
-    
+
   },
-  reservations:{
-    width:"100vw",
-    height:"15vh",
+  reservations: {
+    width: "100vw",
+    height: "15vh",
     marginTop: "3vh",
     marginLeft: "15vw",
     float: "left",
   },
-  datePicker:{
+  datePicker: {
     marginTop: "2vh",
     marginLeft: "8vw",
     color: '#ADA788',
     textColor: '#ADA788'
   },
-  reservationButton:{
+  reservationButton: {
     marginTop: "3.5vh",
     marginLeft: "8vw",
     background: '#ADA788',
@@ -88,55 +89,84 @@ const styles = {
   appBar: {
     backgroundColor: "#BAB392"
   },
-  infoRoot:{
+  infoRoot: {
     width: "100vw",
     height: "75vh",
   },
-  infoBlock:{
-    width:"100vw",
+  infoBlock: {
+    width: "100vw",
     height: "25vh"
   },
-  infoImgsLeft:{
+  infoImgsLeft: {
     width: "50vw",
     height: "50vh",
-    marginTop: "3vh",
     float: "left",
-    zIndex: 0
   },
   infoText: {
     marginLeft: "64vw",
     color: "#ABA586",
   },
   infoParagraphRight: {
-    width:"45vw",
+    width: "45vw",
     marginTop: "6vh",
     marginLeft: "53vw",
     color: "#ABA586",
   },
-  infoTextLeft:{
+  infoTextLeft: {
     color: "#ABA586",
     marginTop: "50vh",
     marginLeft: "17vw"
   },
-  infoImgsRight:{
+  infoImgsRight: {
     width: "50vw",
     height: "50vh",
-    marginTop: "-47vh",
-    marginLeft:"50vw",
+    marginTop: "-38vh",
+    marginLeft: "50vw",
     float: "left",
-    zIndex: 0
   },
   infoParagraphLeft: {
-    width:"45vw",
+    width: "45vw",
     marginLeft: "2vw",
-    marginTop: "2vh",
+    marginTop: "8vh",
     color: "#ABA586",
   },
+  infoTextRightThird: {
+    color: "#ABA586",
+    width: "50vw",
+    heigth: "10vw",
+    marginTop: "25vh",
+    marginLeft: "67vw",
+
+  },
+  infoParagraphRightThird: {
+    color: "#ABA586",
+    width: "40vw",
+    heigth: "40vw",
+    marginLeft: "55vw",
+    marginTop: "10vh"
+
+  },
+  pageFooter: {
+    width: "100vw",
+    height: "10vh",
+    marginTop: "103vh",
+  },
+  footerInfoText: {
+    marginLeft: "1vw",
+    opacity: 0.5,
+    float: "left"
+  },
+  footerLinks:{
+    textDecoration: "none",
+    color: "#A2B8B7",
+    marginLeft: "12vh",
+    fontSize: "1.6em"
+  }
 };
 
 const room = [
   {
-    value:"standard",
+    value: "standard",
     label: "New York"
   },
   {
@@ -148,7 +178,7 @@ const room = [
     label: "Dubai"
   }
 ]
-room.map(option=>{
+room.map(option => {
   console.log(option)
 })
 /* eslint-disable react/prefer-stateless-function */
@@ -169,15 +199,15 @@ class HomePage extends React.PureComponent {
   };
 
   handleAcomodacaoChange = event => {
-    this.setState({acomodacao: event.target.value})
+    this.setState({ acomodacao: event.target.value })
   };
 
   handleChegadaChange = event => {
-    this.setState({chegada: new Date(event)}) 
+    this.setState({ chegada: new Date(event) })
   };
 
   handleSaidaChange = event => {
-    this.setState({saida: new Date(event)}) 
+    this.setState({ saida: new Date(event) })
   };
 
   render() {
@@ -190,12 +220,12 @@ class HomePage extends React.PureComponent {
         <AppBar position="static" color="default" className={classes.appBar}>
           <Toolbar>
             <div id="socialMedias">
-                <img src={tripad} className={classes.socialMedias}/>
-                <img src={faceb} className={classes.socialMedias}/>
-                <img src={instaIcon} className={classes.socialMedias}/>
+              <img src={tripad} className={classes.socialMedias} />
+              <img src={faceb} className={classes.socialMedias} />
+              <img src={instaIcon} className={classes.socialMedias} />
             </div>
             <div className={classes.grow} id="logo">
-              <img src={placeholderLogo} className={classes.grow}/>
+              <img src={placeholderLogo} className={classes.grow} />
             </div>
             <div id="menu">
               <IconButton
@@ -228,66 +258,86 @@ class HomePage extends React.PureComponent {
             </div>
           </Toolbar>
         </AppBar>
-        <div id = "carrousel">
-          <img src = {hotelMainImage} className = {classes.carousel}/>
+        <div id="carrousel">
+          <img src={hotelMainImage} className={classes.carousel} />
         </div>
-        <div id = "reservations" className = {classes.reservations}>
+        <div id="reservations" className={classes.reservations}>
           <TextField
-            id = "tpAcomodacao"
+            id="tpAcomodacao"
             select
-            label = "Acomodação"
-            value = {acomodacao}
-            onChange = {this.handleAcomodacaoChange}
-            helperText = "Selecione o tipo de acomodação"
-            margin = "normal"
-            color = "inherit"
+            label="Acomodação"
+            value={acomodacao}
+            onChange={this.handleAcomodacaoChange}
+            helperText="Selecione o tipo de acomodação"
+            margin="normal"
+            color="inherit"
           >
             {room.map(option => (
-            <MenuItem key = {option.value} value = {option.value} style = {{textColor: '#ADA788'}}>
-              {option.label}
-            </MenuItem>
-          ))}
+              <MenuItem key={option.value} value={option.value} style={{ textColor: '#ADA788' }}>
+                {option.label}
+              </MenuItem>
+            ))}
           </TextField>
-          <DatePicker 
+          <DatePicker
             autoOk
-            label = "Data de Chegada"
+            label="Data de Chegada"
             clearable
             disablePast
-            value = {chegada}
-            onChange = {this.handleChegadaChange}
-            className = {classes.datePicker}
-            color = "inherit"
+            value={chegada}
+            onChange={this.handleChegadaChange}
+            className={classes.datePicker}
+            color="inherit"
           />
-          <DatePicker 
+          <DatePicker
             autoOk
-            label = "Data de Saída"
+            label="Data de Saída"
             clearable
             disablePast
-            value = {saida}
-            onChange = {this.handleSaidaChange}
-            className = {classes.datePicker}
-            color = "inherit"
+            value={saida}
+            onChange={this.handleSaidaChange}
+            className={classes.datePicker}
+            color="inherit"
           />
           <Button
-            variant = "flat"
-            color = "inherit"
-            className = {classes.reservationButton}
+            variant="flat"
+            color="inherit"
+            className={classes.reservationButton}
           >
             Reservar
           </Button>
         </div>
-        
-        <div id="hotelInfoRes" className = {classes.infoRoot}>
-            <div id="info_block_restaurant" className={classes.infoBlock}>
-              <img src = {infoImage} className = {classes.infoImgsLeft}/>
-              <Typography id="nss_restaurante" variant = "display1" className = {classes.infoText}>Nosso Restaurante</Typography>
-              <Typography variant = 'overline' className = {classes.infoParagraphRight}>{restText}</Typography>
-            </div>
-            <div id="info_block_loja" className={classes.infoBlock}>
-              <Typography variant = "display1" className={classes.infoTextLeft}>Nossas Lojas</Typography>
-              <Typography variant = 'overline' className = {classes.infoParagraphLeft}>{restText}</Typography>
-              <img src = {infoImage} className = {classes.infoImgsRight}/>
-            </div>
+
+        <div id="hotelInfoRes" className={classes.infoRoot}>
+          <div id="info_block_restaurant" className={classes.infoBlock}>
+            <img src={infoImage} className={classes.infoImgsLeft} />
+            <Typography id="nss_restaurante" variant="display1" className={classes.infoText}>Nosso Restaurante</Typography>
+            <Typography variant='overline' className={classes.infoParagraphRight}>{restText}</Typography>
+          </div>
+          <div id="info_block_loja" className={classes.infoBlock}>
+            <Typography variant="display1" className={classes.infoTextLeft}>Nossas Lojas</Typography>
+            <Typography variant='overline' className={classes.infoParagraphLeft}>{restText}</Typography>
+            <img src={infoImage} className={classes.infoImgsRight} />
+          </div>
+          <div id="info_block_restaurant" className={classes.infoBlock}>
+            <img src={infoImage} className={classes.infoImgsLeft} />
+            <Typography id="nss_restaurante" variant="display1" className={classes.infoTextRightThird}>Espaços do Hotel</Typography>
+            <Typography variant='overline' className={classes.infoParagraphRightThird}>{restText}</Typography>
+          </div>
+        </div>
+        <div id="pageFooter" className={classes.pageFooter}>
+          <div id="infoText" className={classes.footerInfoText}>
+            <Typography variant="overline">contato@wgmanagement.com</Typography>
+            <Typography variant="overline">+55(11)995841564</Typography>
+          </div>
+          <div id="links" className={classes.footerLinks}>
+              <Typography>
+                <Link href="javascript;;" className={classes.footerLinks}>NewsLetter</Link>
+                <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
+                <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
+                <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
+                <Link href="javascript;;" className={classes.footerLinks}>Área Administrativa</Link>
+              </Typography>
+          </div>
         </div>
       </div>
     );
