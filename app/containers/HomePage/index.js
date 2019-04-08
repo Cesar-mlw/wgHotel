@@ -149,17 +149,17 @@ const styles = {
   pageFooter: {
     width: "100vw",
     height: "10vh",
-    marginTop: "103vh",
+    marginTop: "120vh",
   },
   footerInfoText: {
-    marginLeft: "1vw",
+    marginLeft: "0.5vw",
     opacity: 0.5,
     float: "left"
   },
   footerLinks:{
     textDecoration: "none",
     color: "#A2B8B7",
-    marginLeft: "12vh",
+    marginLeft: "10vh",
     fontSize: "1.6em"
   }
 };
@@ -335,7 +335,7 @@ class HomePage extends React.PureComponent {
                 <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
                 <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
                 <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
-                <Link href="javascript;;" className={classes.footerLinks}>Área Administrativa</Link>
+                <Link href="/rooms" className={classes.footerLinks}>Área Administrativa</Link>
               </Typography>
           </div>
         </div>
