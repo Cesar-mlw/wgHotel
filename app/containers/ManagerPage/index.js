@@ -1,18 +1,7 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable import/order */
-/* eslint-disable no-unused-vars */
-/*
- * HomePage
- *
- * This is the first thing users see of our App, at the '/' route
- *
- * NOTE: while this component should technically be a stateless functional
- * component (SFC), hot reloading does not currently support SFCs. If hot
- * reloading is not a necessity for you then you can refactor it and remove
- * the linting exception.
- */
+
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
     AppBar,
     Toolbar,
@@ -29,7 +18,7 @@ import {
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
-import placeholderLogo from '../../images/placeholderLogo.png'
+import placeholderLogo from '../../images/placeholderLogo.png';
 
 
 
@@ -66,9 +55,16 @@ const styles = {
         marginLeft: "15vw",
         marginTop: "-4vh"
     },
-    radio:{
-        marginLeft:"2vw"
+    radio: {
+        marginLeft: "2vw"
+    },
+    managementRoot: {
+        width: "100vw",
+        height: '100vh',
+        marginTop: "12vh",
+        borderStyle: "solid",
     }
+
 };
 
 const room = [
@@ -89,7 +85,7 @@ room.map(option => {
     console.log(option)
 })
 /* eslint-disable react/prefer-stateless-function */
-class RoomPage extends React.PureComponent {
+class ManagerPage extends React.PureComponent {
     state = {
         anchorEl: null,
         acomodacao: "normal",
@@ -111,8 +107,9 @@ class RoomPage extends React.PureComponent {
     handleRadioChange = event => {
         this.setState({ selectedValue: event.target.value })
     }
+    handleRoomLoad = () => {
 
-
+    }
     render() {
         const { classes } = this.props;
         const { anchorEl, managingDate, selectedValue } = this.state;
@@ -176,6 +173,7 @@ class RoomPage extends React.PureComponent {
                             name="quartos"
                             label="Quartos"
                             aria-label="Quartos"
+                            onClick = {() => selected_value("room")}
 
                         />
                         <FormLabel className={classes.radio} >Hóspedes</FormLabel>
@@ -185,6 +183,7 @@ class RoomPage extends React.PureComponent {
                             value="guests"
                             name="Hóspedes"
                             aria-label="Hóspedes"
+                           
 
                         />
                         <FormLabel className={classes.radio} >Restaurante</FormLabel>
@@ -194,7 +193,8 @@ class RoomPage extends React.PureComponent {
                             value="diner"
                             name="Restaurante"
                             aria-label="Restaurante"
-                    
+                            
+
                         />
                         <FormLabel className={classes.radio} >Sala de Eventos</FormLabel>
                         <Radio
@@ -203,7 +203,8 @@ class RoomPage extends React.PureComponent {
                             value="events"
                             name="Sala de Eventos"
                             aria-label="Sala de Eventos"
-                    
+                            
+
                         />
                         <FormLabel className={classes.radio} >Estacionamento</FormLabel>
                         <Radio
@@ -212,13 +213,43 @@ class RoomPage extends React.PureComponent {
                             value="parking"
                             name="Estacionamento"
                             aria-label="Estacionamento"
-                    
+                            
+
                         />
                     </div>
+                </div>
+                <div className={classes.managementRoot}>
+                    {selectedValue === 'room' && (
+                        <Typography>{this.props.selectedValueData}</Typography>
+                   )}
+                    {selectedValue === 'guests' && (
+                       <Typography>{this.props.selectedValueData}</Typography>
+                    )}
+                    {selectedValue === 'diner' && (
+                       <Typography>{this.props.selectedValueData}</Typography>
+                    )}
+                    {selectedValue === 'events' && (
+                       <Typography>{this.props.selectedValueData}</Typography>
+                    )}
+                    {selectedValue === 'parking' && (
+                       <Typography>{this.props.selectedValueData}</Typography>
+                    )}
                 </div>
             </div >
         );
     }
+    
 }
 
-export default withStyles(styles)(RoomPage);
+ManagerPage.propType = {
+    selectedValueData: PropTypes.string
+}
+mapDispatchToProps = (dispatch) => {
+    selected_value: (selectedvalue) => dispatch({type: "CHANGE_SELECTED_VALUE", selectedValue: selectedvalue})
+}
+mapStateToProps = (state) => {
+    const { selectedValueData } = state
+    return { selectedValueData }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ManagerPage));

@@ -120,7 +120,7 @@ const styles = {
   infoImgsRight: {
     width: "50vw",
     height: "50vh",
-    marginTop: "-38vh",
+    marginTop: "-57vh",
     marginLeft: "50vw",
     float: "left",
   },
@@ -149,7 +149,7 @@ const styles = {
   pageFooter: {
     width: "100vw",
     height: "10vh",
-    marginTop: "120vh",
+    marginTop: "112vh",
   },
   footerInfoText: {
     marginLeft: "0.5vw",
@@ -178,9 +178,6 @@ const room = [
     label: "Dubai"
   }
 ]
-room.map(option => {
-  console.log(option)
-})
 /* eslint-disable react/prefer-stateless-function */
 class HomePage extends React.PureComponent {
   state = {
@@ -335,7 +332,7 @@ class HomePage extends React.PureComponent {
                 <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
                 <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
                 <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
-                <Link href="/rooms" className={classes.footerLinks}>Área Administrativa</Link>
+                <Link href="/management" className={classes.footerLinks}>Área Administrativa</Link>
               </Typography>
           </div>
         </div>
