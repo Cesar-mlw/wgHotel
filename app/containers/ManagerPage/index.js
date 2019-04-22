@@ -19,6 +19,7 @@ import {
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
 import placeholderLogo from '../../images/placeholderLogo.png';
+import { radioChange } from './actions'
 
 
 
@@ -107,9 +108,7 @@ class ManagerPage extends React.PureComponent {
     handleRadioChange = event => {
         this.setState({ selectedValue: event.target.value })
     }
-    handleRoomLoad = () => {
 
-    }
     render() {
         const { classes } = this.props;
         const { anchorEl, managingDate, selectedValue } = this.state;
@@ -220,19 +219,19 @@ class ManagerPage extends React.PureComponent {
                 </div>
                 <div className={classes.managementRoot}>
                     {selectedValue === 'room' && (
-                        <Typography>{this.props.selectedValueData}</Typography>
+                        <Typography>dasd</Typography>
                    )}
                     {selectedValue === 'guests' && (
-                       <Typography>{this.props.selectedValueData}</Typography>
+                       <Typography>Guests</Typography>
                     )}
                     {selectedValue === 'diner' && (
-                       <Typography>{this.props.selectedValueData}</Typography>
+                       <Typography>Diner</Typography>
                     )}
                     {selectedValue === 'events' && (
-                       <Typography>{this.props.selectedValueData}</Typography>
+                       <Typography>Events</Typography>
                     )}
                     {selectedValue === 'parking' && (
-                       <Typography>{this.props.selectedValueData}</Typography>
+                       <Typography>Parking</Typography>
                     )}
                 </div>
             </div >
@@ -241,15 +240,21 @@ class ManagerPage extends React.PureComponent {
     
 }
 
-ManagerPage.propType = {
-    selectedValueData: PropTypes.string
+Manager.propTypes = {
+    grabData: PropTypes.func.isRequired
 }
-mapDispatchToProps = (dispatch) => {
-    selected_value: (selectedvalue) => dispatch({type: "CHANGE_SELECTED_VALUE", selectedValue: selectedvalue})
+
+const mapDispatchToProps = dispatch => {
+    return{
+        grabData: selectedValue => {
+            dispatch(radioChange(selectedValue))
+        }
+    }
 }
-mapStateToProps = (state) => {
-    const { selectedValueData } = state
-    return { selectedValueData }
+
+const mapStateToProps = state => {
+
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ManagerPage));

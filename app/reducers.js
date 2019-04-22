@@ -7,7 +7,7 @@ import { connectRouter } from 'connected-react-router/immutable';
 
 import history from 'utils/history';
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
-import selectedValueDataReducer from 'containers/ManagerPage/reducers'
+import radioChangeReducer from 'containers/ManagerPage/reducer'
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -15,7 +15,7 @@ import selectedValueDataReducer from 'containers/ManagerPage/reducers'
 export default function createReducer(injectedReducers = {}) {
   const rootReducer = combineReducers({
     language: languageProviderReducer,
-    managementData: selectedValueDataReducer,
+    management: radioChangeReducer,
     ...injectedReducers,
   });
 
