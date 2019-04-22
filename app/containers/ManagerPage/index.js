@@ -219,7 +219,7 @@ class ManagerPage extends React.PureComponent {
                 </div>
                 <div className={classes.managementRoot}>
                     {selectedValue === 'room' && (
-                        <Typography>dasd</Typography>
+                        this.props.grabData
                    )}
                     {selectedValue === 'guests' && (
                        <Typography>Guests</Typography>
