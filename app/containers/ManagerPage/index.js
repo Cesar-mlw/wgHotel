@@ -68,30 +68,13 @@ const styles = {
 
 };
 
-const room = [
-    {
-        value: "standard",
-        label: "New York"
-    },
-    {
-        value: "lightLuxury",
-        label: "Milan"
-    },
-    {
-        value: "ultraLuxury",
-        label: "Dubai"
-    }
-]
-room.map(option => {
-    console.log(option)
-})
 /* eslint-disable react/prefer-stateless-function */
 class ManagerPage extends React.PureComponent {
     state = {
         anchorEl: null,
         acomodacao: "normal",
         managingDate: null,
-        selectedValue: 'room'
+        selectedValue: 'room',
     };
 
     handleMenu = event => {
@@ -107,6 +90,10 @@ class ManagerPage extends React.PureComponent {
     };
     handleRadioChange = event => {
         this.setState({ selectedValue: event.target.value })
+    }
+    handleData = data => {
+        console.log(data)
+        return (<Typography>{data[0].tipo}</Typography>)
     }
 
     render() {
@@ -172,7 +159,7 @@ class ManagerPage extends React.PureComponent {
                             name="quartos"
                             label="Quartos"
                             aria-label="Quartos"
-                            onClick = {() => selected_value("room")}
+                            onClick = {this.props.grabData(this.state.selectedValue)}
 
                         />
                         <FormLabel className={classes.radio} >Hóspedes</FormLabel>
@@ -219,7 +206,7 @@ class ManagerPage extends React.PureComponent {
                 </div>
                 <div className={classes.managementRoot}>
                     {selectedValue === 'room' && (
-                        this.props.grabData
+                        this.handleData(this.props.data)
                    )}
                     {selectedValue === 'guests' && (
                        <Typography>Guests</Typography>
@@ -241,7 +228,14 @@ class ManagerPage extends React.PureComponent {
 }
 
 Manager.propTypes = {
-    grabData: PropTypes.func.isRequired
+    grabData: PropTypes.func.isRequired,
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            tipo: PropTypes.string.isRequired,
+            vago: PropTypes.bool.isRequired,
+        }).isRequired
+    ).isRequired
 }
 
 const mapDispatchToProps = dispatch => {
@@ -253,7 +247,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 const mapStateToProps = state => {
-
+    return {
+        data: state.data
+    }
 }
 
 
