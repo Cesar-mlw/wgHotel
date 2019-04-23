@@ -18,8 +18,9 @@ import {
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
+import { createStructuredSelector } from 'reselect'
 import placeholderLogo from '../../images/placeholderLogo.png';
-import { radioChange } from './actions'
+import { loadRadioData } from './actions'
 
 
 
@@ -239,7 +240,7 @@ Manager.propTypes = {
 }
 
 const mapDispatchToProps = dispatch => ({
-    grabData: selectedValue => dispatch(radioChange(selectedValue))
+    grabData: selectedValue => dispatch(loadRadioData(selectedValue))
 })
 
 

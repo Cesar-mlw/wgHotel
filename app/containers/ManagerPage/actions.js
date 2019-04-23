@@ -1,7 +1,9 @@
-import { RADIO_CHANGE } from './constants'
+import { LOAD_RADIO_DATA } from './constants'
 
 
-export const radioChange = radio => ({
-    type: RADIO_CHANGE,
-    btnPressed: radio,
-})
+export function loadRadioData(btnPressed){
+    return {
+        type: LOAD_RADIO_DATA,
+        btnPressed
+    }
+}

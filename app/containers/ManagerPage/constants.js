@@ -1,1 +1,1 @@
-export const RADIO_CHANGE = 'RADIO_CHANGE'
+export const LOAD_RADIO_DATA = 'app/ManagerPage/LOAD_RADIO_DATA'

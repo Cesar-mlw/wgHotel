@@ -11,8 +11,9 @@ export const initialState = fromJS({
 const managementReducer = (state = initialState, action) => {
     switch(action.type){
         case RADIO_CHANGE:
-            state.set('btnPressed', action.btnPressed)
-            return state.set('data', [{id:0, tipo:"Milan", vago: false}, {id:1, tipo:"Milan", vago: true}, {id:2, tipo:"Dubai", vago: false}])
+            return state
+                .set('btnPressed', action.btnPressed)
+                .set('data', [{id:0, tipo:"Milan", vago: false}, {id:1, tipo:"Milan", vago: true}, {id:2, tipo:"Dubai", vago: false}])
             
         default:
             return state
