@@ -1,16 +1,17 @@
 import { fromJS } from 'immutable'
+import { RADIO_CHANGE } from './constants'  
 
 
 export const initialState = fromJS({
-    btn_pressed: "room",
-    data: []
+    btnPressed: "room",
+    data: [{id:0, tipo:"Milan", vago: false}, {id:1, tipo:"Milan", vago: true}, {id:2, tipo:"Dubai", vago: false}]
   });
 
 
-function radioChangeReducer(state = initialState, action){
+const managementReducer = (state = initialState, action) => {
     switch(action.type){
-        case 'radioChange':
-            state.set('btn_pressed', action.btn_pressed)
+        case RADIO_CHANGE:
+            state.set('btnPressed', action.btnPressed)
             return state.set('data', [{id:0, tipo:"Milan", vago: false}, {id:1, tipo:"Milan", vago: true}, {id:2, tipo:"Dubai", vago: false}])
             
         default:
@@ -19,4 +20,4 @@ function radioChangeReducer(state = initialState, action){
 }
 
 
-export default radioChangeReducer
+export default managementReducer

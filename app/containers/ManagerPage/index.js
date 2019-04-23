@@ -159,7 +159,7 @@ class ManagerPage extends React.PureComponent {
                             name="quartos"
                             label="Quartos"
                             aria-label="Quartos"
-                            onClick = {this.props.grabData(this.state.selectedValue)}
+                            onClick = {() => classes.grabData(selectedValue)}
 
                         />
                         <FormLabel className={classes.radio} >Hóspedes</FormLabel>
@@ -206,7 +206,7 @@ class ManagerPage extends React.PureComponent {
                 </div>
                 <div className={classes.managementRoot}>
                     {selectedValue === 'room' && (
-                        this.handleData(this.props.data)
+                        this.handleData(classes.dados)
                    )}
                     {selectedValue === 'guests' && (
                        <Typography>Guests</Typography>
@@ -228,29 +228,25 @@ class ManagerPage extends React.PureComponent {
 }
 
 Manager.propTypes = {
-    grabData: PropTypes.func.isRequired,
-    data: PropTypes.arrayOf(
+    grabData: PropTypes.func,
+    dados: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            tipo: PropTypes.string.isRequired,
-            vago: PropTypes.bool.isRequired,
-        }).isRequired
-    ).isRequired
+            id: PropTypes.number,
+            tipo: PropTypes.string,
+            vago: PropTypes.bool,
+        })
+    )
 }
 
-const mapDispatchToProps = dispatch => {
-    return{
-        grabData: selectedValue => {
-            dispatch(radioChange(selectedValue))
-        }
-    }
-}
+const mapDispatchToProps = dispatch => ({
+    grabData: selectedValue => dispatch(radioChange(selectedValue))
+})
 
-const mapStateToProps = state => {
-    return {
-        data: state.data
-    }
-}
+
+const mapStateToProps = state => ({
+    dados: state.data
+})
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ManagerPage));
