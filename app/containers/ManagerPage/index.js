@@ -19,8 +19,13 @@ import {
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
 import { createStructuredSelector } from 'reselect'
+import injectReducer from 'utils/injectReducer'
 import placeholderLogo from '../../images/placeholderLogo.png';
 import { loadRadioData } from './actions'
+import reducer from './reducer'
+import { makeDataSelector } from './selectors'
+import { compose } from '../../../../../../AppData/Local/Microsoft/TypeScript/3.4.3/node_modules/redux';
+import { connect } from 'redux';
 
 
 
@@ -92,16 +97,15 @@ class ManagerPage extends React.PureComponent {
     handleRadioChange = event => {
         this.setState({ selectedValue: event.target.value })
     }
-    handleData = data => {
-        console.log(data)
-        return (<Typography>{data[0].tipo}</Typography>)
+    componentDidMount() {
+        loadRadioData(this.state.selectedValue)
     }
-
     render() {
         const { classes } = this.props;
         const { anchorEl, managingDate, selectedValue } = this.state;
         const open = Boolean(anchorEl);
-
+        const dados = this.props.dados
+        console.log(dados)
         return (
             <div className={classes.root}>
                 <AppBar position="static" color="default" className={classes.appBar}>
@@ -160,7 +164,7 @@ class ManagerPage extends React.PureComponent {
                             name="quartos"
                             label="Quartos"
                             aria-label="Quartos"
-                            onClick = {() => classes.grabData(selectedValue)}
+
 
                         />
                         <FormLabel className={classes.radio} >Hóspedes</FormLabel>
@@ -170,7 +174,7 @@ class ManagerPage extends React.PureComponent {
                             value="guests"
                             name="Hóspedes"
                             aria-label="Hóspedes"
-                           
+
 
                         />
                         <FormLabel className={classes.radio} >Restaurante</FormLabel>
@@ -180,7 +184,7 @@ class ManagerPage extends React.PureComponent {
                             value="diner"
                             name="Restaurante"
                             aria-label="Restaurante"
-                            
+
 
                         />
                         <FormLabel className={classes.radio} >Sala de Eventos</FormLabel>
@@ -190,7 +194,7 @@ class ManagerPage extends React.PureComponent {
                             value="events"
                             name="Sala de Eventos"
                             aria-label="Sala de Eventos"
-                            
+
 
                         />
                         <FormLabel className={classes.radio} >Estacionamento</FormLabel>
@@ -200,54 +204,53 @@ class ManagerPage extends React.PureComponent {
                             value="parking"
                             name="Estacionamento"
                             aria-label="Estacionamento"
-                            
+
 
                         />
                     </div>
                 </div>
                 <div className={classes.managementRoot}>
                     {selectedValue === 'room' && (
-                        this.handleData(classes.dados)
-                   )}
+                        <Typography>Room</Typography>
+                    )}
                     {selectedValue === 'guests' && (
-                       <Typography>Guests</Typography>
+                        <Typography>Guests</Typography>
                     )}
                     {selectedValue === 'diner' && (
-                       <Typography>Diner</Typography>
+                        <Typography>Diner</Typography>
                     )}
                     {selectedValue === 'events' && (
-                       <Typography>Events</Typography>
+                        <Typography>Events</Typography>
                     )}
                     {selectedValue === 'parking' && (
-                       <Typography>Parking</Typography>
+                        <Typography>Parking</Typography>
                     )}
                 </div>
             </div >
         );
     }
-    
+
 }
 
 Manager.propTypes = {
     grabData: PropTypes.func,
-    dados: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.number,
-            tipo: PropTypes.string,
-            vago: PropTypes.bool,
-        })
-    )
+    dados: PropTypes.array
 }
 
-const mapDispatchToProps = dispatch => ({
-    grabData: selectedValue => dispatch(loadRadioData(selectedValue))
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRadioData: selectedValue => dispatch(loadRadioData(selectedValue))
+    }
+}
+
+
+const mapStateToProps = createStructuredSelector({
+    dados: makeDataSelector()
 })
 
+const withConnect = connect(mapStateToProps, mapDispatchToProps)
 
-const mapStateToProps = state => ({
-    dados: state.data
-})
-
+const withReducer = injectReducer({ key: 'managerPage', reducer })
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ManagerPage));
+export default compose(withReducer, withConnect)(withStyles(styles)(ManagerPage));

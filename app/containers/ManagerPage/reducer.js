@@ -1,5 +1,5 @@
 import { fromJS } from 'immutable'
-import { RADIO_CHANGE } from './constants'  
+import { LOAD_RADIO_DATA } from './constants'  
 
 
 export const initialState = fromJS({
