@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import placeholderLogo from '../../images/placeholderLogo.png';
+import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
 import { getRadioData } from './actions'
 import {
   AppBar,
@@ -27,7 +28,6 @@ import {
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
-
 import injectReducer from 'utils/injectReducer';
 import { makeRadioDataSelector } from './selectors';
 import reducer from './reducer';
@@ -73,7 +73,12 @@ const styles = {
     width: "100vw",
     height: '100vh',
     marginTop: "12vh",
-    borderStyle: "solid",
+  },
+  hotelCard:{
+    display:'flex',
+    flexWrap: 'wrap',
+    marginTop: '15vh',
+    marginLeft: '2vw',
   }
 
 };
@@ -216,7 +221,14 @@ export class MngrPage extends React.Component {
           </div>
           <div className={classes.managementRoot}>
             {selectedValue === 'room' && (
-              <Typography>Room</Typography>
+              <div className={classes.hotelCard}>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+              </div>
             )}
             {selectedValue === 'guests' && (
               <Typography>Guests</Typography>
@@ -238,7 +250,7 @@ export class MngrPage extends React.Component {
 }
 
 MngrPage.propTypes = {
-  radioData: PropTypes.array,
+  radioData: PropTypes.array
 };
 
 const mapStateToProps = createStructuredSelector({
