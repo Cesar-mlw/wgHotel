@@ -222,12 +222,12 @@ export class MngrPage extends React.Component {
           <div className={classes.managementRoot}>
             {selectedValue === 'room' && (
               <div className={classes.hotelCard}>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='disp' tipoUsuario = 'camareira' precoDiaria='R$1200'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='ocup' tipoUsuario = 'camareira' precoDiaria='R$1200'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='inter' tipoUsuario = 'atendente' precoDiaria='R$1200'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='clean' tipoUsuario = 'atendente' precoDiaria='R$1200'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='disp' tipoUsuario = 'supAcomodacao' precoDiaria='R$1200'/>
+                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='ocup' tipoUsuario = 'supAcomodacao' precoDiaria='R$1200'/>
               </div>
             )}
             {selectedValue === 'guests' && (

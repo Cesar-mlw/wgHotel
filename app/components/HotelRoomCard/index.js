@@ -6,8 +6,22 @@
 
 import React from 'react';
 import PropTypes from 'prop-types'
-import { Card, CardActionArea, CardMedia, CardContent, Typography, withStyles, Dialog, Slide, DialogTitle, DialogContent } from '@material-ui/core'
+import { 
+  Card, 
+  CardActionArea, 
+  CardMedia, 
+  CardContent, 
+  Typography, 
+  withStyles, 
+  Dialog, 
+  Slide, 
+  DialogTitle, 
+  DialogContent, } from '@material-ui/core'
 import hotelRoomImg from '../../images/hotelRoomImg.png'
+import greenBall from '../../images/greenBall.png'
+import redBall from '../../images/redBall.png'
+import yellowBall from '../../images/yellowBall.png'
+import { MeetingRoom } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -36,7 +50,19 @@ const style = {
   title:{
     marginBottom: 0.5
   },
-  
+  cardVacantImg: {
+    width: 25,
+    height: 25,
+    marginLeft: '18.5vw',
+    marginTop: '-8vh'
+  },
+  dialogInfoText: {
+    fontSize: '0.8em',
+    display: 'flex',
+    flexWrap: 'wrap',
+    float: 'left',
+    marginLeft: '2.5vw'
+  }
 }
 class HotelRoomCard extends React.Component {
   state={
@@ -51,9 +77,11 @@ class HotelRoomCard extends React.Component {
   handleDialogOpen = () => {
     this.setState({dialogOpen: true})
   }
+  
   render() {
     const { classes } = this.props
     const { dialogOpen } = this.state
+    console.log(this.props.vacant)
     return (
       <div className={classes.root}>
         <Card className={classes.card} onClick={this.handleDialogOpen}>
@@ -68,6 +96,7 @@ class HotelRoomCard extends React.Component {
             <CardContent>
               <Typography className={classes.title} gutterBottom variant='overline' >Número do Quarto: {this.props.numeroQuarto}</Typography>
               <Typography variant='caption'>Tipo do Quarto: {this.props.tipoQuarto}</Typography>
+              <img src={(this.props.vacant == "disp") ? greenBall : (this.props.vacant == "ocup") ? redBall : yellowBall} className={classes.cardVacantImg}/>
             </CardContent>
           </CardActionArea>
         </Card>
@@ -75,14 +104,22 @@ class HotelRoomCard extends React.Component {
           open={dialogOpen}
           TransitionComponent={this.Transition}
           keepMounted
+          fullWidth
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
         >
           <DialogTitle>
-            Informações sobre o quarto {this.props.numeroQuarto}
+            Informações Adicionais
           </DialogTitle>
           <DialogContent>
-
+            {this.props.tipoUsuario == "atendente" && (
+              <div>
+                <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom/> {this.props.numeroQuarto}</Typography>
+                <Typography className={classes.dialogInfoText} variant='overline'>Estado: {(this.props.vacant == 'disp') ? 'Disponível': (this.props.vacant == 'ocup') ? "Ocupado": (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
+                <Typography className={classes.dialogInfoText} variant='overline'>Tier: {this.props.tipoQuarto}</Typography>
+                <Typography className={classes.dialogInfoText} variant='overline'>Preço da Diária: {this.props.precoDiaria},00</Typography>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
@@ -93,6 +130,9 @@ class HotelRoomCard extends React.Component {
 HotelRoomCard.propTypes = {
   numeroQuarto: PropTypes.string.isRequired,
   tipoQuarto: PropTypes.string.isRequired,
+  vacant: PropTypes.string,
+  tipoUsuario: PropTypes.string.isRequired,
+  precoDiaria: PropTypes.string,
 };
 
 export default withStyles(style)(HotelRoomCard);
