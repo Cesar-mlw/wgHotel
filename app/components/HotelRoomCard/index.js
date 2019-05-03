@@ -21,7 +21,7 @@ import hotelRoomImg from '../../images/hotelRoomImg.png'
 import greenBall from '../../images/greenBall.png'
 import redBall from '../../images/redBall.png'
 import yellowBall from '../../images/yellowBall.png'
-import { MeetingRoom } from '@material-ui/icons'
+import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, DateRange } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -56,12 +56,24 @@ const style = {
     marginLeft: '18.5vw',
     marginTop: '-8vh'
   },
+  dialog:{
+    maxWidth: 1500
+  },
+  dialogRoot:{
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
   dialogInfoText: {
     fontSize: '0.8em',
     display: 'flex',
     flexWrap: 'wrap',
-    float: 'left',
-    marginLeft: '2.5vw'
+    marginLeft: '2.5vw',
+    marginTop: '2.5vh',
+  },
+  hotelRoomImgInCard:{
+    width: '18vw',
+    height: '18vh',
+    marginLeft: '7vw'
   }
 }
 class HotelRoomCard extends React.Component {
@@ -107,17 +119,24 @@ class HotelRoomCard extends React.Component {
           fullWidth
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
+          className={classes.dialog}
         >
           <DialogTitle>
             Informações Adicionais
           </DialogTitle>
           <DialogContent>
             {this.props.tipoUsuario == "atendente" && (
-              <div>
-                <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom/> {this.props.numeroQuarto}</Typography>
-                <Typography className={classes.dialogInfoText} variant='overline'>Estado: {(this.props.vacant == 'disp') ? 'Disponível': (this.props.vacant == 'ocup') ? "Ocupado": (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
-                <Typography className={classes.dialogInfoText} variant='overline'>Tier: {this.props.tipoQuarto}</Typography>
-                <Typography className={classes.dialogInfoText} variant='overline'>Preço da Diária: {this.props.precoDiaria},00</Typography>
+              <div className={classes.dialogRoot}>
+                <div>
+                  <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom/> {this.props.numeroQuarto}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "inter") ? <PriorityHigh/> : (this.props.vacant == "ocup") ? <Block/> : <Done/>} {(this.props.vacant == 'disp') ? 'Disponível': (this.props.vacant == 'ocup') ? "Ocupado": (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'><Palette/> {this.props.tipoQuarto}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'><AttachMoney/> {this.props.precoDiaria},00 / Dia</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "disp") ?  "Próxima reserva:": "Ocupado até:"} {this.props.ocupUntil}</Typography>
+                </div>
+                <div>
+                  <img className={classes.hotelRoomImgInCard} src={hotelRoomImg}/>
+                </div>
               </div>
             )}
           </DialogContent>
