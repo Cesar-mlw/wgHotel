@@ -16,12 +16,17 @@ import {
   Dialog, 
   Slide, 
   DialogTitle, 
-  DialogContent, } from '@material-ui/core'
+  DialogContent,
+  Button, 
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+   } from '@material-ui/core'
 import hotelRoomImg from '../../images/hotelRoomImg.png'
 import greenBall from '../../images/greenBall.png'
 import redBall from '../../images/redBall.png'
 import yellowBall from '../../images/yellowBall.png'
-import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, DateRange } from '@material-ui/icons'
+import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, ExpandMore } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -36,6 +41,21 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, DateRange
 //Vermelho - Ocupado (colocar dentro do diálogo data de até quando a reserva é vigente)
 //Amarelo - Limpeza / Interditado
 
+
+
+//Props taken
+// -- ATENDENTE --
+//numeroQuarto
+//tipoQuarto
+//vacant
+//tipoUsuario
+//precoDiaria
+//ocupUntil
+// -- CAMAREIRA -- 
+//Lista de Produtos
+  //nomeProduto
+  //precoProduto
+  //qtdeProduto
 const style = {
   root:{
     marginLeft:'1vw',
@@ -74,8 +94,25 @@ const style = {
     width: '18vw',
     height: '18vh',
     marginLeft: '7vw'
-  }
+  },
+  btnReservarAtendente: {
+    color: "#BAB392",
+    marginLeft: "12vw",
+    marginTop: "5vh"
+  },
+  expansionPanelSummaryColumn:{
+    flexBasis: '33.33%'
+  },
+  expPanelDetails: {
+    alignItems: 'center'
+  },
+  expPanelDetailsText:{
+    marginTop: '1vh'
+
+  },
 }
+
+
 class HotelRoomCard extends React.Component {
   state={
     dialogOpen: false,
@@ -89,7 +126,30 @@ class HotelRoomCard extends React.Component {
   handleDialogOpen = () => {
     this.setState({dialogOpen: true})
   }
-  
+  handleProductList = listaProduto => {
+    const elements = []
+    listaProduto.map(prd => {
+      elements.push(
+        <ExpansionPanel
+          fullWidth
+        >
+          <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
+            <div className={style.expansionPanelSummaryColumn}>
+              <Typography variant="overline">{prd.nome}</Typography>
+            </div>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={style.expPanelDetails}>
+            <div style={style.expPanelDetailsText}>
+              <Typography variant='overline' >Preço: R${prd.preco}</Typography>
+              <Typography variant='overline' >Quantidade Consumida: {prd.qtde}</Typography>
+              <Typography variant='overline' >Total Gasto: R${parseFloat(prd.qtde * prd.preco)}</Typography>
+            </div>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      )
+    })
+    return elements
+  }
   render() {
     const { classes } = this.props
     const { dialogOpen } = this.state
@@ -122,7 +182,7 @@ class HotelRoomCard extends React.Component {
           className={classes.dialog}
         >
           <DialogTitle>
-            Informações Adicionais
+            <Typography variant="overline" style={{fontSize:"0.9em"}}> Informações Adicionais </Typography>
           </DialogTitle>
           <DialogContent>
             {this.props.tipoUsuario == "atendente" && (
@@ -135,8 +195,18 @@ class HotelRoomCard extends React.Component {
                   <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "disp") ?  "Próxima reserva:": "Ocupado até:"} {this.props.ocupUntil}</Typography>
                 </div>
                 <div>
-                  <img className={classes.hotelRoomImgInCard} src={hotelRoomImg}/>
+                  <Button
+                    variant="outlined"
+                    className={classes.btnReservarAtendente}
+                  >
+                    Efetuar Reserva
+                  </Button>
                 </div>
+              </div>
+            )}
+            {this.props.tipoUsuario == "camareira" && (
+              <div >
+                  {this.handleProductList(this.props.listaProduto)}
               </div>
             )}
           </DialogContent>
@@ -145,7 +215,9 @@ class HotelRoomCard extends React.Component {
     );
   }
 }
-
+// Organizar por numero de quarto
+// Busca pelo quarto
+// 
 HotelRoomCard.propTypes = {
   numeroQuarto: PropTypes.string.isRequired,
   tipoQuarto: PropTypes.string.isRequired,

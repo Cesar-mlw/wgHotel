@@ -64,7 +64,7 @@ const styles = {
   },
   radioGroup: {
     marginLeft: "15vw",
-    marginTop: "-4vh"
+    marginTop: "4vh"
   },
   radio: {
     marginLeft: "2vw"
@@ -74,15 +74,26 @@ const styles = {
     height: '100vh',
     marginTop: "12vh",
   },
-  hotelCard:{
-    display:'flex',
+  hotelCard: {
+    display: 'flex',
     flexWrap: 'wrap',
-    marginTop: '15vh',
+    marginTop: '2vh',
     marginLeft: '2vw',
-  }
-
+  },
+  roomTextField: {
+    marginTop: '6vw',
+    marginLeft: '45vw',
+    color: '#BAB392',
+  },
 };
-
+const listaProduto = [
+  { id:0, nome:"Coca-Cola", preco:12.50, qtde:8 },
+  { id:1, nome:"Chocolate Godiva", preco:55.99, qtde:12 },
+  { id:2, nome:"Red Label", preco:120.00, qtde:3 },
+  { id:3, nome:"Corona", preco:20.00, qtde:8 },
+  { id:4, nome:"Lays Potato Chips", preco:35.00, qtde:8 },
+  { id:5, nome:"Milano Cookies", preco:15.00, qtde:36 },
+]
 /* eslint-disable react/prefer-stateless-function */
 export class MngrPage extends React.Component {
   state = {
@@ -90,6 +101,7 @@ export class MngrPage extends React.Component {
     acomodacao: "normal",
     managingDate: null,
     selectedValue: 'room',
+    roomTextField: '',
   };
 
   handleMenu = event => {
@@ -106,15 +118,17 @@ export class MngrPage extends React.Component {
   handleRadioChange = event => {
     this.setState({ selectedValue: event.target.value })
   }
+  handleRoomTextFieldChange = event => {
+    this.setState({ roomTextField: event.target.value })
+  }
   componentDidMount() {
     getRadioData("room")
   }
   render() {
     const { classes } = this.props;
-    const { anchorEl, managingDate, selectedValue } = this.state;
+    const { anchorEl, selectedValue, roomTextField } = this.state;
     const open = Boolean(anchorEl);
-    const data = { ...this.props.radioData};
-    console.log(data)
+    const data = { ...this.props.radioData };
     return (
       <div>
         <div className={classes.root}>
@@ -156,15 +170,6 @@ export class MngrPage extends React.Component {
             </Toolbar>
           </AppBar>
           <div id="selector" className={classes.selector}>
-            <DatePicker
-              autoOk
-              label="Gerenciamento"
-              clearable
-              value={managingDate}
-              onChange={this.handleManageChange}
-              className={classes.datePicker}
-              color="inherit"
-            />
             <div className={classes.radioGroup}>
               <FormLabel className={classes.radio}>Quartos</FormLabel>
               <Radio
@@ -221,13 +226,72 @@ export class MngrPage extends React.Component {
           </div>
           <div className={classes.managementRoot}>
             {selectedValue === 'room' && (
-              <div className={classes.hotelCard}>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='disp' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="02/12/2019"/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='ocup' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="05/05/2019"/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='inter' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="09/05/2019"/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='clean' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="02/05/2019"/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='disp' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="15/07/2019"/>
-                <HotelRoomCard numeroQuarto='1101' tipoQuarto='Milan' vacant='ocup' tipoUsuario = 'atendente' precoDiaria='R$1200' ocupUntil="19/08/2019"/>
+              <div>
+                <div className={classes.roomTextField}>
+                  <TextField
+                    id="roomSearchTextField"
+                    label="Número do quarto"
+                    placeholder="1101"
+                    value={roomTextField}
+                    onChange={this.handleRoomTextFieldChange}
+                  />
+                </div>
+                <div className={classes.hotelCard}>
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='disp'
+                    tipoUsuario='atendente'
+                    precoDiaria='R$1200'
+                    ocupUntil="02/12/2019"
+                    listaProduto={listaProduto}
+                  />
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='ocup'
+                    tipoUsuario='atendente'
+                    precoDiaria='R$1200'
+                    ocupUntil="05/05/2019"
+                    listaProduto={listaProduto}
+                  />
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='inter'
+                    tipoUsuario='atendente'
+                    precoDiaria='R$1200'
+                    ocupUntil="09/05/2019"
+                    listaProduto={listaProduto}
+                  />
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='clean'
+                    tipoUsuario='camareira'
+                    precoDiaria='R$1200'
+                    ocupUntil="02/05/2019"
+                    listaProduto={listaProduto}
+                  />
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='disp'
+                    tipoUsuario='atendente'
+                    precoDiaria='R$1200'
+                    ocupUntil="15/07/2019" 
+                    listaProduto={listaProduto}
+                    />
+                  <HotelRoomCard
+                    numeroQuarto='1101'
+                    tipoQuarto='Milan'
+                    vacant='ocup'
+                    tipoUsuario='atendente'
+                    precoDiaria='R$1200'
+                    ocupUntil="19/08/2019" 
+                    listaProduto={listaProduto}
+                    />
+                </div>
               </div>
             )}
             {selectedValue === 'guests' && (
@@ -259,7 +323,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    getRadioData: selectedValue => 
+    getRadioData: selectedValue =>
       dispatch(getRadioData(selectedValue)),
   };
 }
