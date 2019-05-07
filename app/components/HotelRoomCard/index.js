@@ -135,6 +135,9 @@ const style = {
 class HotelRoomCard extends React.Component {
   state={
     dialogOpen: false,
+    itemQted: 0,
+    itemPreco: 0,
+    itemPrecoTotal: 0,
   }
   Transition = props => {
     return <Slide direction='up' {...props}/>
@@ -145,6 +148,17 @@ class HotelRoomCard extends React.Component {
   handleDialogOpen = () => {
     this.setState({dialogOpen: true})
   }
+  handleItemPlus = event =>{
+    //use refs    
+    // let precoTotal = parseFloat(document.getElementById("preco").textContent)
+    // qtde += 1
+    // precoTotal *= qtde
+    // document.getElementById("precoTotal").textContent = precoTotal
+    // document.getElementById("qtde").textContent = qtde
+
+    //call API to insert new item and return new data
+
+  }
   handleProductList = listaProduto => {
     const elements = []
     listaProduto.map(prd => {
@@ -152,8 +166,9 @@ class HotelRoomCard extends React.Component {
         <TableRow key={prd.id}>
           <TableCell>{prd.nome}</TableCell>
           <TableCell align="right">{prd.qtde}</TableCell>
+          <TableCell align="right">{prd.preco}</TableCell>
           <TableCell align="right">{prd.preco * prd.qtde}</TableCell>
-          <TableCell align="right"><IconButton size="small"><Add/></IconButton></TableCell>
+          <TableCell align="right"><IconButton size="small" onClick={this.handleItemPlus}><Add/></IconButton></TableCell>
         </TableRow>
       )
     })
@@ -219,6 +234,7 @@ class HotelRoomCard extends React.Component {
                   <TableHead>
                     <TableCell><Typography variant="overline">Produto</Typography></TableCell>
                     <TableCell align='right'><Typography variant="overline">Quantidade Consumida</Typography></TableCell>
+                    <TableCell align='right'><Typography variant="overline">Preço</Typography></TableCell>
                     <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
                     <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
                   </TableHead>
