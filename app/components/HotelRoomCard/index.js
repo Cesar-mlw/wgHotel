@@ -36,10 +36,32 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, ExpandMor
 //Atendente - Faz reservas
 //Supervisor de Acomodação - Edita dados do quarto
 
+
+//Quartos
+//Check-in Check-out - Quem fizer a reserva é quem faz o check in e o check out
+//letra indica bloco e o numero o andar
+
+
 //Cores para vacant Status
 //Verde - Disponível
 //Vermelho - Ocupado (colocar dentro do diálogo data de até quando a reserva é vigente)
 //Amarelo - Limpeza / Interditado
+
+//Hóspedes
+//Somente o atendente poderá manipular os hóspedes
+//Dados do hóspede - CRUD - Dados Pessoais/Pagamento/
+//campo pesquisar cpf 
+
+//Restaurante
+//somente supervisor do restaurante
+//Estoquista - Solicitar um item / Registrar items consumidos 
+//Host - Reservar mesas por quarto / Menu
+
+//Sala de eventos - Vitrine
+
+//Estacionamento
+//Só manobrista
+//tarifas extras / visualizar e alterar dados das vagas (carro ocupado qual vaga e hóspede dono do carro)
 
 
 
