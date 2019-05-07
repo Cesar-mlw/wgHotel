@@ -18,15 +18,18 @@ import {
   DialogTitle, 
   DialogContent,
   Button, 
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
+  Table,
+  TableHead,
+  TableCell,
+  TableBody,
+  TableRow,
+  IconButton,
    } from '@material-ui/core'
 import hotelRoomImg from '../../images/hotelRoomImg.png'
 import greenBall from '../../images/greenBall.png'
 import redBall from '../../images/redBall.png'
 import yellowBall from '../../images/yellowBall.png'
-import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, ExpandMore } from '@material-ui/icons'
+import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -122,16 +125,10 @@ const style = {
     marginLeft: "12vw",
     marginTop: "5vh"
   },
-  expansionPanelSummaryColumn:{
-    flexBasis: '33.33%'
-  },
-  expPanelDetails: {
-    alignItems: 'center'
-  },
-  expPanelDetailsText:{
-    marginTop: '1vh'
-
-  },
+  tableAddButton: {
+    height: 25,
+    width: 25
+  }
 }
 
 
@@ -152,22 +149,12 @@ class HotelRoomCard extends React.Component {
     const elements = []
     listaProduto.map(prd => {
       elements.push(
-        <ExpansionPanel
-          fullWidth
-        >
-          <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-            <div className={style.expansionPanelSummaryColumn}>
-              <Typography variant="overline">{prd.nome}</Typography>
-            </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails className={style.expPanelDetails}>
-            <div style={style.expPanelDetailsText}>
-              <Typography variant='overline' >Preço: R${prd.preco}</Typography>
-              <Typography variant='overline' >Quantidade Consumida: {prd.qtde}</Typography>
-              <Typography variant='overline' >Total Gasto: R${parseFloat(prd.qtde * prd.preco)}</Typography>
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+        <TableRow key={prd.id}>
+          <TableCell>{prd.nome}</TableCell>
+          <TableCell align="right">{prd.qtde}</TableCell>
+          <TableCell align="right">{prd.preco * prd.qtde}</TableCell>
+          <TableCell align="right"><IconButton size="small"><Add/></IconButton></TableCell>
+        </TableRow>
       )
     })
     return elements
@@ -228,7 +215,17 @@ class HotelRoomCard extends React.Component {
             )}
             {this.props.tipoUsuario == "camareira" && (
               <div >
-                  {this.handleProductList(this.props.listaProduto)}
+                <Table>
+                  <TableHead>
+                    <TableCell><Typography variant="overline">Produto</Typography></TableCell>
+                    <TableCell align='right'><Typography variant="overline">Quantidade Consumida</Typography></TableCell>
+                    <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
+                    <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {this.handleProductList(this.props.listaProduto)}
+                  </TableBody>
+                </Table>
               </div>
             )}
           </DialogContent>
