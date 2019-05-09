@@ -29,7 +29,7 @@ import hotelRoomImg from '../../images/hotelRoomImg.png'
 import greenBall from '../../images/greenBall.png'
 import redBall from '../../images/redBall.png'
 import yellowBall from '../../images/yellowBall.png'
-import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add } from '@material-ui/icons'
+import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remove } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -128,7 +128,11 @@ const style = {
   tableAddButton: {
     height: 25,
     width: 25
-  }
+  },
+  btnConfirmar:{
+    marginTop: '4vh',
+    marginLeft: '1vw'
+  },
 }
 
 
@@ -138,6 +142,13 @@ class HotelRoomCard extends React.Component {
     itemQted: 0,
     itemPreco: 0,
     itemPrecoTotal: 0,
+    originalListaProduto: [],
+    listaProduto: [],
+    confirmBtn: true
+  }
+  componentWillMount(){
+    this.setState({listaProduto: this.props.listaProduto, originalListaProduto: this.props.listaProduto})
+    console.log(this.state.originalListaProduto)
   }
   Transition = props => {
     return <Slide direction='up' {...props}/>
@@ -148,27 +159,38 @@ class HotelRoomCard extends React.Component {
   handleDialogOpen = () => {
     this.setState({dialogOpen: true})
   }
-  handleItemPlus = event =>{
-    //use refs    
-    // let precoTotal = parseFloat(document.getElementById("preco").textContent)
-    // qtde += 1
-    // precoTotal *= qtde
-    // document.getElementById("precoTotal").textContent = precoTotal
-    // document.getElementById("qtde").textContent = qtde
-
-    //call API to insert new item and return new data
-
+  handleItemAdd = id =>{
+    let newLista = this.state.listaProduto
+    newLista.map(prd => {
+      if(prd.id == id){
+        prd.qtde += 1
+      }
+    })
+    this.setState({listaProduto: newLista})
+    //Still need to find a way to compare both lists to enable or disable confirm buttons
+  }
+  handleItemRemove = id =>{
+    let newLista = this.state.listaProduto
+    newLista.map(prd => {
+      if(prd.id == id && prd.qtde - 1 >= 0){
+        prd.qtde -= 1
+      }
+    })
+    
+    
+    this.setState({listaProduto: newLista})
   }
   handleProductList = listaProduto => {
     const elements = []
     listaProduto.map(prd => {
       elements.push(
-        <TableRow key={prd.id}>
+        <TableRow key={prd.id} id={prd.key}>
           <TableCell>{prd.nome}</TableCell>
-          <TableCell align="right">{prd.qtde}</TableCell>
-          <TableCell align="right">{prd.preco}</TableCell>
-          <TableCell align="right">{prd.preco * prd.qtde}</TableCell>
-          <TableCell align="right"><IconButton size="small" onClick={this.handleItemPlus}><Add/></IconButton></TableCell>
+          <TableCell align="right" ref={`qtde${prd.id}`}>{prd.qtde}</TableCell>
+          <TableCell align="right" ref={`preco${prd.id}`}>{prd.preco}</TableCell>
+          <TableCell align="right" ref={`total${prd.id}`}>{prd.preco * prd.qtde}</TableCell>
+          <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleItemAdd(prd.id)}><Add/></IconButton></TableCell>
+          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleItemRemove(prd.id)}><Remove/></IconButton></TableCell>
         </TableRow>
       )
     })
@@ -177,7 +199,6 @@ class HotelRoomCard extends React.Component {
   render() {
     const { classes } = this.props
     const { dialogOpen } = this.state
-    console.log(this.props.vacant)
     return (
       <div className={classes.root}>
         <Card className={classes.card} onClick={this.handleDialogOpen}>
@@ -201,6 +222,7 @@ class HotelRoomCard extends React.Component {
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
+          maxWidth="lg"
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
           className={classes.dialog}
@@ -237,11 +259,18 @@ class HotelRoomCard extends React.Component {
                     <TableCell align='right'><Typography variant="overline">Preço</Typography></TableCell>
                     <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
                     <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
+                    <TableCell align='right'><Typography variant="overline">Remover</Typography></TableCell>
                   </TableHead>
                   <TableBody>
-                    {this.handleProductList(this.props.listaProduto)}
+                    {this.handleProductList(this.state.listaProduto)}
                   </TableBody>
                 </Table>
+                <Button variant="outlined"  disabled={this.state.confirmBtn} color="primary" className={classes.btnConfirmar}>
+                  Confirmar
+                </Button>
+                <Button variant="outlined"  disabled={this.state.confirmBtn} color="secondary" className={classes.btnConfirmar}>
+                  Cancelar
+                </Button>
               </div>
             )}
           </DialogContent>
