@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import placeholderLogo from '../../images/placeholderLogo.png';
+import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
 import { getRadioData } from './actions'
 import {
@@ -41,17 +41,16 @@ const styles = {
     overflow: "hidden"
   },
   appBar: {
-    backgroundColor: "#BAB392"
+    backgroundColor: "#DEFAFF"
   },
   menuButton: {
     marginLeft: "1vw"
   },
   welcomeText: {
     color: "#A2B8B7",
-    marginLeft: "80vw"
+    marginLeft: "62vw"
   },
   logo: {
-    width: 60,
     height: 50,
   },
   selector: {
@@ -135,7 +134,7 @@ export class MngrPage extends React.Component {
           <AppBar position="static" color="default" className={classes.appBar}>
             <Toolbar>
               <div id="hotelLogo">
-                <img src={placeholderLogo} className={classes.logo} />
+                <img src={finalLogo} className={classes.logo} />
               </div>
               <div id="welcomeText" className={classes.welcomeText}>
                 <Typography variant="overline" noWrap>Bem vindo, Cesar</Typography>

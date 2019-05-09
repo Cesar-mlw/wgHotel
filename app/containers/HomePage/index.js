@@ -27,10 +27,10 @@ import {
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
-import tripad from '../../images/tripad.png'
+import tripad from '../../images/tripad.svg'
 import faceb from '../../images/faceb.png'
-import instaIcon from '../../images/instaIcon.jpg'
-import placeholderLogo from '../../images/placeholderLogo.png'
+import instaIcon from '../../images/insta.svg'
+import placeholderLogo from '../../images/logo.png'
 import hotelMainImage from '../../images/hotelMainImage.jpg'
 import infoImage from '../../images/infoImage.jpg'
 
@@ -43,14 +43,28 @@ const styles = {
   },
   grow: {
     flexGrow: 1,
-    width: 60,
     height: 50,
-    marginLeft: "17vw"
+    marginLeft: '12vw'
+    
   },
   socialMedias: {
     flexGrow: 1,
     width: 55,
     height: 32,
+    paddingLeft: "0.5vw",
+
+  },
+  socialMediasFace: {
+    flexGrow: 1,
+    width: 43,
+    height: 32,
+    paddingLeft: "0.5vw",
+
+  },
+  socialMediasInsta: {
+    flexGrow: 1,
+    width: 59,
+    height: 36,
     paddingLeft: "0.5vw",
 
   },
@@ -73,13 +87,13 @@ const styles = {
   datePicker: {
     marginTop: "2vh",
     marginLeft: "8vw",
-    color: '#ADA788',
-    textColor: '#ADA788'
+    color: '#00BFDF',
+    textColor: '#00BFDF'
   },
   reservationButton: {
     marginTop: "3.5vh",
     marginLeft: "8vw",
-    background: '#ADA788',
+    background: '#00BFDF',
     borderRadius: 3,
     border: 0,
     color: 'white',
@@ -87,7 +101,7 @@ const styles = {
     padding: '0 30px',
   },
   appBar: {
-    backgroundColor: "#BAB392"
+    backgroundColor: "#DEFAFF"
   },
   infoRoot: {
     width: "100vw",
@@ -104,16 +118,16 @@ const styles = {
   },
   infoText: {
     marginLeft: "64vw",
-    color: "#ABA586",
+    color: "#00BFDF",
   },
   infoParagraphRight: {
     width: "45vw",
     marginTop: "6vh",
     marginLeft: "53vw",
-    color: "#ABA586",
+    color: "#00BFDF",
   },
   infoTextLeft: {
-    color: "#ABA586",
+    color: "#00BFDF",
     marginTop: "50vh",
     marginLeft: "17vw"
   },
@@ -128,10 +142,10 @@ const styles = {
     width: "45vw",
     marginLeft: "2vw",
     marginTop: "8vh",
-    color: "#ABA586",
+    color: "#00BFDF",
   },
   infoTextRightThird: {
-    color: "#ABA586",
+    color: "#00BFDF",
     width: "50vw",
     heigth: "10vw",
     marginTop: "25vh",
@@ -139,7 +153,7 @@ const styles = {
 
   },
   infoParagraphRightThird: {
-    color: "#ABA586",
+    color: "#00BFDF",
     width: "40vw",
     heigth: "40vw",
     marginLeft: "55vw",
@@ -158,7 +172,7 @@ const styles = {
   },
   footerLinks:{
     textDecoration: "none",
-    color: "#A2B8B7",
+    color: "#00BFDF",
     marginLeft: "10vh",
     fontSize: "1.6em"
   }
@@ -218,8 +232,8 @@ class HomePage extends React.PureComponent {
           <Toolbar>
             <div id="socialMedias">
               <img src={tripad} className={classes.socialMedias} />
-              <img src={faceb} className={classes.socialMedias} />
-              <img src={instaIcon} className={classes.socialMedias} />
+              <img src={faceb} className={classes.socialMediasFace} />
+              <img src={instaIcon} className={classes.socialMediasInsta} />
             </div>
             <div className={classes.grow} id="logo">
               <img src={placeholderLogo} className={classes.grow} />
@@ -270,7 +284,7 @@ class HomePage extends React.PureComponent {
             color="inherit"
           >
             {room.map(option => (
-              <MenuItem key={option.value} value={option.value} style={{ textColor: '#ADA788' }}>
+              <MenuItem key={option.value} value={option.value} style={{ textColor: '#00BFDF' }}>
                 {option.label}
               </MenuItem>
             ))}
@@ -316,7 +330,7 @@ class HomePage extends React.PureComponent {
             <img src={infoImage} className={classes.infoImgsRight} />
           </div>
           <div id="info_block_restaurant" className={classes.infoBlock}>
-            <img src={infoImage} className={classes.infoImgsLeft} />
+            <img src={infoImage} style={{marginTop:'6vh'}} className={classes.infoImgsLeft} />
             <Typography id="nss_restaurante" variant="display1" className={classes.infoTextRightThird}>Espaços do Hotel</Typography>
             <Typography variant='overline' className={classes.infoParagraphRightThird}>{restText}</Typography>
           </div>

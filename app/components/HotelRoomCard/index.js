@@ -222,7 +222,7 @@ class HotelRoomCard extends React.Component {
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
-          maxWidth="lg"
+          maxWidth={(this.props.tipoUsuario == "atendente") ? "sm":"lg"}
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
           className={classes.dialog}
