@@ -27,9 +27,9 @@ import {
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
-import tripad from '../../images/tripad.svg'
-import faceb from '../../images/faceb.png'
-import instaIcon from '../../images/insta.svg'
+import tripad from '../../images/trip.png'
+import faceb from '../../images/face.png'
+import instaIcon from '../../images/insta.png'
 import placeholderLogo from '../../images/logo.png'
 import hotelMainImage from '../../images/hotelMainImage.jpg'
 import infoImage from '../../images/infoImage.jpg'
@@ -44,13 +44,13 @@ const styles = {
   grow: {
     flexGrow: 1,
     height: 50,
-    marginLeft: '12vw'
+    marginLeft: '13vw'
     
   },
   socialMedias: {
     flexGrow: 1,
-    width: 55,
-    height: 32,
+    width: 47,
+    height: 33,
     paddingLeft: "0.5vw",
 
   },
@@ -63,7 +63,7 @@ const styles = {
   },
   socialMediasInsta: {
     flexGrow: 1,
-    width: 59,
+    width: 50,
     height: 36,
     paddingLeft: "0.5vw",
 

@@ -6,25 +6,30 @@
 
 import React from 'react';
 import PropTypes from 'prop-types'
-import { 
-  Card, 
-  CardActionArea, 
-  CardMedia, 
-  CardContent, 
-  Typography, 
-  withStyles, 
-  Dialog, 
-  Slide, 
-  DialogTitle, 
+import {
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  Typography,
+  withStyles,
+  Dialog,
+  Slide,
+  DialogTitle,
   DialogContent,
-  Button, 
+  Button,
   Table,
   TableHead,
   TableCell,
   TableBody,
   TableRow,
   IconButton,
-   } from '@material-ui/core'
+  Select,
+  OutlinedInput,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from '@material-ui/core'
 import hotelRoomImg from '../../images/hotelRoomImg.png'
 import greenBall from '../../images/greenBall.png'
 import redBall from '../../images/redBall.png'
@@ -78,21 +83,21 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remo
 //ocupUntil
 // -- CAMAREIRA -- 
 //Lista de Produtos
-  //nomeProduto
-  //precoProduto
-  //qtdeProduto
+//nomeProduto
+//precoProduto
+//qtdeProduto
 const style = {
-  root:{
-    marginLeft:'1vw',
+  root: {
+    marginLeft: '1vw',
     marginTop: '1vh'
   },
-  card:{
+  card: {
     maxWidth: 345,
   },
-  media:{
+  media: {
     objectFit: 'cover',
   },
-  title:{
+  title: {
     marginBottom: 0.5
   },
   cardVacantImg: {
@@ -101,10 +106,10 @@ const style = {
     marginLeft: '18.5vw',
     marginTop: '-8vh'
   },
-  dialog:{
+  dialog: {
     maxWidth: 1500
   },
-  dialogRoot:{
+  dialogRoot: {
     display: 'flex',
     flexWrap: 'wrap',
   },
@@ -115,7 +120,7 @@ const style = {
     marginLeft: '2.5vw',
     marginTop: '2.5vh',
   },
-  hotelRoomImgInCard:{
+  hotelRoomImgInCard: {
     width: '18vw',
     height: '18vh',
     marginLeft: '7vw'
@@ -129,56 +134,83 @@ const style = {
     height: 25,
     width: 25
   },
-  btnConfirmar:{
+  btnConfirmar: {
     marginTop: '4vh',
     marginLeft: '1vw'
   },
+  supAcomodRoot: {
+    marginTop:'1vh',
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  supAcomodSelect:{
+    width: '40vw'
+  },
+  supAcomodBtn:{
+    marginLeft: '2vw'
+  },
 }
 
-
 class HotelRoomCard extends React.Component {
-  state={
-    dialogOpen: false,
-    itemQted: 0,
-    itemPreco: 0,
-    itemPrecoTotal: 0,
-    originalListaProduto: [],
-    listaProduto: [],
-    confirmBtn: true
+  constructor(props) {
+    super(props);
+    this.state = {
+      dialogOpen: false,
+      itemQted: 0,
+      itemPreco: 0,
+      itemPrecoTotal: 0,
+      listaProduto: this.props.listaProduto,
+      originalListaProduto: [],
+      confirmBtn: true,
+      supAcomodRoomState: this.props.tipoQuarto,
+      
+    }
   }
-  componentWillMount(){
-    this.setState({listaProduto: this.props.listaProduto, originalListaProduto: this.props.listaProduto})
-    console.log(this.state.originalListaProduto)
+  componentWillMount() {
+    
   }
   Transition = props => {
-    return <Slide direction='up' {...props}/>
-  } 
-  handleDialogClose = () =>{
-    this.setState({dialogOpen: false})
+    return <Slide direction='up' {...props} />
+  }
+  handleDialogClose = () => {
+    this.setState({ dialogOpen: false })
+  }
+  getInitialState = () => {
+    return this.props.listaProduto
   }
   handleDialogOpen = () => {
-    this.setState({dialogOpen: true})
+    this.setState({ dialogOpen: true })
   }
-  handleItemAdd = id =>{
+  handleItemAdd = id => {
     let newLista = this.state.listaProduto
+    if (this.state.confirmBtn) {
+      this.setState({ confirmBtn: false })
+    }
     newLista.map(prd => {
-      if(prd.id == id){
+      if (prd.id == id) {
         prd.qtde += 1
       }
     })
-    this.setState({listaProduto: newLista})
+    this.setState({ listaProduto: newLista })
     //Still need to find a way to compare both lists to enable or disable confirm buttons
   }
-  handleItemRemove = id =>{
+  handleItemRemove = id => {
     let newLista = this.state.listaProduto
+    if (this.state.confirmBtn) {
+      this.setState({ confirmBtn: false })
+    }
     newLista.map(prd => {
-      if(prd.id == id && prd.qtde - 1 >= 0){
+      if (prd.id == id && prd.qtde - 1 >= 0) {
         prd.qtde -= 1
       }
     })
-    
-    
-    this.setState({listaProduto: newLista})
+    this.setState({ listaProduto: newLista })
+  }
+  handleCancelarItem = () => {
+
+  }
+  handleConfirmarItem = () => {
+    //chamar api para registrar no banco
   }
   handleProductList = listaProduto => {
     const elements = []
@@ -189,16 +221,25 @@ class HotelRoomCard extends React.Component {
           <TableCell align="right" ref={`qtde${prd.id}`}>{prd.qtde}</TableCell>
           <TableCell align="right" ref={`preco${prd.id}`}>{prd.preco}</TableCell>
           <TableCell align="right" ref={`total${prd.id}`}>{prd.preco * prd.qtde}</TableCell>
-          <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleItemAdd(prd.id)}><Add/></IconButton></TableCell>
-          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleItemRemove(prd.id)}><Remove/></IconButton></TableCell>
+          <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleItemAdd(prd.id)}><Add /></IconButton></TableCell>
+          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleItemRemove(prd.id)}><Remove /></IconButton></TableCell>
         </TableRow>
       )
     })
     return elements
   }
+  handleRoomStateChange = event => {
+    this.setState({ supAcomodRoomState: event.target.value })
+  }
+  handleSupAcomodConfirm = () => {
+    //call action to store state inside database
+  }
+  handleSupAcomodCancel = () => {
+    this.setState({supAcomodRoomState: this.props.tipoQuarto})
+  }
   render() {
     const { classes } = this.props
-    const { dialogOpen } = this.state
+    const { dialogOpen, confirmBtn, supAcomodRoomState } = this.state
     return (
       <div className={classes.root}>
         <Card className={classes.card} onClick={this.handleDialogOpen}>
@@ -213,7 +254,7 @@ class HotelRoomCard extends React.Component {
             <CardContent>
               <Typography className={classes.title} gutterBottom variant='overline' >Número do Quarto: {this.props.numeroQuarto}</Typography>
               <Typography variant='caption'>Tipo do Quarto: {this.props.tipoQuarto}</Typography>
-              <img src={(this.props.vacant == "disp") ? greenBall : (this.props.vacant == "ocup") ? redBall : yellowBall} className={classes.cardVacantImg}/>
+              <img src={(this.props.vacant == "disp") ? greenBall : (this.props.vacant == "ocup") ? redBall : yellowBall} className={classes.cardVacantImg} />
             </CardContent>
           </CardActionArea>
         </Card>
@@ -222,23 +263,23 @@ class HotelRoomCard extends React.Component {
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
-          maxWidth={(this.props.tipoUsuario == "atendente") ? "sm":"lg"}
+          maxWidth={(this.props.tipoUsuario == "atendente") ? "sm" : "lg"}
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
           className={classes.dialog}
         >
           <DialogTitle>
-            <Typography variant="overline" style={{fontSize:"0.9em"}}> Informações Adicionais </Typography>
+            <Typography variant="overline" style={{ fontSize: "0.9em" }}> Informações Adicionais </Typography>
           </DialogTitle>
           <DialogContent>
             {this.props.tipoUsuario == "atendente" && (
               <div className={classes.dialogRoot}>
                 <div>
-                  <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom/> {this.props.numeroQuarto}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "inter") ? <PriorityHigh/> : (this.props.vacant == "ocup") ? <Block/> : <Done/>} {(this.props.vacant == 'disp') ? 'Disponível': (this.props.vacant == 'ocup') ? "Ocupado": (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'><Palette/> {this.props.tipoQuarto}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'><AttachMoney/> {this.props.precoDiaria},00 / Dia</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "disp") ?  "Próxima reserva:": "Ocupado até:"} {this.props.ocupUntil}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom /> {this.props.numeroQuarto}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "inter") ? <PriorityHigh /> : (this.props.vacant == "ocup") ? <Block /> : <Done />} {(this.props.vacant == 'disp') ? 'Disponível' : (this.props.vacant == 'ocup') ? "Ocupado" : (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'><Palette /> {this.props.tipoQuarto}</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'><AttachMoney /> {this.props.precoDiaria},00 / Dia</Typography>
+                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "disp") ? "Próxima reserva:" : "Ocupado até:"} {this.props.ocupUntil}</Typography>
                 </div>
                 <div>
                   <Button
@@ -265,11 +306,43 @@ class HotelRoomCard extends React.Component {
                     {this.handleProductList(this.state.listaProduto)}
                   </TableBody>
                 </Table>
-                <Button variant="outlined"  disabled={this.state.confirmBtn} color="primary" className={classes.btnConfirmar}>
+                <Button variant="outlined" onClick={this.handleConfirmarItem} disabled={confirmBtn} color="primary" className={classes.btnConfirmar}>
                   Confirmar
                 </Button>
-                <Button variant="outlined"  disabled={this.state.confirmBtn} color="secondary" className={classes.btnConfirmar}>
+                <Button variant="outlined" onClick={this.handleCancelarItem} disabled={confirmBtn} color="secondary" className={classes.btnConfirmar}>
                   Cancelar
+                </Button>
+              </div>
+            )}
+            {this.props.tipoUsuario == "supAcomod" && (
+              <div className={classes.supAcomodRoot}>
+                <FormControl variant="outlined" style={{minWidth:120}}>
+                  <InputLabel
+                  >
+                    Tipo de Quarto
+              </InputLabel>
+                  <Select
+                    value={supAcomodRoomState}
+                    onChange={this.handleRoomStateChange}
+                    className={classes.supAcomodSelect}
+                    input={
+                      <OutlinedInput
+                        labelWidth={115}
+                        name="Tipo de Quarto"
+                        id="tipoQuarto"
+                      />
+                    }
+                  >
+                    <MenuItem value="Milan">Milan</MenuItem>
+                    <MenuItem value="New York">New York</MenuItem>
+                    <MenuItem value="Dubai">Dubai</MenuItem>
+                  </Select>
+                </FormControl>
+                <Button variant="outlined" onClick={this.handleSupAcomodConfirm} className={classes.supAcomodBtn} color="primary" disabled={(this.state.supAcomodRoomState == this.props.tipoQuarto)}>
+                    Confirmar
+                </Button>
+                <Button variant="outlined" onClick={this.handleSupAcomodCancel} className={classes.supAcomodBtn} color="secondary" disabled={(this.state.supAcomodRoomState == this.props.tipoQuarto)}>
+                    Cancelar
                 </Button>
               </div>
             )}
@@ -288,6 +361,7 @@ HotelRoomCard.propTypes = {
   vacant: PropTypes.string,
   tipoUsuario: PropTypes.string.isRequired,
   precoDiaria: PropTypes.string,
+  listaProduto: PropTypes.array.isRequired
 };
 
 export default withStyles(style)(HotelRoomCard);

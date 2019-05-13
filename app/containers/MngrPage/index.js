@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
-import { getRadioData } from './actions'
+import { getRadioData, getProductData } from './actions'
 import {
   AppBar,
   Toolbar,
@@ -23,13 +23,15 @@ import {
   Radio,
   FormLabel,
   TextField,
-  Button,
-  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
 import injectReducer from 'utils/injectReducer';
-import { makeRadioDataSelector } from './selectors';
+import { makeRadioDataSelector, makeProductListSelector } from './selectors';
 import reducer from './reducer';
 
 
@@ -85,14 +87,6 @@ const styles = {
     color: '#BAB392',
   },
 };
-const listaProduto = [
-  { id:0, nome:"Coca-Cola", preco:12.50, qtde:8 },
-  { id:1, nome:"Chocolate Godiva", preco:55.99, qtde:12 },
-  { id:2, nome:"Red Label", preco:120.00, qtde:3 },
-  { id:3, nome:"Corona", preco:20.00, qtde:8 },
-  { id:4, nome:"Lays Potato Chips", preco:35.00, qtde:8 },
-  { id:5, nome:"Milano Cookies", preco:15.00, qtde:36 },
-]
 /* eslint-disable react/prefer-stateless-function */
 export class MngrPage extends React.Component {
   state = {
@@ -115,19 +109,25 @@ export class MngrPage extends React.Component {
     this.setState({ managingDate: new Date(event) })
   };
   handleRadioChange = event => {
+    this.props.getRadioData(event.target.value)
     this.setState({ selectedValue: event.target.value })
+    
   }
   handleRoomTextFieldChange = event => {
     this.setState({ roomTextField: event.target.value })
   }
+  handleGuestList = (guestList) => {
+
+  }
   componentDidMount() {
-    getRadioData("room")
+    this.props.getRadioDataDispatcher("guests")
+    getProductData()
   }
   render() {
     const { classes } = this.props;
     const { anchorEl, selectedValue, roomTextField } = this.state;
     const open = Boolean(anchorEl);
-    const data = { ...this.props.radioData };
+    console.log(this.props.radioData)
     return (
       <div>
         <div className={classes.root}>
@@ -240,10 +240,10 @@ export class MngrPage extends React.Component {
                     numeroQuarto='1101'
                     tipoQuarto='Milan'
                     vacant='disp'
-                    tipoUsuario='atendente'
+                    tipoUsuario='supAcomod'
                     precoDiaria='R$1200'
                     ocupUntil="02/12/2019"
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
                     numeroQuarto='1101'
@@ -252,7 +252,7 @@ export class MngrPage extends React.Component {
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
                     ocupUntil="05/05/2019"
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
                     numeroQuarto='1101'
@@ -261,7 +261,7 @@ export class MngrPage extends React.Component {
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
                     ocupUntil="09/05/2019"
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
                     numeroQuarto='1101'
@@ -270,7 +270,7 @@ export class MngrPage extends React.Component {
                     tipoUsuario='camareira'
                     precoDiaria='R$1200'
                     ocupUntil="02/05/2019"
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
                     numeroQuarto='1101'
@@ -279,7 +279,7 @@ export class MngrPage extends React.Component {
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
                     ocupUntil="15/07/2019" 
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                     />
                   <HotelRoomCard
                     numeroQuarto='1101'
@@ -288,13 +288,25 @@ export class MngrPage extends React.Component {
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
                     ocupUntil="19/08/2019" 
-                    listaProduto={listaProduto}
+                    listaProduto={this.props.productList}
                     />
                 </div>
               </div>
             )}
             {selectedValue === 'guests' && (
-              <Typography>Guests</Typography>
+              <Table>
+              <TableHead>
+                <TableCell><Typography variant="overline">Produto</Typography></TableCell>
+                <TableCell align='right'><Typography variant="overline">Quantidade Consumida</Typography></TableCell>
+                <TableCell align='right'><Typography variant="overline">Preço</Typography></TableCell>
+                <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
+                <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
+                <TableCell align='right'><Typography variant="overline">Remover</Typography></TableCell>
+              </TableHead>
+              <TableBody>
+                
+              </TableBody>
+            </Table>
             )}
             {selectedValue === 'diner' && (
               <Typography>Diner</Typography>
@@ -313,17 +325,21 @@ export class MngrPage extends React.Component {
 }
 
 MngrPage.propTypes = {
-  radioData: PropTypes.array
+  radioData: PropTypes.array,
+  productList: PropTypes.array
 };
 
 const mapStateToProps = createStructuredSelector({
   radioData: makeRadioDataSelector(),
+  productList: makeProductListSelector(),
 });
 
 function mapDispatchToProps(dispatch) {
   return {
-    getRadioData: selectedValue =>
+    getRadioDataDispatcher: selectedValue =>
       dispatch(getRadioData(selectedValue)),
+    getProductList: () =>
+      dispatch(getProductData())
   };
 }
 

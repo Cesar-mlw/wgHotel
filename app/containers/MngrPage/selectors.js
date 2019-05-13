@@ -21,5 +21,8 @@ const makeSelectMngrPage = () =>
 const makeRadioDataSelector = () =>
   createSelector(selectMngrPageDomain, substate => substate.get('data').toJS())
 
+const makeProductListSelector = () => 
+  createSelector(selectMngrPageDomain, substate => substate.get('productList').toJS())
+
 export default makeSelectMngrPage;
-export { selectMngrPageDomain, makeRadioDataSelector };
+export { selectMngrPageDomain, makeRadioDataSelector, makeProductListSelector };
