@@ -127,7 +127,6 @@ export class MngrPage extends React.Component {
     const { classes } = this.props;
     const { anchorEl, selectedValue, roomTextField } = this.state;
     const open = Boolean(anchorEl);
-    console.log(this.props.radioData)
     return (
       <div>
         <div className={classes.root}>

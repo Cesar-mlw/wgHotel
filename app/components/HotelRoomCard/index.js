@@ -159,15 +159,11 @@ class HotelRoomCard extends React.Component {
       itemQted: 0,
       itemPreco: 0,
       itemPrecoTotal: 0,
-      listaProduto: this.props.listaProduto,
-      originalListaProduto: [],
+      listaProduto: [...this.props.listaProduto],
       confirmBtn: true,
       supAcomodRoomState: this.props.tipoQuarto,
       
     }
-  }
-  componentWillMount() {
-    
   }
   Transition = props => {
     return <Slide direction='up' {...props} />
@@ -175,31 +171,23 @@ class HotelRoomCard extends React.Component {
   handleDialogClose = () => {
     this.setState({ dialogOpen: false })
   }
-  getInitialState = () => {
-    return this.props.listaProduto
-  }
   handleDialogOpen = () => {
     this.setState({ dialogOpen: true })
   }
   handleItemAdd = id => {
     let newLista = this.state.listaProduto
-    if (this.state.confirmBtn) {
-      this.setState({ confirmBtn: false })
-    }
-    newLista.map(prd => {
-      if (prd.id == id) {
-        prd.qtde += 1
-      }
+    newLista.forEach(prd => {
+      if(prd.id == id) prd.qtde ++
     })
     this.setState({ listaProduto: newLista })
+    console.log(this.props.listaProduto)
+    console.log(this.state.listaProduto)
+    console.log(this.props.listaProduto === this.state.listaProduto)
     //Still need to find a way to compare both lists to enable or disable confirm buttons
   }
   handleItemRemove = id => {
     let newLista = this.state.listaProduto
-    if (this.state.confirmBtn) {
-      this.setState({ confirmBtn: false })
-    }
-    newLista.map(prd => {
+    newLista.forEach(prd => {
       if (prd.id == id && prd.qtde - 1 >= 0) {
         prd.qtde -= 1
       }
