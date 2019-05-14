@@ -17,7 +17,7 @@ import {
   TableRow, 
   TableHead,
   Slide,
-  IconButton
+  IconButton,
 } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
