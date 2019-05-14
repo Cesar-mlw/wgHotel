@@ -15,7 +15,7 @@ import {
 } from './constants';
 
 export const initialState = fromJS({
-  data: [
+  roomData: [
     { id: 0, tipo: "Milan", vago: true },
     { id: 1, tipo: "Milan", vago: false },
     { id: 2, tipo: "Dubai", vago: true },
@@ -33,23 +33,39 @@ export const initialState = fromJS({
     { id:4, nome:"Lays Potato Chips", preco:35.00, qtde:8 },
     { id:5, nome:"Milano Cookies", preco:15.00, qtde:36 },
   ],
-  selectedRadio: 'room',
+  guestData: [
+    {id:0, name:"Bernardo Favaretto", hospedado: true, meioPagamento: 'cartaoCredito'},
+    {id:1, name:"Jorge Favaretto", hospedado: true, meioPagamento: 'cheque'},
+    {id:2, name:"Bruna Favaretto", hospedado: false, meioPagamento: 'dinheiro'},
+    {id:3, name:"Rodrigo Favaretto", hospedado: false, meioPagamento: 'cartaoDebito'},
+  ],
 });
 
 function mngrPageReducer(state = initialState, action) {
   switch (action.type) {
     case GET_RADIO_DATA:
       if(action.selectedValue == "room"){
-        return state.set('loading', true).set('error', false).set('selectedRadio', 'room');  
+        return state.set('loading', true).set('error', false).set('roomData', [
+          { id: 0, tipo: "Milan", vago: true },
+          { id: 1, tipo: "Milan", vago: false },
+          { id: 2, tipo: "Dubai", vago: true },
+          { id: 3, tipo: "Dubai", vago: false },
+          { id: 4, tipo: "New York", vago: true },
+          { id: 5, tipo: "New York", vago: false },
+        ]);  
       }
       else if(action.selectedValue == "guests"){
-        console.log(action.selectedValue)
-        return state.set('loading', true).set('error', false).set('selectedRadio', 'guests');  
+        return state.set('loading', true).set('error', false).set('guestData', [
+          {id:0, name:"Bernardo Favaretto", hospedado: true, meioPagamento: 'cartaoCredito'},
+          {id:1, name:"Jorge Favaretto", hospedado: true, meioPagamento: 'cheque'},
+          {id:2, name:"Bruna Favaretto", hospedado: false, meioPagamento: 'dinheiro'},
+          {id:3, name:"Rodrigo Favaretto", hospedado: false, meioPagamento: 'cartaoDebito'},
+        ]);  
       }
       
     case GET_RADIO_DATA_SUCCESS:
       if(state.selectedRadio == "room"){
-        return state.set('loading', false).set('error', false).set('data', [
+        return state.set('loading', false).set('error', false).set('roomData', [
           { id: 0, tipo: "Milan", vago: true },
           { id: 1, tipo: "Milan", vago: false },
           { id: 2, tipo: "Dubai", vago: true },
@@ -59,7 +75,7 @@ function mngrPageReducer(state = initialState, action) {
         ])
       }
       else if(state.selectedRadio == 'guests'){
-        return state.set('loading', false).set('error', false).set('data', [
+        return state.set('loading', false).set('error', false).set('guestData', [
           {id:0, name:"Bernardo Favaretto", hospedado: true, meioPagamento: 'cartaoCredito'},
           {id:1, name:"Jorge Favaretto", hospedado: true, meioPagamento: 'cheque'},
           {id:2, name:"Bruna Favaretto", hospedado: false, meioPagamento: 'dinheiro'},

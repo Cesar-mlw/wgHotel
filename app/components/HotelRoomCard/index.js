@@ -159,7 +159,7 @@ class HotelRoomCard extends React.Component {
       itemQted: 0,
       itemPreco: 0,
       itemPrecoTotal: 0,
-      listaProduto: [...this.props.listaProduto],
+      listaProduto: JSON.parse(JSON.stringify(this.props.listaProduto)),
       confirmBtn: true,
       supAcomodRoomState: this.props.tipoQuarto,
       
@@ -176,17 +176,20 @@ class HotelRoomCard extends React.Component {
   }
   handleItemAdd = id => {
     let newLista = this.state.listaProduto
+    if(this.state.confirmBtn){
+      this.setState({confirmBtn: false})
+    }
     newLista.forEach(prd => {
       if(prd.id == id) prd.qtde ++
     })
     this.setState({ listaProduto: newLista })
-    console.log(this.props.listaProduto)
-    console.log(this.state.listaProduto)
-    console.log(this.props.listaProduto === this.state.listaProduto)
     //Still need to find a way to compare both lists to enable or disable confirm buttons
   }
   handleItemRemove = id => {
     let newLista = this.state.listaProduto
+    if(this.state.confirmBtn){
+      this.setState({confirmBtn: false})
+    }
     newLista.forEach(prd => {
       if (prd.id == id && prd.qtde - 1 >= 0) {
         prd.qtde -= 1
@@ -195,7 +198,7 @@ class HotelRoomCard extends React.Component {
     this.setState({ listaProduto: newLista })
   }
   handleCancelarItem = () => {
-
+    this.setState({listaProduto: JSON.parse(JSON.stringify(this.props.listaProduto)), confirmBtn: true})
   }
   handleConfirmarItem = () => {
     //chamar api para registrar no banco
@@ -294,10 +297,10 @@ class HotelRoomCard extends React.Component {
                     {this.handleProductList(this.state.listaProduto)}
                   </TableBody>
                 </Table>
-                <Button variant="outlined" onClick={this.handleConfirmarItem} disabled={confirmBtn} color="primary" className={classes.btnConfirmar}>
+                <Button variant="outlined" disabled={confirmBtn} onClick={this.handleConfirmarItem} color="primary" className={classes.btnConfirmar}>
                   Confirmar
                 </Button>
-                <Button variant="outlined" onClick={this.handleCancelarItem} disabled={confirmBtn} color="secondary" className={classes.btnConfirmar}>
+                <Button variant="outlined" disabled={confirmBtn} onClick={this.handleCancelarItem} color="secondary" className={classes.btnConfirmar}>
                   Cancelar
                 </Button>
               </div>

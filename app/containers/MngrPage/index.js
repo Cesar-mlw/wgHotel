@@ -11,6 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
+import GuestList from '../../components/GuestTable/Loadable'
 import { getRadioData, getProductData } from './actions'
 import {
   AppBar,
@@ -23,15 +24,10 @@ import {
   Radio,
   FormLabel,
   TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
 } from '@material-ui/core';
-import { DatePicker } from 'material-ui-pickers'
-import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
+import { AccountCircleOutlined } from '@material-ui/icons';
 import injectReducer from 'utils/injectReducer';
-import { makeRadioDataSelector, makeProductListSelector } from './selectors';
+import { makeRadioDataSelector, makeProductListSelector, makeGuestDataSelector } from './selectors';
 import reducer from './reducer';
 
 
@@ -109,19 +105,15 @@ export class MngrPage extends React.Component {
     this.setState({ managingDate: new Date(event) })
   };
   handleRadioChange = event => {
-    this.props.getRadioData(event.target.value)
-    this.setState({ selectedValue: event.target.value })
-    
+    this.props.getRadioDataDispatcher(event.target.value)
+    this.setState({ selectedValue: event.target.value })    
   }
   handleRoomTextFieldChange = event => {
     this.setState({ roomTextField: event.target.value })
   }
-  handleGuestList = (guestList) => {
-
-  }
   componentDidMount() {
-    this.props.getRadioDataDispatcher("guests")
-    getProductData()
+    this.props.getRadioDataDispatcher("room")
+    this.props.getProductList()
   }
   render() {
     const { classes } = this.props;
@@ -293,19 +285,9 @@ export class MngrPage extends React.Component {
               </div>
             )}
             {selectedValue === 'guests' && (
-              <Table>
-              <TableHead>
-                <TableCell><Typography variant="overline">Produto</Typography></TableCell>
-                <TableCell align='right'><Typography variant="overline">Quantidade Consumida</Typography></TableCell>
-                <TableCell align='right'><Typography variant="overline">Preço</Typography></TableCell>
-                <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
-                <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
-                <TableCell align='right'><Typography variant="overline">Remover</Typography></TableCell>
-              </TableHead>
-              <TableBody>
-                
-              </TableBody>
-            </Table>
+              <GuestList 
+                guestList={this.props.guestData}
+              />
             )}
             {selectedValue === 'diner' && (
               <Typography>Diner</Typography>
@@ -324,13 +306,15 @@ export class MngrPage extends React.Component {
 }
 
 MngrPage.propTypes = {
-  radioData: PropTypes.array,
-  productList: PropTypes.array
+  roomData: PropTypes.array,
+  productList: PropTypes.array,
+  guestData: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
-  radioData: makeRadioDataSelector(),
+  roomData: makeRadioDataSelector(),
   productList: makeProductListSelector(),
+  guestData: makeGuestDataSelector(),
 });
 
 function mapDispatchToProps(dispatch) {
