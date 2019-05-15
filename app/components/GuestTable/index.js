@@ -5,19 +5,22 @@
  */
 
 import React from 'react';
-import { 
-  Dialog, 
-  withStyles, 
-  DialogTitle, 
-  DialogContent, 
-  Typography, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableRow, 
+import {
+  Dialog,
+  withStyles,
+  DialogTitle,
+  DialogContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
   TableHead,
   Slide,
   IconButton,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
@@ -28,7 +31,9 @@ const style = {
 /* eslint-disable react/prefer-stateless-function */
 class GuestTable extends React.Component {
   state = {
-    editDialog: false
+    editDialog: false,
+    deleteDialog: false,
+    usrId: ""
   }
   Transition = props => {
     return <Slide direction="up" {...props} />
@@ -41,22 +46,28 @@ class GuestTable extends React.Component {
           <TableCell>{gst.name}</TableCell>
           <TableCell align="right" >{(gst.hospedado) ? "Hospedado" : "Não Hospedade"}</TableCell>
           <TableCell align="right" >{gst.meioPagamento}</TableCell>
-          <TableCell align="right"><IconButton color="primary" size="small" onClick={this.handleEditDialogOpen}><Edit /></IconButton></TableCell>
-          <TableCell align="right"><IconButton color="secondary" size="small" onClick={this.handleDeleteUsuario}><Delete /></IconButton></TableCell>
+          <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleEditDialogOpen(gst.id)}><Edit /></IconButton></TableCell>
+          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleDeleteDialogOpen(gst.id)}><Delete /></IconButton></TableCell>
         </TableRow>
       )
     })
-    console.log(elements)
     return elements
   }
-  handleEditDialogOpen = () => {
-    this.setState({ editDialog: true })
+  handleEditDialogOpen = (id) => {
+    this.setState({ editDialog: true, usrId: id })
   }
   handleEditDialogClose = () => {
-    this.setState({ editDialog: false })
+    this.setState({ editDialog: false, usrId: "" })
   }
-  handleDeleteUsuario = () => {
-
+  handleDeleteDialogOpen = (id) => {
+    this.setState({ deleteDialog: true, usrId: id })
+  }
+  handleDeleteDialogClose = () => {
+    this.setState({ deleteDialog: false, usrId: "" })
+  }
+  getUsuario = (id) => {
+    let usr = this.props.guestList.filter(usr => usr.id == id)
+    return usr[0].name
   }
   render() {
     return (
@@ -85,6 +96,38 @@ class GuestTable extends React.Component {
           <DialogTitle>
             <Typography variant="overline">Editar Hóspede</Typography>
           </DialogTitle>
+        </Dialog>
+        <Dialog
+          open={this.state.deleteDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="sm"
+          onClose={this.handleDeleteDialogClose}
+          onBackdropClick={this.handleDeleteDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="overline">Deletar Usuário</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="deleteDialogText">
+              Você te certeza que quer deletar o(a) usuário(a) - {this.getUsuario(this.state.usrId)}?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={this.handleDeleteDialogClose}
+              color="primary"
+            >
+              Sim
+            </Button>
+            <Button
+              onClick={this.handleDeleteDialogClose}
+              color="secondary"
+            >
+              Não
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     )

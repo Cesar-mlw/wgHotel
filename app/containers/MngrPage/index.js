@@ -91,6 +91,7 @@ export class MngrPage extends React.Component {
     managingDate: null,
     selectedValue: 'room',
     roomTextField: '',
+    guestTextField: '',
   };
 
   handleMenu = event => {
@@ -106,10 +107,13 @@ export class MngrPage extends React.Component {
   };
   handleRadioChange = event => {
     this.props.getRadioDataDispatcher(event.target.value)
-    this.setState({ selectedValue: event.target.value })    
+    this.setState({ selectedValue: event.target.value })
   }
   handleRoomTextFieldChange = event => {
     this.setState({ roomTextField: event.target.value })
+  }
+  handleGuestTextFieldChange = event => {
+    this.setState({ guestTextField: event.target.value })
   }
   componentDidMount() {
     this.props.getRadioDataDispatcher("room")
@@ -117,7 +121,7 @@ export class MngrPage extends React.Component {
   }
   render() {
     const { classes } = this.props;
-    const { anchorEl, selectedValue, roomTextField } = this.state;
+    const { anchorEl, selectedValue, roomTextField, guestTextField } = this.state;
     const open = Boolean(anchorEl);
     return (
       <div>
@@ -192,13 +196,13 @@ export class MngrPage extends React.Component {
 
 
               />
-              <FormLabel className={classes.radio} >Sala de Eventos</FormLabel>
+              <FormLabel className={classes.radio} >Estoque</FormLabel>
               <Radio
-                checked={selectedValue === 'events'}
+                checked={selectedValue === 'stock'}
                 onChange={this.handleRadioChange}
-                value="events"
-                name="Sala de Eventos"
-                aria-label="Sala de Eventos"
+                value="stock"
+                name="Estoque"
+                aria-label="Estoque"
 
 
               />
@@ -220,7 +224,7 @@ export class MngrPage extends React.Component {
                 <div className={classes.roomTextField}>
                   <TextField
                     id="roomSearchTextField"
-                    label="Número do quarto"
+                    label="Número do Quarto"
                     placeholder="1101"
                     value={roomTextField}
                     onChange={this.handleRoomTextFieldChange}
@@ -269,31 +273,42 @@ export class MngrPage extends React.Component {
                     vacant='disp'
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
-                    ocupUntil="15/07/2019" 
+                    ocupUntil="15/07/2019"
                     listaProduto={this.props.productList}
-                    />
+                  />
                   <HotelRoomCard
                     numeroQuarto='1101'
                     tipoQuarto='Milan'
                     vacant='ocup'
                     tipoUsuario='atendente'
                     precoDiaria='R$1200'
-                    ocupUntil="19/08/2019" 
+                    ocupUntil="19/08/2019"
                     listaProduto={this.props.productList}
-                    />
+                  />
                 </div>
               </div>
             )}
             {selectedValue === 'guests' && (
-              <GuestList 
-                guestList={this.props.guestData}
-              />
+              <div>
+                <div className={classes.roomTextField}>
+                  <TextField
+                    id="guestSearchTextField"
+                    label="Nome do Hóspede"
+                    placeholder="Bernardo Favaretto"
+                    value={guestTextField}
+                    onChange={this.handleGuestTextFieldChange}
+                  />
+                </div>
+                <GuestList
+                  guestList={this.props.guestData}
+                />
+              </div>
             )}
             {selectedValue === 'diner' && (
               <Typography>Diner</Typography>
             )}
-            {selectedValue === 'events' && (
-              <Typography>Events</Typography>
+            {selectedValue === 'stock' && (
+              <Typography>Stock</Typography>
             )}
             {selectedValue === 'parking' && (
               <Typography>Parking</Typography>
