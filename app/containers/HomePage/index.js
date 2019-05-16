@@ -24,6 +24,10 @@ import {
   TextField,
   Button,
   Link,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
@@ -45,7 +49,7 @@ const styles = {
     flexGrow: 1,
     height: 50,
     marginLeft: '13vw'
-    
+
   },
   socialMedias: {
     flexGrow: 1,
@@ -170,11 +174,20 @@ const styles = {
     opacity: 0.5,
     float: "left"
   },
-  footerLinks:{
+  footerLinks: {
     textDecoration: "none",
     color: "#00BFDF",
     marginLeft: "10vh",
     fontSize: "1.6em"
+  },
+  welcomeText: {
+    color: "#A2B8B7",
+    marginRight: '1vw',
+    marginTop: '1vh'
+  },
+  appBarRoot:{
+    display: 'flex',
+    flexWrap: 'wrap',
   }
 };
 
@@ -198,7 +211,11 @@ class HomePage extends React.PureComponent {
     anchorEl: null,
     acomodacao: "normal",
     chegada: null,
-    saida: null
+    saida: null,
+    logged: false, // TESTING
+    loginDialog: false,
+    loginUsrTextField: '',
+    loginPssTextField: '',
   };
 
   handleMenu = event => {
@@ -221,6 +238,24 @@ class HomePage extends React.PureComponent {
     this.setState({ saida: new Date(event) })
   };
 
+  handleLoginDialogOpen = () => {
+    this.setState({ loginDialog: true })
+  }
+
+  handleLoginDialogClose = () => {
+    this.setState({ loginDialog: false })
+  }
+
+  handleLoginTextFieldChange = name => event => {
+    this.setState({ [name]: event.target.value })
+  }
+
+  handleClickLogin = () => {
+    if (this.state.loginUsrTextField == "Cheddar" && this.state.loginPssTextField == "1234") {
+      this.setState({ logged: true, loginDialog: false, anchorEl: null })
+    }
+  }
+
   render() {
     const { classes } = this.props;
     const { anchorEl, acomodacao, saida, chegada } = this.state;
@@ -238,35 +273,67 @@ class HomePage extends React.PureComponent {
             <div className={classes.grow} id="logo">
               <img src={placeholderLogo} className={classes.grow} />
             </div>
-            <div id="menu">
-              <IconButton
-                aria-owns="menu-appbar"
-                aria-haspopup="true"
-                onClick={this.handleMenu}
-                color="inherit"
-                className={classes.menuButton}
-              >
-                <AccountCircleOutlined />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={this.state.anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onClose={this.handleClose}
-              >
-                <MenuItem onClick={this.handleClose}>Crie uma Conta</MenuItem>
-                <MenuItem onClick={this.handleClose}>Já Possuo uma Conta</MenuItem>
-                <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
-              </Menu>
-            </div>
+            {(this.state.logged) ? (
+              <div className={classes.appBarRoot}>
+                <div id="welcomeText" className={classes.welcomeText}>
+                  <Typography variant="overline" noWrap>Bem vindo, Cesar</Typography>
+                </div>
+                <div id="menu">
+                  <IconButton
+                    aria-owns="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={this.handleMenu}
+                    color="inherit"
+                    className={classes.menuButton}
+                  >
+                    <AccountCircleOutlined />
+                  </IconButton>
+                  <Menu
+                    id="menu-appbar"
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={open}
+                    onClose={this.handleClose}
+                  >
+                    <MenuItem onClick={this.handleClose}>Settings</MenuItem>
+                  </Menu>
+                </div>
+              </div>) : (<div id="menu">
+                <IconButton
+                  aria-owns="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={this.handleMenu}
+                  color="inherit"
+                  className={classes.menuButton}
+                >
+                  <AccountCircleOutlined />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={this.state.anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={open}
+                  onClose={this.handleClose}
+                >
+                  <MenuItem onClick={this.handleClose}>Crie uma Conta</MenuItem>
+                  <MenuItem onClick={this.handleLoginDialogOpen}>Já Possuo uma Conta</MenuItem>
+                  <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
+                </Menu>
+              </div>)}
           </Toolbar>
         </AppBar>
         <div id="carrousel">
@@ -283,7 +350,7 @@ class HomePage extends React.PureComponent {
             margin="normal"
             color="inherit"
           >
-            {room.map(option => (
+            {room.forEach(option => (
               <MenuItem key={option.value} value={option.value} style={{ textColor: '#00BFDF' }}>
                 {option.label}
               </MenuItem>
@@ -310,14 +377,13 @@ class HomePage extends React.PureComponent {
             color="inherit"
           />
           <Button
-            variant="flat"
+            variant="text"
             color="inherit"
             className={classes.reservationButton}
           >
             Reservar
           </Button>
         </div>
-
         <div id="hotelInfoRes" className={classes.infoRoot}>
           <div id="info_block_restaurant" className={classes.infoBlock}>
             <img src={infoImage} className={classes.infoImgsLeft} />
@@ -330,7 +396,7 @@ class HomePage extends React.PureComponent {
             <img src={infoImage} className={classes.infoImgsRight} />
           </div>
           <div id="info_block_restaurant" className={classes.infoBlock}>
-            <img src={infoImage} style={{marginTop:'6vh'}} className={classes.infoImgsLeft} />
+            <img src={infoImage} style={{ marginTop: '6vh' }} className={classes.infoImgsLeft} />
             <Typography id="nss_restaurante" variant="display1" className={classes.infoTextRightThird}>Espaços do Hotel</Typography>
             <Typography variant='overline' className={classes.infoParagraphRightThird}>{restText}</Typography>
           </div>
@@ -341,15 +407,52 @@ class HomePage extends React.PureComponent {
             <Typography variant="overline">+55(11)995841564</Typography>
           </div>
           <div id="links" className={classes.footerLinks}>
-              <Typography>
-                <Link href="javascript;;" className={classes.footerLinks}>NewsLetter</Link>
-                <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
-                <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
-                <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
-                <Link href="/management" className={classes.footerLinks}>Área Administrativa</Link>
-              </Typography>
+            <Typography>
+              <Link href="javascript;;" className={classes.footerLinks}>NewsLetter</Link>
+              <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
+              <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
+              <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
+              <Link href="/management" className={classes.footerLinks}>Área Administrativa</Link>
+            </Typography>
           </div>
         </div>
+        <Dialog
+          open={this.state.loginDialog}
+          onClose={this.handleLoginDialogClose}
+          onBackdropClick={this.handleLoginDialogClose}
+          maxWidth="md"
+        >
+          <DialogTitle>
+            Bem vindo(a)! Por favor, faça o Login
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              margin="normal"
+              name="loginUsrTextField"
+              id="pssTextField"
+              label="Usuário"
+              type="text"
+              value={this.state.loginUsrTextField}
+              onChange={this.handleLoginTextFieldChange('loginUsrTextField')}
+              fullWidth
+            />
+            <TextField
+              margin="normal"
+              name="loginPssTextField"
+              id="pssTextField"
+              label="Senha"
+              type="password"
+              value={this.state.loginPssTextField}
+              onChange={this.handleLoginTextFieldChange('loginPssTextField')}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClickLogin}>
+              Login
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
