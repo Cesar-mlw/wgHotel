@@ -26,7 +26,6 @@ import { Edit, Delete } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 const style = {
-
 }
 /* eslint-disable react/prefer-stateless-function */
 class GuestTable extends React.Component {
@@ -47,7 +46,7 @@ class GuestTable extends React.Component {
           <TableCell align="right" >{(gst.hospedado) ? "Hospedado" : "Não Hospedade"}</TableCell>
           <TableCell align="right" >{gst.meioPagamento}</TableCell>
           <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleEditDialogOpen(gst.id)}><Edit /></IconButton></TableCell>
-          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleDeleteDialogOpen(gst.id)}><Delete /></IconButton></TableCell>
+          <TableCell align="right"><Button variant="outlined" color={(gst.hospedado) ? "secondary" : "primary"}>{(gst.hospedado) ? "Check-out" : "Check-in"}</Button></TableCell>
         </TableRow>
       )
     })
@@ -78,7 +77,7 @@ class GuestTable extends React.Component {
             <TableCell align='right'><Typography variant="overline">Estado</Typography></TableCell>
             <TableCell align='right'><Typography variant="overline">Meio de Pagamento</Typography></TableCell>
             <TableCell align='right'><Typography variant="overline">Editar</Typography></TableCell>
-            <TableCell align='right'><Typography variant="overline">Excluir</Typography></TableCell>
+            <TableCell align='right'><Typography variant="overline">Check-in / Check-out</Typography></TableCell>
           </TableHead>
           <TableBody>
             {this.handleGuestList()}

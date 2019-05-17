@@ -24,6 +24,7 @@ import {
   Radio,
   FormLabel,
   TextField,
+  Button
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
 import injectReducer from 'utils/injectReducer';
@@ -78,8 +79,12 @@ const styles = {
     marginLeft: '2vw',
   },
   roomTextField: {
-    marginTop: '6vw',
     marginLeft: '45vw',
+    color: '#BAB392',
+  },
+  roomBtn: {
+    marginTop: '15vh',
+    marginBottom: '-6vh',
     color: '#BAB392',
   },
 };
@@ -290,6 +295,11 @@ export class MngrPage extends React.Component {
             )}
             {selectedValue === 'guests' && (
               <div>
+                <div className={classes.roomBtn}>
+                <Button variant="outlined" color="default">
+                    Registrar Usuário
+                  </Button>
+                </div>
                 <div className={classes.roomTextField}>
                   <TextField
                     id="guestSearchTextField"

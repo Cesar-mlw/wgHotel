@@ -28,9 +28,10 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
+  Snackbar,
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
-import { AccountCircleOutlined, MenuOutlined } from '@material-ui/icons';
+import { AccountCircleOutlined, MenuOutlined, Close } from '@material-ui/icons';
 import tripad from '../../images/trip.png'
 import faceb from '../../images/face.png'
 import instaIcon from '../../images/insta.png'
@@ -128,7 +129,6 @@ const styles = {
     width: "45vw",
     marginTop: "6vh",
     marginLeft: "53vw",
-    color: "#00BFDF",
   },
   infoTextLeft: {
     color: "#00BFDF",
@@ -146,7 +146,6 @@ const styles = {
     width: "45vw",
     marginLeft: "2vw",
     marginTop: "8vh",
-    color: "#00BFDF",
   },
   infoTextRightThird: {
     color: "#00BFDF",
@@ -157,7 +156,6 @@ const styles = {
 
   },
   infoParagraphRightThird: {
-    color: "#00BFDF",
     width: "40vw",
     heigth: "40vw",
     marginLeft: "55vw",
@@ -216,6 +214,9 @@ class HomePage extends React.PureComponent {
     loginDialog: false,
     loginUsrTextField: '',
     loginPssTextField: '',
+    snackOpen: false,
+    snackMessage: "",
+    tpUsuario: ""
   };
 
   handleMenu = event => {
@@ -250,15 +251,24 @@ class HomePage extends React.PureComponent {
     this.setState({ [name]: event.target.value })
   }
 
+  makeSnack = message => {
+    this.setState({snackOpen: true, snackMessage: message})
+  }
+
+  eatSnack = () => {
+    this.setState({snackOpen: false, snackMessage: ""})
+  }
+
   handleClickLogin = () => {
     if (this.state.loginUsrTextField == "Cheddar" && this.state.loginPssTextField == "1234") {
-      this.setState({ logged: true, loginDialog: false, anchorEl: null })
+      this.setState({ logged: true, loginDialog: false, anchorEl: null, tpUsuario: "admin" })
+      this.makeSnack("Logged as Cesar Moura Leite Westphal")
     }
   }
 
   render() {
     const { classes } = this.props;
-    const { anchorEl, acomodacao, saida, chegada } = this.state;
+    const { anchorEl, acomodacao, saida, chegada, snackOpen } = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -350,7 +360,7 @@ class HomePage extends React.PureComponent {
             margin="normal"
             color="inherit"
           >
-            {room.forEach(option => (
+            {room.map(option => (
               <MenuItem key={option.value} value={option.value} style={{ textColor: '#00BFDF' }}>
                 {option.label}
               </MenuItem>
@@ -412,7 +422,7 @@ class HomePage extends React.PureComponent {
               <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
               <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
               <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
-              <Link href="/management" className={classes.footerLinks}>Área Administrativa</Link>
+              <Link href={(this.state.tpUsuario == "guest" || this.state.tpUsuario == "") ? "/" : "/management"} className={classes.footerLinks}>Área Administrativa</Link>
             </Typography>
           </div>
         </div>
@@ -453,6 +463,23 @@ class HomePage extends React.PureComponent {
             </Button>
           </DialogActions>
         </Dialog>
+
+        <Snackbar 
+          anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
+          open={snackOpen}
+          onClose={this.eatSnack}
+          message={<span id="snackMessage">{this.state.snackMessage}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.eatSnack}
+            >
+              <Close />
+            </IconButton>
+          ]}
+        />
       </div>
     );
   }
