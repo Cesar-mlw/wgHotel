@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import MaskedInput from 'react-text-mask'
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
 import GuestList from '../../components/GuestTable/Loadable'
@@ -24,9 +25,13 @@ import {
   Radio,
   FormLabel,
   TextField,
-  Button
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
+import { DatePicker } from 'material-ui-pickers'
 import injectReducer from 'utils/injectReducer';
 import { makeRadioDataSelector, makeProductListSelector, makeGuestDataSelector } from './selectors';
 import reducer from './reducer';
@@ -88,15 +93,33 @@ const styles = {
     color: '#BAB392',
   },
 };
+
+
+
 /* eslint-disable react/prefer-stateless-function */
 export class MngrPage extends React.Component {
   state = {
     anchorEl: null,
-    acomodacao: "normal",
+    acomodacao: 'normal',
     managingDate: null,
     selectedValue: 'room',
     roomTextField: '',
     guestTextField: '',
+    usrRegisterDialog: false,
+    //campos para o registro de hospede
+    usrNomeCompleto: '',
+    usrProfissao: '',
+    usrTelefone: '',
+    usrNacionalidade: '',
+    usrDtNascimento: new Date(),
+    usrSexo: '',
+    usrId: '',
+    usrDocMed: '',
+    usrEndereco: '',
+    usrCidade: '',
+    usrEstado: '',
+    usrPais: '',
+    //----------------
   };
 
   handleMenu = event => {
@@ -110,23 +133,40 @@ export class MngrPage extends React.Component {
   handleManageChange = event => {
     this.setState({ managingDate: new Date(event) })
   };
+
   handleRadioChange = event => {
     this.props.getRadioDataDispatcher(event.target.value)
     this.setState({ selectedValue: event.target.value })
-  }
+  };
+
   handleRoomTextFieldChange = event => {
     this.setState({ roomTextField: event.target.value })
-  }
+  };
+
   handleGuestTextFieldChange = event => {
     this.setState({ guestTextField: event.target.value })
+  };
+
+  handleUsrRegisterTextChange = name => event => {
+    this.setState({ [name]: event.target.value })
   }
+
+  handleUsrRegisterDialogOpen = () => {
+    this.setState({ usrRegisterDialog: true })
+  }
+
+  handleUsrRegisterDialogClose = () => {
+    this.setState({ usrRegisterDialog: false })
+  }
+
   componentDidMount() {
     this.props.getRadioDataDispatcher("room")
     this.props.getProductList()
   }
+
   render() {
     const { classes } = this.props;
-    const { anchorEl, selectedValue, roomTextField, guestTextField } = this.state;
+    const { anchorEl, selectedValue, roomTextField, guestTextField, usrNomeCompleto, usrId, usrCidade, usrDocMed, usrDtNascimento, usrEndereco, usrEstado, usrNacionalidade, usrPais, usrProfissao, usrSexo, usrTelefone, usrRegisterDialog } = this.state;
     const open = Boolean(anchorEl);
     return (
       <div>
@@ -296,9 +336,9 @@ export class MngrPage extends React.Component {
             {selectedValue === 'guests' && (
               <div>
                 <div className={classes.roomBtn}>
-                <Button variant="outlined" color="default">
+                  <Button variant="outlined" color="default" onClick={this.handleUsrRegisterDialogOpen}>
                     Registrar Usuário
-                  </Button>
+                </Button>
                 </div>
                 <div className={classes.roomTextField}>
                   <TextField
@@ -312,6 +352,52 @@ export class MngrPage extends React.Component {
                 <GuestList
                   guestList={this.props.guestData}
                 />
+                <Dialog
+                  open={usrRegisterDialog}
+                  onClose={this.handleUsrRegisterDialogClose}
+                  onBackdropClick={this.handleUsrRegisterDialogClose}
+                >
+                  <DialogTitle>
+                    <Typography variant='overline'>Registrar novo hóspede</Typography>
+                  </DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      id="nomeCompleto"
+                      label="Nome Completo"
+                      value={usrNomeCompleto}
+                      onChange={this.handleUsrRegisterTextChange("usrNomeCompleto")}
+                      margin="normal"
+                      fullWidth
+                      placeholder="Bernardo Favaretto"
+                    />
+                    <DatePicker
+                      margin='normal'
+                      label="Data de Nascimento"
+                      value={usrDtNascimento}
+                      onChange={this.handleUsrRegisterTextChange("usrDtNascimento")}
+                    />
+                    <TextField
+                      id="telefone"
+                      label="Telefone"
+                      value={usrTelefone}
+                      onChange={this.handleUsrRegisterTextChange("usrTelefone")}
+                      margin="normal"
+                      fullWidth
+                      placeholder="(11) 1111-1111"
+                      InputProps={{
+                        inputComponent: <MaskedInput
+                          {...other}
+                          ref={ref => {
+                            inputRef(ref ? ref.inputElement : null);
+                          }}
+                          mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+                          placeholderChar={'\u2000'}
+                          showMask
+                        />
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
             {selectedValue === 'diner' && (

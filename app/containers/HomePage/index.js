@@ -212,8 +212,8 @@ class HomePage extends React.PureComponent {
     saida: null,
     logged: false, // TESTING
     loginDialog: false,
-    loginUsrTextField: '',
-    loginPssTextField: '',
+    loginUsrTextField: 'Cheddar',
+    loginPssTextField: '1234',
     snackOpen: false,
     snackMessage: "",
     tpUsuario: ""
@@ -263,6 +263,10 @@ class HomePage extends React.PureComponent {
     if (this.state.loginUsrTextField == "Cheddar" && this.state.loginPssTextField == "1234") {
       this.setState({ logged: true, loginDialog: false, anchorEl: null, tpUsuario: "admin" })
       this.makeSnack("Logged as Cesar Moura Leite Westphal")
+    }
+    else{
+      this.setState({ loginDialog: false, anchorEl: null })
+      this.makeSnack("Usuário ou senha incorretos")
     }
   }
 
@@ -469,6 +473,7 @@ class HomePage extends React.PureComponent {
           open={snackOpen}
           onClose={this.eatSnack}
           message={<span id="snackMessage">{this.state.snackMessage}</span>}
+          autoHideDuration="2000"
           action={[
             <IconButton
               key="close"
