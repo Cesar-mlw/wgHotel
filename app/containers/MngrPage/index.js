@@ -9,11 +9,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import MaskedInput from 'react-text-mask'
+import MaskedInput from 'react-text-mask';
 import finalLogo from '../../images/logo.png';
-import HotelRoomCard from '../../components/HotelRoomCard/Loadable'
-import GuestList from '../../components/GuestTable/Loadable'
-import { getRadioData, getProductData } from './actions'
+import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
+import GuestList from '../../components/GuestTable/Loadable';
+import { getRadioData, getProductData } from './actions';
 import {
   AppBar,
   Toolbar,
@@ -29,53 +29,58 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  InputLabel,
+  Select,
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
-import { DatePicker } from 'material-ui-pickers'
+import { DatePicker } from 'material-ui-pickers';
 import injectReducer from 'utils/injectReducer';
-import { makeRadioDataSelector, makeProductListSelector, makeGuestDataSelector } from './selectors';
+import {
+  makeRadioDataSelector,
+  makeProductListSelector,
+  makeGuestDataSelector,
+} from './selectors';
 import reducer from './reducer';
-
 
 const styles = {
   root: {
-    width: "100vw",
-    height: "100vh",
+    width: '100vw',
+    height: '100vh',
     flexGrow: 1,
-    overflow: "hidden"
+    overflow: 'hidden',
   },
   appBar: {
-    backgroundColor: "#DEFAFF"
+    backgroundColor: '#DEFAFF',
   },
   menuButton: {
-    marginLeft: "1vw"
+    marginLeft: '1vw',
   },
   welcomeText: {
-    color: "#A2B8B7",
-    marginLeft: "62vw"
+    color: '#A2B8B7',
+    marginLeft: '62vw',
   },
   logo: {
     height: 50,
   },
   selector: {
-    marginLeft: "2vw",
-    marginTop: "2vh",
-    float: "left"
+    marginLeft: '2vw',
+    marginTop: '2vh',
+    float: 'left',
   },
   datePicker: {
-    color: "#71D1C5"
+    color: '#71D1C5',
   },
   radioGroup: {
-    marginLeft: "15vw",
-    marginTop: "4vh"
+    marginLeft: '15vw',
+    marginTop: '4vh',
   },
   radio: {
-    marginLeft: "2vw"
+    marginLeft: '2vw',
   },
   managementRoot: {
-    width: "100vw",
+    width: '100vw',
     height: '100vh',
-    marginTop: "12vh",
+    marginTop: '12vh',
   },
   hotelCard: {
     display: 'flex',
@@ -94,8 +99,6 @@ const styles = {
   },
 };
 
-
-
 /* eslint-disable react/prefer-stateless-function */
 export class MngrPage extends React.Component {
   state = {
@@ -111,7 +114,7 @@ export class MngrPage extends React.Component {
     usrProfissao: '',
     usrTelefone: '',
     usrNacionalidade: '',
-    usrDtNascimento: new Date(),
+    usrDtNascimento: new Date('1999-01-16'),
     usrSexo: '',
     usrId: '',
     usrDocMed: '',
@@ -131,42 +134,64 @@ export class MngrPage extends React.Component {
   };
 
   handleManageChange = event => {
-    this.setState({ managingDate: new Date(event) })
+    this.setState({ managingDate: new Date(event) });
   };
 
   handleRadioChange = event => {
-    this.props.getRadioDataDispatcher(event.target.value)
-    this.setState({ selectedValue: event.target.value })
+    this.props.getRadioDataDispatcher(event.target.value);
+    this.setState({ selectedValue: event.target.value });
   };
 
   handleRoomTextFieldChange = event => {
-    this.setState({ roomTextField: event.target.value })
+    this.setState({ roomTextField: event.target.value });
   };
 
   handleGuestTextFieldChange = event => {
-    this.setState({ guestTextField: event.target.value })
+    this.setState({ guestTextField: event.target.value });
   };
 
   handleUsrRegisterTextChange = name => event => {
-    this.setState({ [name]: event.target.value })
-  }
+    this.setState({ [name]: event.target.value });
+  };
+
+  handleDatNascimento = date => {
+    this.setState({ usrDtNascimento: date });
+  };
 
   handleUsrRegisterDialogOpen = () => {
-    this.setState({ usrRegisterDialog: true })
-  }
+    this.setState({ usrRegisterDialog: true });
+  };
 
   handleUsrRegisterDialogClose = () => {
-    this.setState({ usrRegisterDialog: false })
-  }
+    this.setState({ usrRegisterDialog: false });
+  };
 
   componentDidMount() {
-    this.props.getRadioDataDispatcher("room")
-    this.props.getProductList()
+    this.props.getRadioDataDispatcher('room');
+    this.props.getProductList();
   }
 
   render() {
     const { classes } = this.props;
-    const { anchorEl, selectedValue, roomTextField, guestTextField, usrNomeCompleto, usrId, usrCidade, usrDocMed, usrDtNascimento, usrEndereco, usrEstado, usrNacionalidade, usrPais, usrProfissao, usrSexo, usrTelefone, usrRegisterDialog } = this.state;
+    const {
+      anchorEl,
+      selectedValue,
+      roomTextField,
+      guestTextField,
+      usrNomeCompleto,
+      usrId,
+      usrCidade,
+      usrDocMed,
+      usrDtNascimento,
+      usrEndereco,
+      usrEstado,
+      usrNacionalidade,
+      usrPais,
+      usrProfissao,
+      usrSexo,
+      usrTelefone,
+      usrRegisterDialog,
+    } = this.state;
     const open = Boolean(anchorEl);
     return (
       <div>
@@ -177,7 +202,9 @@ export class MngrPage extends React.Component {
                 <img src={finalLogo} className={classes.logo} />
               </div>
               <div id="welcomeText" className={classes.welcomeText}>
-                <Typography variant="overline" noWrap>Bem vindo, Cesar</Typography>
+                <Typography variant="overline" noWrap>
+                  Bem vindo, Cesar
+                </Typography>
               </div>
               <div id="menu">
                 <IconButton
@@ -218,48 +245,38 @@ export class MngrPage extends React.Component {
                 name="quartos"
                 label="Quartos"
                 aria-label="Quartos"
-
-
               />
-              <FormLabel className={classes.radio} >Hóspedes</FormLabel>
+              <FormLabel className={classes.radio}>Hóspedes</FormLabel>
               <Radio
                 checked={selectedValue === 'guests'}
                 onChange={this.handleRadioChange}
                 value="guests"
                 name="Hóspedes"
                 aria-label="Hóspedes"
-
-
               />
-              <FormLabel className={classes.radio} >Restaurante</FormLabel>
+              <FormLabel className={classes.radio}>Restaurante</FormLabel>
               <Radio
                 checked={selectedValue === 'diner'}
                 onChange={this.handleRadioChange}
                 value="diner"
                 name="Restaurante"
                 aria-label="Restaurante"
-
-
               />
-              <FormLabel className={classes.radio} >Estoque</FormLabel>
+              <FormLabel className={classes.radio}>Estoque</FormLabel>
               <Radio
                 checked={selectedValue === 'stock'}
                 onChange={this.handleRadioChange}
                 value="stock"
                 name="Estoque"
                 aria-label="Estoque"
-
-
               />
-              <FormLabel className={classes.radio} >Estacionamento</FormLabel>
+              <FormLabel className={classes.radio}>Estacionamento</FormLabel>
               <Radio
                 checked={selectedValue === 'parking'}
                 onChange={this.handleRadioChange}
                 value="parking"
                 name="Estacionamento"
                 aria-label="Estacionamento"
-
-
               />
             </div>
           </div>
@@ -277,56 +294,56 @@ export class MngrPage extends React.Component {
                 </div>
                 <div className={classes.hotelCard}>
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='disp'
-                    tipoUsuario='supAcomod'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="disp"
+                    tipoUsuario="supAcomod"
+                    precoDiaria="R$1200"
                     ocupUntil="02/12/2019"
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='ocup'
-                    tipoUsuario='atendente'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="ocup"
+                    tipoUsuario="atendente"
+                    precoDiaria="R$1200"
                     ocupUntil="05/05/2019"
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='inter'
-                    tipoUsuario='atendente'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="inter"
+                    tipoUsuario="atendente"
+                    precoDiaria="R$1200"
                     ocupUntil="09/05/2019"
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='clean'
-                    tipoUsuario='camareira'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="clean"
+                    tipoUsuario="camareira"
+                    precoDiaria="R$1200"
                     ocupUntil="02/05/2019"
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='disp'
-                    tipoUsuario='atendente'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="disp"
+                    tipoUsuario="atendente"
+                    precoDiaria="R$1200"
                     ocupUntil="15/07/2019"
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
-                    numeroQuarto='1101'
-                    tipoQuarto='Milan'
-                    vacant='ocup'
-                    tipoUsuario='atendente'
-                    precoDiaria='R$1200'
+                    numeroQuarto="1101"
+                    tipoQuarto="Milan"
+                    vacant="ocup"
+                    tipoUsuario="atendente"
+                    precoDiaria="R$1200"
                     ocupUntil="19/08/2019"
                     listaProduto={this.props.productList}
                   />
@@ -336,9 +353,13 @@ export class MngrPage extends React.Component {
             {selectedValue === 'guests' && (
               <div>
                 <div className={classes.roomBtn}>
-                  <Button variant="outlined" color="default" onClick={this.handleUsrRegisterDialogOpen}>
+                  <Button
+                    variant="outlined"
+                    color="default"
+                    onClick={this.handleUsrRegisterDialogOpen}
+                  >
                     Registrar Usuário
-                </Button>
+                  </Button>
                 </div>
                 <div className={classes.roomTextField}>
                   <TextField
@@ -349,68 +370,72 @@ export class MngrPage extends React.Component {
                     onChange={this.handleGuestTextFieldChange}
                   />
                 </div>
-                <GuestList
-                  guestList={this.props.guestData}
-                />
+                <GuestList guestList={this.props.guestData} />
                 <Dialog
                   open={usrRegisterDialog}
                   onClose={this.handleUsrRegisterDialogClose}
                   onBackdropClick={this.handleUsrRegisterDialogClose}
+                  fullWidth
+                  maxWidth="md"
                 >
                   <DialogTitle>
-                    <Typography variant='overline'>Registrar novo hóspede</Typography>
+                    <Typography variant="overline">
+                      Registrar novo hóspede
+                    </Typography>
                   </DialogTitle>
                   <DialogContent>
                     <TextField
                       id="nomeCompleto"
+                      type="text"
                       label="Nome Completo"
                       value={usrNomeCompleto}
-                      onChange={this.handleUsrRegisterTextChange("usrNomeCompleto")}
+                      onChange={this.handleUsrRegisterTextChange(
+                        'usrNomeCompleto',
+                      )}
                       margin="normal"
                       fullWidth
                       placeholder="Bernardo Favaretto"
                     />
                     <DatePicker
-                      margin='normal'
+                      margin="normal"
                       label="Data de Nascimento"
                       value={usrDtNascimento}
-                      onChange={this.handleUsrRegisterTextChange("usrDtNascimento")}
-                    />
-                    <TextField
-                      id="telefone"
-                      label="Telefone"
-                      value={usrTelefone}
-                      onChange={this.handleUsrRegisterTextChange("usrTelefone")}
-                      margin="normal"
+                      onChange={this.handleDatNascimento}
                       fullWidth
-                      placeholder="(11) 1111-1111"
-                      InputProps={{
-                        inputComponent: <MaskedInput
-                          {...other}
-                          ref={ref => {
-                            inputRef(ref ? ref.inputElement : null);
-                          }}
-                          mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                          placeholderChar={'\u2000'}
-                          showMask
-                        />
-                      }}
+                      style={{ marginBottom: '-1vh' }}
+                      disableFuture
+                    />
+                    <div style={{marginTop: '4vh'}}>
+                      <InputLabel htmlFor="sexSelect">Sexo</InputLabel>
+                      <Select
+                        value={usrSexo}
+                        onChange={this.handleUsrRegisterTextChange('usrSexo')}
+                        placeholder="Sexo"
+                        fullWidth
+                      >
+                        <MenuItem value="feminino">Feminino</MenuItem>
+                        <MenuItem value="masculino">Masculino</MenuItem>
+                        <MenuItem value="outros">Outros</MenuItem>
+                      </Select>
+                    </div>
+                    <TextField
+                      margin="normal"
+                      label="Telefone"
+                      type="number"
+                      value={usrTelefone}
+                      onChange={this.handleUsrRegisterTextChange('usrTelefone')}
+                      fullWidth
+                      placeholder="(11)92222-2222"
                     />
                   </DialogContent>
                 </Dialog>
               </div>
             )}
-            {selectedValue === 'diner' && (
-              <Typography>Diner</Typography>
-            )}
-            {selectedValue === 'stock' && (
-              <Typography>Stock</Typography>
-            )}
-            {selectedValue === 'parking' && (
-              <Typography>Parking</Typography>
-            )}
+            {selectedValue === 'diner' && <Typography>Diner</Typography>}
+            {selectedValue === 'stock' && <Typography>Stock</Typography>}
+            {selectedValue === 'parking' && <Typography>Parking</Typography>}
           </div>
-        </div >
+        </div>
       </div>
     );
   }
@@ -432,8 +457,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getRadioDataDispatcher: selectedValue =>
       dispatch(getRadioData(selectedValue)),
-    getProductList: () =>
-      dispatch(getProductData())
+    getProductList: () => dispatch(getProductData()),
   };
 }
 
@@ -448,4 +472,3 @@ export default compose(
   withReducer,
   withConnect,
 )(withStyles(styles)(MngrPage));
-
