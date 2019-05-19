@@ -110,18 +110,20 @@ export class MngrPage extends React.Component {
     guestTextField: '',
     usrRegisterDialog: false,
     //campos para o registro de hospede
-    usrNomeCompleto: '',
-    usrProfissao: '',
-    usrTelefone: '',
-    usrNacionalidade: '',
-    usrDtNascimento: new Date('1999-01-16'),
-    usrSexo: '',
-    usrId: '',
-    usrDocMed: '',
-    usrEndereco: '',
-    usrCidade: '',
-    usrEstado: '',
-    usrPais: '',
+    usrNomeCompleto: '', //1
+    usrProfissao: '',//6
+    usrTelefone: '', //5
+    usrNacionalidade: '',//8
+    usrDtNascimento: new Date('1999-01-16'), //2
+    usrSexo: '', //4
+    usrId: '', //3
+    usrDocMed: '',//7
+    usrEndereco: '',//9
+    usrEnderecoNumero: '',//9
+    usrEnderecoComplemento: '',//9
+    usrCidade: '',//10
+    usrEstado: '',//11
+    usrPais: '',//12
     //----------------
   };
 
@@ -191,6 +193,8 @@ export class MngrPage extends React.Component {
       usrSexo,
       usrTelefone,
       usrRegisterDialog,
+      usrEnderecoNumero,
+      usrEnderecoComplemento
     } = this.state;
     const open = Boolean(anchorEl);
     return (
@@ -370,7 +374,7 @@ export class MngrPage extends React.Component {
                     onChange={this.handleGuestTextFieldChange}
                   />
                 </div>
-                <GuestList guestList={this.props.guestData} />
+                <GuestList guestList={this.props.guestData}/>
                 <Dialog
                   open={usrRegisterDialog}
                   onClose={this.handleUsrRegisterDialogClose}
@@ -405,7 +409,17 @@ export class MngrPage extends React.Component {
                       style={{ marginBottom: '-1vh' }}
                       disableFuture
                     />
-                    <div style={{marginTop: '4vh'}}>
+                    <TextField
+                      margin="normal"
+                      id="id"
+                      label="ID"
+                      type="text"
+                      value={usrId}
+                      onChange={this.handleUsrRegisterTextChange('usrId')}
+                      fullWidth
+                      helperText="Passport number or country Id number"
+                    />
+                    <div style={{marginTop: '1vh'}}>
                       <InputLabel htmlFor="sexSelect">Sexo</InputLabel>
                       <Select
                         value={usrSexo}
@@ -420,13 +434,114 @@ export class MngrPage extends React.Component {
                     </div>
                     <TextField
                       margin="normal"
+                      id="telefone"
                       label="Telefone"
                       type="number"
                       value={usrTelefone}
                       onChange={this.handleUsrRegisterTextChange('usrTelefone')}
                       fullWidth
-                      placeholder="(11)22-2222"
+                      placeholder="(11)92222-2222"
                     />
+                    <TextField
+                      margin="normal"
+                      id="profissao"
+                      label="Profissão"
+                      type="text"
+                      value={usrProfissao}
+                      onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+                      fullWidth
+                      placeholder="Engenheiro"
+                    />
+                    <TextField
+                      margin="normal"
+                      id="documentoMedico"
+                      label="Documento Médico"
+                      type="text"
+                      value={usrDocMed}
+                      onChange={this.handleUsrRegisterTextChange('usrDocMed')}
+                      fullWidth
+                      helperText="Inserir somente se hóspede apresenta deficiência física"
+                    />
+                    <TextField
+                      margin="normal"
+                      id="nacionalidade"
+                      label="Nacionalidade"
+                      type="text"
+                      value={usrNacionalidade}
+                      onChange={this.handleUsrRegisterTextChange('usrNacionalidade')}
+                      fullWidth
+                      placeholder="Brasileiro"
+                    />
+                    <TextField
+                      margin="normal"
+                      id="endereco"
+                      label="Endereço"
+                      type="text"
+                      value={usrEndereco}
+                      onChange={this.handleUsrRegisterTextChange('usrEndereco')}
+                      placeholder="Rua Abobrinha"
+                      style={{width: '23vw'}}
+                    />
+                    <TextField
+                      margin="normal"
+                      id="enderecoNumero"
+                      label="Número"
+                      type="number"
+                      value={usrEnderecoNumero}
+                      onChange={this.handleUsrRegisterTextChange('usrEnderecoNumero')}
+                      placeholder="25"
+                      style={{width: '5vw', marginLeft: '2vw'}}
+                    />
+                    <TextField
+                      margin="normal"
+                      id="enderecoComplemento"
+                      label="Complemento"
+                      type="text"
+                      value={usrEnderecoComplemento}
+                      onChange={this.handleUsrRegisterTextChange('usrEnderecoComplemento')}
+                      placeholder="ap 22"
+                      style={{width: '12vw', marginLeft: '2vw'}}
+                    />
+                    <div style={{marginTop: '1vh'}}>
+                      <InputLabel htmlFor="sexSelect">Cidade</InputLabel>
+                      <Select
+                        value={usrCidade}
+                        onChange={this.handleUsrRegisterTextChange('usrCidade')}
+                        placeholder="São Paulo"
+                        fullWidth
+                      >
+                        <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                        <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                        <MenuItem value="beloHorizonte">Belo Horizonte</MenuItem>
+                      </Select>
+                    </div>
+                    <div style={{marginTop: '1vh'}}>
+                      <InputLabel htmlFor="sexSelect">Estado</InputLabel>
+                      <Select
+                        value={usrEstado}
+                        onChange={this.handleUsrRegisterTextChange('usrEstado')}
+                        placeholder="São Paulo"
+                        fullWidth
+                      >
+                        <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                        <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                        <MenuItem value="minasGerais">Minas Gerais</MenuItem>
+                      </Select>
+                    </div>
+                    <div style={{marginTop: '1vh'}}>
+                      <InputLabel htmlFor="sexSelect">País</InputLabel>
+                      <Select
+                        value={usrPais}
+                        onChange={this.handleUsrRegisterTextChange('usrPais')}
+                        placeholder="Brasil"
+                        fullWidth
+                      >
+                        <MenuItem value="Brasil">Brasil</MenuItem>
+                        <MenuItem value="Canada">Canada</MenuItem>
+                        <MenuItem value="russia">Rússia</MenuItem>
+                      </Select>
+                    </div>
+                    
                   </DialogContent>
                 </Dialog>
               </div>

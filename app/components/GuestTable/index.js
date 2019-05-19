@@ -26,6 +26,9 @@ import { Edit, Delete } from '@material-ui/icons'
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 const style = {
+  tableMain: {
+    marginTop: '5vh'
+  }
 }
 /* eslint-disable react/prefer-stateless-function */
 class GuestTable extends React.Component {
@@ -69,9 +72,10 @@ class GuestTable extends React.Component {
     return usr[0].name
   }
   render() {
+    const { classes } = this.props
     return (
       <div>
-        <Table>
+        <Table className={classes.tableMain}>
           <TableHead>
             <TableCell><Typography variant="overline">Nome</Typography></TableCell>
             <TableCell align='right'><Typography variant="overline">Estado</Typography></TableCell>
