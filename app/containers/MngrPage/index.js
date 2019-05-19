@@ -425,7 +425,7 @@ export class MngrPage extends React.Component {
                       value={usrTelefone}
                       onChange={this.handleUsrRegisterTextChange('usrTelefone')}
                       fullWidth
-                      placeholder="(11)92222-2222"
+                      placeholder="(11)22-2222"
                     />
                   </DialogContent>
                 </Dialog>
