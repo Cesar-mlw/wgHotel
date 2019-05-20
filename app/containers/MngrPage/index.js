@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import MaskedInput from 'react-text-mask';
+import StockCard from '../../components/StockCard/Loadable'
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
 import GuestList from '../../components/GuestTable/Loadable';
@@ -31,6 +31,10 @@ import {
   DialogTitle,
   InputLabel,
   Select,
+  DialogActions,
+  Tabs,
+  Tab,
+  Card
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
 import { DatePicker } from 'material-ui-pickers';
@@ -88,7 +92,12 @@ const styles = {
     marginTop: '2vh',
     marginLeft: '2vw',
   },
+  guestTextField: {
+    marginLeft: '45vw',
+    color: '#BAB392',
+  },
   roomTextField: {
+    marginRight: '20vw',
     marginLeft: '45vw',
     color: '#BAB392',
   },
@@ -97,6 +106,12 @@ const styles = {
     marginBottom: '-6vh',
     color: '#BAB392',
   },
+  stockTab:{
+    marginTop: '15vh'
+  },
+  stockCard: {
+
+  }
 };
 
 /* eslint-disable react/prefer-stateless-function */
@@ -111,19 +126,23 @@ export class MngrPage extends React.Component {
     usrRegisterDialog: false,
     //campos para o registro de hospede
     usrNomeCompleto: '', //1
-    usrProfissao: '',//6
+    usrProfissao: '', //6
     usrTelefone: '', //5
-    usrNacionalidade: '',//8
+    usrNacionalidade: '', //8
     usrDtNascimento: new Date('1999-01-16'), //2
     usrSexo: '', //4
     usrId: '', //3
-    usrDocMed: '',//7
-    usrEndereco: '',//9
-    usrEnderecoNumero: '',//9
-    usrEnderecoComplemento: '',//9
-    usrCidade: '',//10
-    usrEstado: '',//11
-    usrPais: '',//12
+    usrDocMed: '', //7
+    usrEndereco: '', //9
+    usrEnderecoNumero: '', //9
+    usrEnderecoComplemento: '', //9
+    usrCidade: '', //10
+    usrEstado: '', //11
+    usrPais: '', //12
+    usrMeioDePagamento: '',
+    //----------------
+    //Estados para radio Estoque
+    stockTabValue: 0,
     //----------------
   };
 
@@ -152,7 +171,17 @@ export class MngrPage extends React.Component {
     this.setState({ guestTextField: event.target.value });
   };
 
+  handleStockTabChange = (event, value) => {
+    console.log(value)
+    this.setState({stockTabValue: value})
+  }
+
   handleUsrRegisterTextChange = name => event => {
+    if (name == 'usrEnderecoNumero') {
+      if (event.target.value < 0) {
+        return;
+      }
+    }
     this.setState({ [name]: event.target.value });
   };
 
@@ -194,9 +223,12 @@ export class MngrPage extends React.Component {
       usrTelefone,
       usrRegisterDialog,
       usrEnderecoNumero,
-      usrEnderecoComplemento
+      usrEnderecoComplemento,
+      usrMeioDePagamento,
+      stockTabValue
     } = this.state;
     const open = Boolean(anchorEl);
+    console.log(this.props.roomData)
     return (
       <div>
         <div className={classes.root}>
@@ -249,6 +281,7 @@ export class MngrPage extends React.Component {
                 name="quartos"
                 label="Quartos"
                 aria-label="Quartos"
+                color="primary"
               />
               <FormLabel className={classes.radio}>Hóspedes</FormLabel>
               <Radio
@@ -257,6 +290,7 @@ export class MngrPage extends React.Component {
                 value="guests"
                 name="Hóspedes"
                 aria-label="Hóspedes"
+                color="primary"
               />
               <FormLabel className={classes.radio}>Restaurante</FormLabel>
               <Radio
@@ -265,6 +299,7 @@ export class MngrPage extends React.Component {
                 value="diner"
                 name="Restaurante"
                 aria-label="Restaurante"
+                color="primary"
               />
               <FormLabel className={classes.radio}>Estoque</FormLabel>
               <Radio
@@ -273,6 +308,7 @@ export class MngrPage extends React.Component {
                 value="stock"
                 name="Estoque"
                 aria-label="Estoque"
+                color="primary"
               />
               <FormLabel className={classes.radio}>Estacionamento</FormLabel>
               <Radio
@@ -281,6 +317,7 @@ export class MngrPage extends React.Component {
                 value="parking"
                 name="Estacionamento"
                 aria-label="Estacionamento"
+                color="primary"
               />
             </div>
           </div>
@@ -365,7 +402,7 @@ export class MngrPage extends React.Component {
                     Registrar Usuário
                   </Button>
                 </div>
-                <div className={classes.roomTextField}>
+                <div className={classes.guestTextField}>
                   <TextField
                     id="guestSearchTextField"
                     label="Nome do Hóspede"
@@ -374,7 +411,7 @@ export class MngrPage extends React.Component {
                     onChange={this.handleGuestTextFieldChange}
                   />
                 </div>
-                <GuestList guestList={this.props.guestData}/>
+                <GuestList guestList={this.props.guestData} />
                 <Dialog
                   open={usrRegisterDialog}
                   onClose={this.handleUsrRegisterDialogClose}
@@ -419,9 +456,10 @@ export class MngrPage extends React.Component {
                       fullWidth
                       helperText="Passport number or country Id number"
                     />
-                    <div style={{marginTop: '1vh'}}>
+                    <div style={{ marginTop: '1vh' }}>
                       <InputLabel htmlFor="sexSelect">Sexo</InputLabel>
                       <Select
+                        id="sexSelect"
                         value={usrSexo}
                         onChange={this.handleUsrRegisterTextChange('usrSexo')}
                         placeholder="Sexo"
@@ -448,7 +486,9 @@ export class MngrPage extends React.Component {
                       label="Profissão"
                       type="text"
                       value={usrProfissao}
-                      onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+                      onChange={this.handleUsrRegisterTextChange(
+                        'usrProfissao',
+                      )}
                       fullWidth
                       placeholder="Engenheiro"
                     />
@@ -468,10 +508,36 @@ export class MngrPage extends React.Component {
                       label="Nacionalidade"
                       type="text"
                       value={usrNacionalidade}
-                      onChange={this.handleUsrRegisterTextChange('usrNacionalidade')}
+                      onChange={this.handleUsrRegisterTextChange(
+                        'usrNacionalidade',
+                      )}
                       fullWidth
                       placeholder="Brasileiro"
                     />
+                    <div style={{ marginTop: '1vh' }}>
+                      <InputLabel htmlFor="meioPagamento">
+                        Meio de Pagamento
+                      </InputLabel>
+                      <Select
+                        id="meioPagamento"
+                        value={usrMeioDePagamento}
+                        onChange={this.handleUsrRegisterTextChange(
+                          'usrMeioDePagamento',
+                        )}
+                        placeholder="Cartão de Crédito"
+                        fullWidth
+                      >
+                        <MenuItem value="cartaoCredito">
+                          Cartão de Crédito
+                        </MenuItem>
+                        <MenuItem value="cartaoDebito">
+                          Cartão de Débito
+                        </MenuItem>
+                        <MenuItem value="cheque">Cheque</MenuItem>
+                        <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                        <MenuItem value="tranferencia">Transferência</MenuItem>
+                      </Select>
+                    </div>
                     <TextField
                       margin="normal"
                       id="endereco"
@@ -480,7 +546,7 @@ export class MngrPage extends React.Component {
                       value={usrEndereco}
                       onChange={this.handleUsrRegisterTextChange('usrEndereco')}
                       placeholder="Rua Abobrinha"
-                      style={{width: '23vw'}}
+                      style={{ width: '23vw' }}
                     />
                     <TextField
                       margin="normal"
@@ -488,9 +554,11 @@ export class MngrPage extends React.Component {
                       label="Número"
                       type="number"
                       value={usrEnderecoNumero}
-                      onChange={this.handleUsrRegisterTextChange('usrEnderecoNumero')}
+                      onChange={this.handleUsrRegisterTextChange(
+                        'usrEnderecoNumero',
+                      )}
                       placeholder="25"
-                      style={{width: '5vw', marginLeft: '2vw'}}
+                      style={{ width: '5vw', marginLeft: '2vw' }}
                     />
                     <TextField
                       margin="normal"
@@ -498,11 +566,13 @@ export class MngrPage extends React.Component {
                       label="Complemento"
                       type="text"
                       value={usrEnderecoComplemento}
-                      onChange={this.handleUsrRegisterTextChange('usrEnderecoComplemento')}
+                      onChange={this.handleUsrRegisterTextChange(
+                        'usrEnderecoComplemento',
+                      )}
                       placeholder="ap 22"
-                      style={{width: '12vw', marginLeft: '2vw'}}
+                      style={{ width: '12vw', marginLeft: '2vw' }}
                     />
-                    <div style={{marginTop: '1vh'}}>
+                    <div style={{ marginTop: '1vh' }}>
                       <InputLabel htmlFor="sexSelect">Cidade</InputLabel>
                       <Select
                         value={usrCidade}
@@ -512,10 +582,12 @@ export class MngrPage extends React.Component {
                       >
                         <MenuItem value="saoPaulo">São Paulo</MenuItem>
                         <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
-                        <MenuItem value="beloHorizonte">Belo Horizonte</MenuItem>
+                        <MenuItem value="beloHorizonte">
+                          Belo Horizonte
+                        </MenuItem>
                       </Select>
                     </div>
-                    <div style={{marginTop: '1vh'}}>
+                    <div style={{ marginTop: '1vh' }}>
                       <InputLabel htmlFor="sexSelect">Estado</InputLabel>
                       <Select
                         value={usrEstado}
@@ -528,7 +600,7 @@ export class MngrPage extends React.Component {
                         <MenuItem value="minasGerais">Minas Gerais</MenuItem>
                       </Select>
                     </div>
-                    <div style={{marginTop: '1vh'}}>
+                    <div style={{ marginTop: '1vh' }}>
                       <InputLabel htmlFor="sexSelect">País</InputLabel>
                       <Select
                         value={usrPais}
@@ -541,13 +613,42 @@ export class MngrPage extends React.Component {
                         <MenuItem value="russia">Rússia</MenuItem>
                       </Select>
                     </div>
-                    
                   </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.handleUsrRegisterDialogClose} color="secondary">
+                      Cancelar
+                    </Button>
+                    <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+                      Registrar
+                    </Button>
+                  </DialogActions>
                 </Dialog>
               </div>
             )}
             {selectedValue === 'diner' && <Typography>Diner</Typography>}
-            {selectedValue === 'stock' && <Typography>Stock</Typography>}
+            {selectedValue === 'stock' && (
+              <div>
+                <div className={classes.stockTab}>
+                  <Tabs
+                    value={stockTabValue}
+                    onChange={this.handleStockTabChange}
+                    variant='fullWidth'
+                  >
+                    <Tab label="Estoque" />
+                    <Tab label="Solicitar Itens"/>
+                  </Tabs>
+                </div>
+                {stockTabValue == 0 && (
+                  <StockCard />
+                )}
+                {stockTabValue == 1 && (
+                  <div>
+
+                  </div>
+                )}
+              </div>
+              
+            )}
             {selectedValue === 'parking' && <Typography>Parking</Typography>}
           </div>
         </div>

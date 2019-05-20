@@ -65,7 +65,6 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remo
 //Estoquista - Solicitar um item / Registrar items consumidos 
 //Host - Reservar mesas por quarto / Menu
 
-//Sala de eventos - Vitrine
 
 //Estacionamento
 //Só manobrista
