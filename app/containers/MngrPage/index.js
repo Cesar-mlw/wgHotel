@@ -34,11 +34,11 @@ import {
   DialogActions,
   Tabs,
   Tab,
-  Card,
   Table,
   TableHead,
   TableBody,
-  TableCell
+  TableCell,
+  Slide
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
 import { DatePicker } from 'material-ui-pickers';
@@ -117,9 +117,11 @@ const styles = {
     marginTop: '2vh',
     marginLeft: '2vw'
   },
-  resturantTable: {
-    
+  requestRoot:{},
+  restaurantTable: {
+    marginTop: '3vh'
   },
+
 };
 
 /* eslint-disable react/prefer-stateless-function */
@@ -151,12 +153,20 @@ export class MngrPage extends React.Component {
     //----------------
     //Estados para radio Estoque
     stockTabValue: 0,
+    itemRequestDialog: false,
+    itemRegisterDialog: false,
+    itemRequestSelect: '',
+    itemRequestQtde: 0
     //----------------
   };
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
+
+  Transition = props => {
+    return <Slide direction='up' {...props} />
+  }
 
   handleClose = () => {
     this.setState({ anchorEl: null });
@@ -180,7 +190,6 @@ export class MngrPage extends React.Component {
   };
 
   handleStockTabChange = (event, value) => {
-    console.log(value)
     this.setState({stockTabValue: value})
   }
 
@@ -204,6 +213,18 @@ export class MngrPage extends React.Component {
   handleUsrRegisterDialogClose = () => {
     this.setState({ usrRegisterDialog: false });
   };
+
+  handleItemRequestDialogClose = () => {
+    this.setState({itemRequestDialog: false})
+  }
+
+  handleItemRequestDialogOpen = () => {
+    this.setState({itemRequestDialog: true})
+  }
+
+  handleItemRequestTextChange = name => event => {
+    this.setState({[name] : event.target.value})
+  }
 
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
@@ -233,7 +254,11 @@ export class MngrPage extends React.Component {
       usrEnderecoNumero,
       usrEnderecoComplemento,
       usrMeioDePagamento,
-      stockTabValue
+      stockTabValue,
+      itemRegisterDialog,
+      itemRequestDialog,
+      itemRequestSelect,
+      itemRequestQtde,
     } = this.state;
     const open = Boolean(anchorEl);
     console.log(this.props.roomData)
@@ -650,9 +675,10 @@ export class MngrPage extends React.Component {
                   <StockCard />
                 )}
                 {stockTabValue == 1 && (
-                  <div>
+                  <div className={classes.requestRoot}>
                     <div className={classes.stockSolBtn}>
-                      <Button variant="outlined" color="primary">Solicitar Item</Button>
+                      <Button variant="outlined" color="primary" onClick={this.handleItemRequestDialogOpen}>Solicitar Item</Button>
+                      <Button variant="outlined" color="primary" style={{marginLeft: '2vw'}}>Cadastrar um Item</Button>
                     </div>
                     <div className={classes.restaurantTable}>
                       <Typography variant='headline'>Restaurante</Typography>
@@ -669,9 +695,9 @@ export class MngrPage extends React.Component {
                         </TableBody>
                       </Table>
                     </div>
-                    <div >
+                    <div className={classes.restaurantTable}>
                       <Typography variant='headline'>Frigobar</Typography>
-                      <Table className={classes.restaurantTable}>
+                      <Table >
                         <TableHead>
                           <TableCell><Typography variant='overline'>Produto Solicitado</Typography></TableCell>
                           <TableCell><Typography variant='overline'>Data da Solicitação</Typography></TableCell>
@@ -684,6 +710,41 @@ export class MngrPage extends React.Component {
                         </TableBody>
                       </Table>
                     </div>
+                    <Dialog
+                      open={itemRequestDialog}
+                      onClose={this.handleItemRequestDialogClose}
+                      onBackdropClick={this.handleItemRequestDialogClose}
+                      fullWidth
+                      maxWidth="md"
+                      TransitionComponent={this.Transition}
+                    > 
+                    <DialogTitle>
+                      <Typography variant='headline'>Solicitar Produto</Typography>
+                    </DialogTitle>
+                    <DialogContent>
+                      <InputLabel htmlFor="requestProduto">Produto</InputLabel>
+                      <Select
+                        id="requestProduto"
+                        value={itemRequestSelect}
+                        onChange={this.handleItemRequestTextChange('itemRequestSelect')}
+                        fullWidth
+                      >
+                        <MenuItem value=""><em>None</em></MenuItem>
+                        <MenuItem value="cocaCola">Coca-Cola</MenuItem>
+                        <MenuItem value="redLabel">Red Label</MenuItem>
+                        <MenuItem value="chocolate">Chocolate Godiva</MenuItem>
+                      </Select>
+                      <TextField 
+                        value={itemRequestQtde}
+                        onChange={this.handleItemRequestTextChange('itemRequestQtde')}
+                        type="number"
+                        margin="normal"
+                        id="itemRequestQtdeTextField"
+                        
+                        placeholde="2"
+                      />
+                    </DialogContent>
+                    </Dialog>
                   </div>
                 )}
               </div>
