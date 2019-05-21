@@ -34,7 +34,11 @@ import {
   DialogActions,
   Tabs,
   Tab,
-  Card
+  Card,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
 import { DatePicker } from 'material-ui-pickers';
@@ -109,9 +113,13 @@ const styles = {
   stockTab:{
     marginTop: '15vh'
   },
-  stockCard: {
-
-  }
+  stockSolBtn:{
+    marginTop: '2vh',
+    marginLeft: '2vw'
+  },
+  resturantTable: {
+    
+  },
 };
 
 /* eslint-disable react/prefer-stateless-function */
@@ -643,7 +651,39 @@ export class MngrPage extends React.Component {
                 )}
                 {stockTabValue == 1 && (
                   <div>
+                    <div className={classes.stockSolBtn}>
+                      <Button variant="outlined" color="primary">Solicitar Item</Button>
+                    </div>
+                    <div className={classes.restaurantTable}>
+                      <Typography variant='headline'>Restaurante</Typography>
+                      <Table>
+                        <TableHead>
+                          <TableCell><Typography variant='overline'>Produto Solicitado</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Data da Solicitação</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Quantidade Solicitada</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Receber</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Cancelar</Typography></TableCell>
+                        </TableHead>
+                        <TableBody>
 
+                        </TableBody>
+                      </Table>
+                    </div>
+                    <div >
+                      <Typography variant='headline'>Frigobar</Typography>
+                      <Table className={classes.restaurantTable}>
+                        <TableHead>
+                          <TableCell><Typography variant='overline'>Produto Solicitado</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Data da Solicitação</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Quantidade Solicitada</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Receber</Typography></TableCell>
+                          <TableCell><Typography variant='overline'>Cancelar</Typography></TableCell>
+                        </TableHead>
+                        <TableBody>
+
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 )}
               </div>
