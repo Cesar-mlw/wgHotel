@@ -156,7 +156,9 @@ export class MngrPage extends React.Component {
     itemRequestDialog: false,
     itemRegisterDialog: false,
     itemRequestSelect: '',
-    itemRequestQtde: 0
+    itemRequestQtde: 0,
+    itemRegisterName: '',
+    itemRegisterPrice: 0,
     //----------------
   };
 
@@ -226,6 +228,18 @@ export class MngrPage extends React.Component {
     this.setState({[name] : event.target.value})
   }
 
+  handleItemRegisterDialogOpen = () => {
+    this.setState({itemRegisterDialog: true})
+  }
+
+  handleItemRegisterDialogClose = () => {
+    this.setState({itemRegisterDialog: false})
+  }
+
+  handleItemRegisterTextChange = name=> event => {
+    this.setState({[name] : event.target.value})
+  }
+
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
@@ -259,6 +273,8 @@ export class MngrPage extends React.Component {
       itemRequestDialog,
       itemRequestSelect,
       itemRequestQtde,
+      itemRegisterName,
+      itemRegisterPrice
     } = this.state;
     const open = Boolean(anchorEl);
     console.log(this.props.roomData)
@@ -678,7 +694,7 @@ export class MngrPage extends React.Component {
                   <div className={classes.requestRoot}>
                     <div className={classes.stockSolBtn}>
                       <Button variant="outlined" color="primary" onClick={this.handleItemRequestDialogOpen}>Solicitar Item</Button>
-                      <Button variant="outlined" color="primary" style={{marginLeft: '2vw'}}>Cadastrar um Item</Button>
+                      <Button variant="outlined" color="primary" style={{marginLeft: '2vw'}} onClick={this.handleItemRegisterDialogOpen}>Cadastrar um Item</Button>
                     </div>
                     <div className={classes.restaurantTable}>
                       <Typography variant='headline'>Restaurante</Typography>
@@ -739,11 +755,51 @@ export class MngrPage extends React.Component {
                         onChange={this.handleItemRequestTextChange('itemRequestQtde')}
                         type="number"
                         margin="normal"
+                        label="Quantidade"
                         id="itemRequestQtdeTextField"
                         
                         placeholde="2"
                       />
                     </DialogContent>
+                    <DialogActions>
+                      <Button variant="outlined" color="primary" onClick={this.handleItemRequestDialogCloseDialogClose}>Solicitar</Button>
+                    </DialogActions>
+                    </Dialog>
+                    <Dialog
+                      open={itemRegisterDialog}
+                      onClose={this.handleItemRegisterDialogClose}
+                      onBackdropClick={this.handleItemRegisterDialogClose}
+                      fullWidth
+                      maxWidth="md"
+                      TransitionComponent={this.Transition}
+                    > 
+                    <DialogTitle>
+                      <Typography variant='headline'>Cadastrar Produto</Typography>
+                    </DialogTitle>
+                    <DialogContent>
+                      <TextField 
+                        value={itemRegisterName}
+                        onChange={this.handleItemRequestTextChange('itemRegisterName')}
+                        type="text"
+                        margin="normal"
+                        id="itemRegisterNameTextField"
+                        placeholde="Coca-Cola"
+                        label="Nome do Produto"
+                        fullWidth
+                      />
+                      <TextField 
+                        value={itemRegisterPrice}
+                        onChange={this.handleItemRequestTextChange('itemRegisterPrice')}
+                        type="number"
+                        margin="normal"
+                        label="Preço por Unidade"
+                        id="itemRegisterPriceTextField"
+                        placeholde="20,00"
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button variant="outlined" color="primary" onClick={this.handleItemRegisterDialogClose}>Cadastrar</Button>
+                    </DialogActions>
                     </Dialog>
                   </div>
                 )}

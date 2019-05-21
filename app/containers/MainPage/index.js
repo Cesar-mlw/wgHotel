@@ -1,3 +1,19 @@
+/**
+ *
+ * MainPage
+ *
+ */
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { compose } from 'redux';
+
+import injectReducer from 'utils/injectReducer';
+import makeSelectMainPage from './selectors';
+import reducer from './reducer';
+
 /* eslint-disable react/prop-types */
 /* eslint-disable import/order */
 /* eslint-disable no-unused-vars */
@@ -11,8 +27,6 @@
  * reloading is not a necessity for you then you can refactor it and remove
  * the linting exception.
  */
-
-import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -29,6 +43,9 @@ import {
   DialogActions,
   DialogContent,
   Snackbar,
+  Slide,
+  InputLabel,
+  Select,
 } from '@material-ui/core';
 import { DatePicker } from 'material-ui-pickers'
 import { AccountCircleOutlined, MenuOutlined, Close } from '@material-ui/icons';
@@ -204,7 +221,7 @@ const room = [
   }
 ]
 /* eslint-disable react/prefer-stateless-function */
-class HomePage extends React.PureComponent {
+class MainPage extends React.PureComponent {
   state = {
     anchorEl: null,
     acomodacao: "normal",
@@ -216,12 +233,47 @@ class HomePage extends React.PureComponent {
     loginPssTextField: '1234',
     snackOpen: false,
     snackMessage: "",
-    tpUsuario: ""
+    tpUsuario: "",
+    usrRegistertDialog: false,
+    // Register User
+    usrNomeCompleto: '', //1
+    usrProfissao: '', //6
+    usrTelefone: '', //5
+    usrNacionalidade: '', //8
+    usrDtNascimento: new Date('1999-01-16'), //2
+    usrSexo: '', //4
+    usrId: '', //3
+    usrDocMed: '', //7
+    usrEndereco: '', //9
+    usrEnderecoNumero: '', //9
+    usrEnderecoComplemento: '', //9
+    usrCidade: '', //10
+    usrEstado: '', //11
+    usrPais: '', //12
+    usrMeioDePagamento: '',
+    usrLogin: '',
+    usrSenha: '',
   };
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
+
+  Transition = props => {
+    return <Slide direction="up" {...props} />;
+  };
+
+  handleUsrRegisterDialogClose = () => {
+    this.setState({usrRegistertDialog: false})
+  }
+
+  handleUsrRegisterDialogOpen = () => {
+    this.setState({usrRegistertDialog: true})
+  }
+
+  handleUsrDatNascimentoChange = date => {
+    this.setState({usrDtNascimento: date})
+  }
 
   handleClose = () => {
     this.setState({ anchorEl: null });
@@ -251,6 +303,10 @@ class HomePage extends React.PureComponent {
     this.setState({ [name]: event.target.value })
   }
 
+  handleUsrRegisterTextChange = name => event => {
+    this.setState({ [name]: event.target.value })
+  }
+
   makeSnack = message => {
     this.setState({snackOpen: true, snackMessage: message})
   }
@@ -272,7 +328,32 @@ class HomePage extends React.PureComponent {
 
   render() {
     const { classes } = this.props;
-    const { anchorEl, acomodacao, saida, chegada, snackOpen } = this.state;
+    const { 
+      anchorEl, 
+      acomodacao, 
+      saida, 
+      chegada, 
+      snackOpen,
+      usrCidade,
+      usrDocMed,
+      usrDtNascimento,
+      usrEndereco,
+      usrEnderecoComplemento,
+      usrEnderecoNumero,
+      usrEstado,
+      usrId,
+      usrMeioDePagamento,
+      usrNacionalidade,
+      usrNomeCompleto,
+      usrPais,
+      usrProfissao,
+      usrSexo,
+      usrTelefone,
+      usrRegistertDialog,
+      usrLogin,
+      usrSenha,
+      logged   
+    } = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -317,6 +398,7 @@ class HomePage extends React.PureComponent {
                     onClose={this.handleClose}
                   >
                     <MenuItem onClick={this.handleClose}>Settings</MenuItem>
+                    <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
                   </Menu>
                 </div>
               </div>) : (<div id="menu">
@@ -343,9 +425,8 @@ class HomePage extends React.PureComponent {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleClose}>Crie uma Conta</MenuItem>
+                  <MenuItem onClick={this.handleUsrRegisterDialogOpen}>Crie uma Conta</MenuItem>
                   <MenuItem onClick={this.handleLoginDialogOpen}>Já Possuo uma Conta</MenuItem>
-                  <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
                 </Menu>
               </div>)}
           </Toolbar>
@@ -468,12 +549,220 @@ class HomePage extends React.PureComponent {
           </DialogActions>
         </Dialog>
 
+        <Dialog
+          open={usrRegistertDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleUsrRegisterDialogClose}
+          onBackdropClick={this.handleUsrRegisterDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="overline">Cadastro WgManagement</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              id="nomeCompleto"
+              type="text"
+              label="Nome Completo"
+              value={usrNomeCompleto}
+              onChange={this.handleUsrRegisterTextChange('usrNomeCompleto')}
+              margin="normal"
+              fullWidth
+              placeholder="Bernardo Favaretto"
+            />
+            <TextField
+              id="login"
+              type="text"
+              label="E-mail"
+              value={usrLogin}
+              onChange={this.handleUsrRegisterTextChange('usrLogin')}
+              margin="normal"
+              fullWidth
+              placeholder="bfavaretto@gmail.com"
+            />
+            <TextField
+              id="senha"
+              type="password"
+              label="Senha"
+              value={usrSenha}
+              onChange={this.handleUsrRegisterTextChange('usrSenha')}
+              margin="normal"
+              fullWidth
+            />
+            <DatePicker
+              margin="normal"
+              label="Data de Nascimento"
+              value={usrDtNascimento}
+              onChange={this.handleUsrDatNascimentoChange}
+              fullWidth
+              style={{ marginBottom: '-1vh' }}
+              disableFuture
+            />
+            <TextField
+              margin="normal"
+              id="id"
+              label="ID"
+              type="text"
+              value={usrId}
+              onChange={this.handleUsrRegisterTextChange('usrId')}
+              fullWidth
+              helperText="Passport number or country Id number"
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="sexSelect">Sexo</InputLabel>
+              <Select
+                id="sexSelect"
+                value={usrSexo}
+                onChange={this.handleUsrRegisterTextChange('usrSexo')}
+                placeholder="Sexo"
+                fullWidth
+              >
+                <MenuItem value="feminino">Feminino</MenuItem>
+                <MenuItem value="masculino">Masculino</MenuItem>
+                <MenuItem value="outros">Outros</MenuItem>
+              </Select>
+            </div>
+            <TextField
+              margin="normal"
+              id="telefone"
+              label="Telefone"
+              type="number"
+              value={usrTelefone}
+              onChange={this.handleUsrRegisterTextChange('usrTelefone')}
+              fullWidth
+              placeholder="(11)92222-2222"
+            />
+            <TextField
+              margin="normal"
+              id="profissao"
+              label="Profissão"
+              type="text"
+              value={usrProfissao}
+              onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+              fullWidth
+              placeholder="Engenheiro"
+            />
+            <TextField
+              margin="normal"
+              id="documentoMedico"
+              label="Documento Médico"
+              type="text"
+              value={usrDocMed}
+              onChange={this.handleUsrRegisterTextChange('usrDocMed')}
+              fullWidth
+              helperText="Inserir somente se hóspede apresenta deficiência física"
+            />
+            <TextField
+              margin="normal"
+              id="nacionalidade"
+              label="Nacionalidade"
+              type="text"
+              value={usrNacionalidade}
+              onChange={this.handleUsrRegisterTextChange('usrNacionalidade')}
+              fullWidth
+              placeholder="Brasileiro"
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="meioPagamento">Meio de Pagamento</InputLabel>
+              <Select
+                id="meioPagamento"
+                value={usrMeioDePagamento}
+                onChange={this.handleUsrRegisterTextChange('usrMeioDePagamento')}
+                placeholder="Cartão de Crédito"
+                fullWidth
+              >
+                <MenuItem value="cartaoCredito">Cartão de Crédito</MenuItem>
+                <MenuItem value="cartaoDebito">Cartão de Débito</MenuItem>
+                <MenuItem value="cheque">Cheque</MenuItem>
+                <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                <MenuItem value="tranferencia">Transferência</MenuItem>
+              </Select>
+            </div>
+            <TextField
+              margin="normal"
+              id="endereco"
+              label="Endereço"
+              type="text"
+              value={usrEndereco}
+              onChange={this.handleUsrRegisterTextChange('usrEndereco')}
+              placeholder="Rua Abobrinha"
+              style={{ width: '23vw' }}
+            />
+            <TextField
+              margin="normal"
+              id="enderecoNumero"
+              label="Número"
+              type="number"
+              value={usrEnderecoNumero}
+              onChange={this.handleUsrRegisterTextChange('usrEnderecoNumero')}
+              placeholder="25"
+              style={{ width: '5vw', marginLeft: '2vw' }}
+            />
+            <TextField
+              margin="normal"
+              id="enderecoComplemento"
+              label="Complemento"
+              type="text"
+              value={usrEnderecoComplemento}
+              onChange={this.handleUsrRegisterTextChange('usrEnderecoComplemento')}
+              placeholder="ap 22"
+              style={{ width: '12vw', marginLeft: '2vw' }}
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="sexSelect">Cidade</InputLabel>
+              <Select
+                value={usrCidade}
+                onChange={this.handleUsrRegisterTextChange('usrCidade')}
+                placeholder="São Paulo"
+                fullWidth
+              >
+                <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                <MenuItem value="beloHorizonte">Belo Horizonte</MenuItem>
+              </Select>
+            </div>
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="sexSelect">Estado</InputLabel>
+              <Select
+                value={usrEstado}
+                onChange={this.handleUsrRegisterTextChange('usrEstado')}
+                placeholder="São Paulo"
+                fullWidth
+              >
+                <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                <MenuItem value="minasGerais">Minas Gerais</MenuItem>
+              </Select>
+            </div>
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="sexSelect">País</InputLabel>
+              <Select
+                value={usrPais}
+                onChange={this.handleUsrRegisterTextChange('usrPais')}
+                placeholder="Brasil"
+                fullWidth
+              >
+                <MenuItem value="Brasil">Brasil</MenuItem>
+                <MenuItem value="Canada">Canada</MenuItem>
+                <MenuItem value="russia">Rússia</MenuItem>
+              </Select>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+              Cadastrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         <Snackbar 
           anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
           open={snackOpen}
           onClose={this.eatSnack}
           message={<span id="snackMessage">{this.state.snackMessage}</span>}
-          autoHideDuration="2000"
+          autoHideDuration={2000}
           action={[
             <IconButton
               key="close"
@@ -490,4 +779,28 @@ class HomePage extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(HomePage);
+MainPage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = createStructuredSelector({
+  mainPage: makeSelectMainPage(),
+});
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+
+const withConnect = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+);
+
+const withReducer = injectReducer({ key: 'mainPage', reducer });
+
+export default compose(
+  withReducer,
+  withConnect,
+)(withStyles(styles)(MainPage));

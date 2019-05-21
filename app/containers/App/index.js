@@ -10,8 +10,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import HomePage from 'containers/HomePage/Loadable';
-import MngrPage from 'containers/MngrPage/Loadable'
+import MainPage from 'containers/MainPage/Loadable';
+import MngrPage from 'containers/MngrPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 import GlobalStyle from '../../global-styles';
@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div>
       <Switch>
-        <Route exact path="/" component={HomePage} />
+        <Route exact path="/" component={MainPage} />
         <Route exact path="/management" component={MngrPage} />
         <Route component={NotFoundPage} />
       </Switch>
