@@ -47,74 +47,70 @@ import {
   InputLabel,
   Select,
 } from '@material-ui/core';
-import { DatePicker } from 'material-ui-pickers'
+import { DatePicker } from 'material-ui-pickers';
 import { AccountCircleOutlined, MenuOutlined, Close } from '@material-ui/icons';
-import tripad from '../../images/trip.png'
-import faceb from '../../images/face.png'
-import instaIcon from '../../images/insta.png'
-import placeholderLogo from '../../images/logo.png'
-import hotelMainImage from '../../images/hotelMainImage.jpg'
-import infoImage from '../../images/infoImage.jpg'
+import tripad from '../../images/trip.png';
+import faceb from '../../images/face.png';
+import instaIcon from '../../images/insta.png';
+import placeholderLogo from '../../images/logo.png';
+import hotelMainImage from '../../images/hotelMainImage.jpg';
+import infoImage from '../../images/infoImage.jpg';
 
-const restText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris scelerisque viverra orci sit amet volutpat. Maecenas egestas egestas mi eu tincidunt. Phasellus consectetur velit ultricies dui consequat, ut pretium mi rhoncus. Suspendisse tempus libero in auctor volutpat. Aenean tincidunt leo egestas tellus egestas lacinia. Donec neque augue, porttitor a tincidunt sit amet, posuere id quam. Aenean ultrices lorem orci, non sagittis nunc hendrerit at. Ut tempus tortor eu turpis luctus, a condimentum risus suscipit. Sed quis est sit amet libero convallis lacinia sit amet eu leo. Ut lacinia sollicitudin mauris, sit amet eleifend ante vulputate vitae. Aliquam erat volutpat."
+const restText =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris scelerisque viverra orci sit amet volutpat. Maecenas egestas egestas mi eu tincidunt. Phasellus consectetur velit ultricies dui consequat, ut pretium mi rhoncus. Suspendisse tempus libero in auctor volutpat. Aenean tincidunt leo egestas tellus egestas lacinia. Donec neque augue, porttitor a tincidunt sit amet, posuere id quam. Aenean ultrices lorem orci, non sagittis nunc hendrerit at. Ut tempus tortor eu turpis luctus, a condimentum risus suscipit. Sed quis est sit amet libero convallis lacinia sit amet eu leo. Ut lacinia sollicitudin mauris, sit amet eleifend ante vulputate vitae. Aliquam erat volutpat.';
 
 const styles = {
   root: {
     flexGrow: 1,
-    overflow: "hidden"
+    overflow: 'hidden',
   },
   grow: {
     flexGrow: 1,
     height: 50,
-    marginLeft: '13vw'
-
+    marginLeft: '13vw',
   },
   socialMedias: {
     flexGrow: 1,
     width: 47,
     height: 33,
-    paddingLeft: "0.5vw",
-
+    paddingLeft: '0.5vw',
   },
   socialMediasFace: {
     flexGrow: 1,
     width: 43,
     height: 32,
-    paddingLeft: "0.5vw",
-
+    paddingLeft: '0.5vw',
   },
   socialMediasInsta: {
     flexGrow: 1,
     width: 50,
     height: 36,
-    paddingLeft: "0.5vw",
-
+    paddingLeft: '0.5vw',
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
   },
   carousel: {
-    width: "100vw",
-    height: "70vh",
-
+    width: '100vw',
+    height: '70vh',
   },
   reservations: {
-    width: "100vw",
-    height: "15vh",
-    marginTop: "3vh",
-    marginLeft: "15vw",
-    float: "left",
+    width: '100vw',
+    height: '15vh',
+    marginTop: '3vh',
+    marginLeft: '15vw',
+    float: 'left',
   },
   datePicker: {
-    marginTop: "2vh",
-    marginLeft: "8vw",
+    marginTop: '2vh',
+    marginLeft: '8vw',
     color: '#00BFDF',
-    textColor: '#00BFDF'
+    textColor: '#00BFDF',
   },
   reservationButton: {
-    marginTop: "3.5vh",
-    marginLeft: "8vw",
+    marginTop: '3.5vh',
+    marginLeft: '8vw',
     background: '#00BFDF',
     borderRadius: 3,
     border: 0,
@@ -123,108 +119,106 @@ const styles = {
     padding: '0 30px',
   },
   appBar: {
-    backgroundColor: "#DEFAFF"
+    backgroundColor: '#DEFAFF',
   },
   infoRoot: {
-    width: "100vw",
-    height: "75vh",
+    width: '100vw',
+    height: '75vh',
   },
   infoBlock: {
-    width: "100vw",
-    height: "25vh"
+    width: '100vw',
+    height: '25vh',
   },
   infoImgsLeft: {
-    width: "50vw",
-    height: "50vh",
-    float: "left",
+    width: '50vw',
+    height: '50vh',
+    float: 'left',
   },
   infoText: {
-    marginLeft: "64vw",
-    color: "#00BFDF",
+    marginLeft: '64vw',
+    color: '#00BFDF',
   },
   infoParagraphRight: {
-    width: "45vw",
-    marginTop: "6vh",
-    marginLeft: "53vw",
+    width: '45vw',
+    marginTop: '6vh',
+    marginLeft: '53vw',
   },
   infoTextLeft: {
-    color: "#00BFDF",
-    marginTop: "50vh",
-    marginLeft: "17vw"
+    color: '#00BFDF',
+    marginTop: '50vh',
+    marginLeft: '17vw',
   },
   infoImgsRight: {
-    width: "50vw",
-    height: "50vh",
-    marginTop: "-57vh",
-    marginLeft: "50vw",
-    float: "left",
+    width: '50vw',
+    height: '50vh',
+    marginTop: '-57vh',
+    marginLeft: '50vw',
+    float: 'left',
   },
   infoParagraphLeft: {
-    width: "45vw",
-    marginLeft: "2vw",
-    marginTop: "8vh",
+    width: '45vw',
+    marginLeft: '2vw',
+    marginTop: '8vh',
   },
   infoTextRightThird: {
-    color: "#00BFDF",
-    width: "50vw",
-    heigth: "10vw",
-    marginTop: "25vh",
-    marginLeft: "67vw",
-
+    color: '#00BFDF',
+    width: '50vw',
+    heigth: '10vw',
+    marginTop: '25vh',
+    marginLeft: '67vw',
   },
   infoParagraphRightThird: {
-    width: "40vw",
-    heigth: "40vw",
-    marginLeft: "55vw",
-    marginTop: "10vh"
-
+    width: '40vw',
+    heigth: '40vw',
+    marginLeft: '55vw',
+    marginTop: '10vh',
   },
   pageFooter: {
-    width: "100vw",
-    height: "10vh",
-    marginTop: "112vh",
+    width: '100vw',
+    height: '10vh',
+    marginTop: '112vh',
   },
   footerInfoText: {
-    marginLeft: "0.5vw",
+    marginLeft: '0.5vw',
     opacity: 0.5,
-    float: "left"
+    float: 'left',
   },
   footerLinks: {
-    textDecoration: "none",
-    color: "#00BFDF",
-    marginLeft: "10vh",
-    fontSize: "1.6em"
+    textDecoration: 'none',
+    color: '#00BFDF',
+    marginLeft: '10vh',
+    fontSize: '1.6em',
   },
   welcomeText: {
-    color: "#A2B8B7",
+    color: '#A2B8B7',
     marginRight: '1vw',
-    marginTop: '1vh'
+    marginTop: '1vh',
   },
-  appBarRoot:{
+  appBarRoot: {
     display: 'flex',
     flexWrap: 'wrap',
-  }
+  },
 };
 
 const room = [
   {
-    value: "standard",
-    label: "New York"
+    value: 'standard',
+    label: 'New York',
   },
   {
-    value: "lightLuxury",
-    label: "Milan"
+    value: 'lightLuxury',
+    label: 'Milan',
   },
   {
-    value: "ultraLuxury",
-    label: "Dubai"
-  }
-]
+    value: 'ultraLuxury',
+    label: 'Dubai',
+  },
+];
 /* eslint-disable react/prefer-stateless-function */
 class MainPage extends React.PureComponent {
   state = {
     anchorEl: null,
-    acomodacao: "normal",
+    acomodacao: '',
     chegada: null,
     saida: null,
     logged: false, // TESTING
@@ -232,8 +226,8 @@ class MainPage extends React.PureComponent {
     loginUsrTextField: 'Cheddar',
     loginPssTextField: '1234',
     snackOpen: false,
-    snackMessage: "",
-    tpUsuario: "",
+    snackMessage: '',
+    tpUsuario: '',
     usrRegistertDialog: false,
     // Register User
     usrNomeCompleto: '', //1
@@ -253,6 +247,10 @@ class MainPage extends React.PureComponent {
     usrMeioDePagamento: '',
     usrLogin: '',
     usrSenha: '',
+    //------
+    //Reservation Answer
+    reservationAnswerDialog: false,
+    reservationAnswerText: '',
   };
 
   handleMenu = event => {
@@ -264,75 +262,127 @@ class MainPage extends React.PureComponent {
   };
 
   handleUsrRegisterDialogClose = () => {
-    this.setState({usrRegistertDialog: false})
-  }
+    this.setState({ usrRegistertDialog: false });
+  };
 
   handleUsrRegisterDialogOpen = () => {
-    this.setState({usrRegistertDialog: true})
-  }
+    this.setState({ usrRegistertDialog: true });
+  };
+
+  handleClickReserva = () => {
+    if (this.state.logged) {
+      let resp = true;
+      if (
+        this.state.acomodacao == '' ||
+        this.state.chegada == null ||
+        this.state.saida == null
+      ) {
+        this.makeSnack('Preencha todos os campos antes de prosseguir');
+      } else {
+        if (!resp) {
+          this.setState({
+            reservationAnswerDialog: true,
+            reservationAnswerText:
+              'Infelizmente o quarto solicitado não está disponível',
+          });
+        } else {
+          this.setState({
+            reservationAnswerDialog: true,
+            reservationAnswerText: `Seu quarto do tipo ${
+              this.state.acomodacao == 'standard'
+                ? 'New York'
+                : this.state.acomodacao == 'lightLuxury'
+                  ? 'Milan'
+                  : 'Dubai'
+            } foi reservado`,
+          });
+        }
+      }
+    } else {
+      this.makeSnack(
+        'Registre-se ou faça o login antes de efetuar uma reserva',
+      );
+      this.setState({ loginDialog: true });
+    }
+  };
 
   handleUsrDatNascimentoChange = date => {
-    this.setState({usrDtNascimento: date})
-  }
+    this.setState({ usrDtNascimento: date });
+  };
+
+  handleReservationAnswerDialogClose = () => {
+    this.setState({ reservationAnswerDialog: false });
+  };
 
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
   handleAcomodacaoChange = event => {
-    this.setState({ acomodacao: event.target.value })
+    this.setState({ acomodacao: event.target.value });
   };
 
   handleChegadaChange = event => {
-    this.setState({ chegada: new Date(event) })
+    this.setState({ chegada: new Date(event) });
   };
 
   handleSaidaChange = event => {
-    this.setState({ saida: new Date(event) })
+    this.setState({ saida: new Date(event) });
   };
 
   handleLoginDialogOpen = () => {
-    this.setState({ loginDialog: true })
-  }
+    this.setState({ loginDialog: true });
+  };
 
   handleLoginDialogClose = () => {
-    this.setState({ loginDialog: false })
-  }
+    this.setState({ loginDialog: false });
+  };
 
   handleLoginTextFieldChange = name => event => {
-    this.setState({ [name]: event.target.value })
-  }
+    this.setState({ [name]: event.target.value });
+  };
 
   handleUsrRegisterTextChange = name => event => {
-    this.setState({ [name]: event.target.value })
-  }
+    this.setState({ [name]: event.target.value });
+  };
 
   makeSnack = message => {
-    this.setState({snackOpen: true, snackMessage: message})
-  }
+    this.setState({ snackOpen: true, snackMessage: message });
+  };
 
   eatSnack = () => {
-    this.setState({snackOpen: false, snackMessage: ""})
-  }
+    this.setState({ snackOpen: false, snackMessage: '' });
+  };
+
+  handleRegisterClickLink = () => {
+    this.setState({ loginDialog: false, usrRegistertDialog: true });
+  };
 
   handleClickLogin = () => {
-    if (this.state.loginUsrTextField == "Cheddar" && this.state.loginPssTextField == "1234") {
-      this.setState({ logged: true, loginDialog: false, anchorEl: null, tpUsuario: "admin" })
-      this.makeSnack("Logged as Cesar Moura Leite Westphal")
+    if (
+      this.state.loginUsrTextField == 'Cheddar' &&
+      this.state.loginPssTextField == '1234'
+    ) {
+      this.setState({
+        logged: true,
+        loginDialog: false,
+        anchorEl: null,
+        tpUsuario: 'admin',
+      });
+      this.makeSnack('Logged as Cesar Moura Leite Westphal');
+    } else {
+      this.setState({ loginDialog: false, anchorEl: null });
+      this.makeSnack('Usuário ou senha incorretos');
     }
-    else{
-      this.setState({ loginDialog: false, anchorEl: null })
-      this.makeSnack("Usuário ou senha incorretos")
-    }
-  }
+  };
 
   render() {
     const { classes } = this.props;
-    const { 
-      anchorEl, 
-      acomodacao, 
-      saida, 
-      chegada, 
+    const {
+      anchorEl,
+      acomodacao,
+      saida,
+      chegada,
       snackOpen,
       usrCidade,
       usrDocMed,
@@ -352,7 +402,9 @@ class MainPage extends React.PureComponent {
       usrRegistertDialog,
       usrLogin,
       usrSenha,
-      logged   
+      logged,
+      reservationAnswerDialog,
+      reservationAnswerText,
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -368,10 +420,12 @@ class MainPage extends React.PureComponent {
             <div className={classes.grow} id="logo">
               <img src={placeholderLogo} className={classes.grow} />
             </div>
-            {(this.state.logged) ? (
+            {this.state.logged ? (
               <div className={classes.appBarRoot}>
                 <div id="welcomeText" className={classes.welcomeText}>
-                  <Typography variant="overline" noWrap>Bem vindo, Cesar</Typography>
+                  <Typography variant="overline" noWrap>
+                    Bem vindo, Cesar
+                  </Typography>
                 </div>
                 <div id="menu">
                   <IconButton
@@ -398,10 +452,14 @@ class MainPage extends React.PureComponent {
                     onClose={this.handleClose}
                   >
                     <MenuItem onClick={this.handleClose}>Settings</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Minhas Reservas</MenuItem>
+                    <MenuItem onClick={this.handleClose}>
+                      Minhas Reservas
+                    </MenuItem>
                   </Menu>
                 </div>
-              </div>) : (<div id="menu">
+              </div>
+            ) : (
+              <div id="menu">
                 <IconButton
                   aria-owns="menu-appbar"
                   aria-haspopup="true"
@@ -425,10 +483,15 @@ class MainPage extends React.PureComponent {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleUsrRegisterDialogOpen}>Crie uma Conta</MenuItem>
-                  <MenuItem onClick={this.handleLoginDialogOpen}>Já Possuo uma Conta</MenuItem>
+                  <MenuItem onClick={this.handleUsrRegisterDialogOpen}>
+                    Crie uma Conta
+                  </MenuItem>
+                  <MenuItem onClick={this.handleLoginDialogOpen}>
+                    Já Possuo uma Conta
+                  </MenuItem>
                 </Menu>
-              </div>)}
+              </div>
+            )}
           </Toolbar>
         </AppBar>
         <div id="carrousel">
@@ -446,7 +509,11 @@ class MainPage extends React.PureComponent {
             color="inherit"
           >
             {room.map(option => (
-              <MenuItem key={option.value} value={option.value} style={{ textColor: '#00BFDF' }}>
+              <MenuItem
+                key={option.value}
+                value={option.value}
+                style={{ textColor: '#00BFDF' }}
+              >
                 {option.label}
               </MenuItem>
             ))}
@@ -475,6 +542,7 @@ class MainPage extends React.PureComponent {
             variant="text"
             color="inherit"
             className={classes.reservationButton}
+            onClick={this.handleClickReserva}
           >
             Reservar
           </Button>
@@ -482,18 +550,51 @@ class MainPage extends React.PureComponent {
         <div id="hotelInfoRes" className={classes.infoRoot}>
           <div id="info_block_restaurant" className={classes.infoBlock}>
             <img src={infoImage} className={classes.infoImgsLeft} />
-            <Typography id="nss_restaurante" variant="display1" className={classes.infoText}>Nosso Restaurante</Typography>
-            <Typography variant='overline' className={classes.infoParagraphRight}>{restText}</Typography>
+            <Typography
+              id="nss_restaurante"
+              variant="display1"
+              className={classes.infoText}
+            >
+              Nosso Restaurante
+            </Typography>
+            <Typography
+              variant="overline"
+              className={classes.infoParagraphRight}
+            >
+              {restText}
+            </Typography>
           </div>
           <div id="info_block_loja" className={classes.infoBlock}>
-            <Typography variant="display1" className={classes.infoTextLeft}>Nossas Lojas</Typography>
-            <Typography variant='overline' className={classes.infoParagraphLeft}>{restText}</Typography>
+            <Typography variant="display1" className={classes.infoTextLeft}>
+              Nossas Lojas
+            </Typography>
+            <Typography
+              variant="overline"
+              className={classes.infoParagraphLeft}
+            >
+              {restText}
+            </Typography>
             <img src={infoImage} className={classes.infoImgsRight} />
           </div>
           <div id="info_block_restaurant" className={classes.infoBlock}>
-            <img src={infoImage} style={{ marginTop: '6vh' }} className={classes.infoImgsLeft} />
-            <Typography id="nss_restaurante" variant="display1" className={classes.infoTextRightThird}>Espaços do Hotel</Typography>
-            <Typography variant='overline' className={classes.infoParagraphRightThird}>{restText}</Typography>
+            <img
+              src={infoImage}
+              style={{ marginTop: '6vh' }}
+              className={classes.infoImgsLeft}
+            />
+            <Typography
+              id="nss_restaurante"
+              variant="display1"
+              className={classes.infoTextRightThird}
+            >
+              Espaços do Hotel
+            </Typography>
+            <Typography
+              variant="overline"
+              className={classes.infoParagraphRightThird}
+            >
+              {restText}
+            </Typography>
           </div>
         </div>
         <div id="pageFooter" className={classes.pageFooter}>
@@ -503,11 +604,28 @@ class MainPage extends React.PureComponent {
           </div>
           <div id="links" className={classes.footerLinks}>
             <Typography>
-              <Link href="javascript;;" className={classes.footerLinks}>NewsLetter</Link>
-              <Link href="javascript;;" className={classes.footerLinks}>Contato Empresarial</Link>
-              <Link href="javascript;;" className={classes.footerLinks}>Informações Legais</Link>
-              <Link href="javascript;;" className={classes.footerLinks}>Trabalhe Conosco</Link>
-              <Link href={(this.state.tpUsuario == "guest" || this.state.tpUsuario == "") ? "/" : "/management"} className={classes.footerLinks}>Área Administrativa</Link>
+              <Link href="javascript;;" className={classes.footerLinks}>
+                NewsLetter
+              </Link>
+              <Link href="javascript;;" className={classes.footerLinks}>
+                Contato Empresarial
+              </Link>
+              <Link href="javascript;;" className={classes.footerLinks}>
+                Informações Legais
+              </Link>
+              <Link href="javascript;;" className={classes.footerLinks}>
+                Trabalhe Conosco
+              </Link>
+              <Link
+                href={
+                  this.state.tpUsuario == 'guest' || this.state.tpUsuario == ''
+                    ? '/'
+                    : '/management'
+                }
+                className={classes.footerLinks}
+              >
+                Área Administrativa
+              </Link>
             </Typography>
           </div>
         </div>
@@ -517,14 +635,12 @@ class MainPage extends React.PureComponent {
           onBackdropClick={this.handleLoginDialogClose}
           maxWidth="md"
         >
-          <DialogTitle>
-            Bem vindo(a)! Por favor, faça o Login
-          </DialogTitle>
+          <DialogTitle>Bem vindo(a)! Por favor, faça o Login</DialogTitle>
           <DialogContent>
             <TextField
               margin="normal"
               name="loginUsrTextField"
-              id="pssTextField"
+              id="usrTextField"
               label="Usuário"
               type="text"
               value={this.state.loginUsrTextField}
@@ -541,11 +657,16 @@ class MainPage extends React.PureComponent {
               onChange={this.handleLoginTextFieldChange('loginPssTextField')}
               fullWidth
             />
+            <Link
+              component="button"
+              variant="body2"
+              onClick={this.handleRegisterClickLink}
+            >
+              Cadastre-se!
+            </Link>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClickLogin}>
-              Login
-            </Button>
+            <Button onClick={this.handleClickLogin}>Login</Button>
           </DialogActions>
         </Dialog>
 
@@ -669,7 +790,9 @@ class MainPage extends React.PureComponent {
               <Select
                 id="meioPagamento"
                 value={usrMeioDePagamento}
-                onChange={this.handleUsrRegisterTextChange('usrMeioDePagamento')}
+                onChange={this.handleUsrRegisterTextChange(
+                  'usrMeioDePagamento',
+                )}
                 placeholder="Cartão de Crédito"
                 fullWidth
               >
@@ -706,7 +829,9 @@ class MainPage extends React.PureComponent {
               label="Complemento"
               type="text"
               value={usrEnderecoComplemento}
-              onChange={this.handleUsrRegisterTextChange('usrEnderecoComplemento')}
+              onChange={this.handleUsrRegisterTextChange(
+                'usrEnderecoComplemento',
+              )}
               placeholder="ap 22"
               style={{ width: '12vw', marginLeft: '2vw' }}
             />
@@ -756,9 +881,38 @@ class MainPage extends React.PureComponent {
             </Button>
           </DialogActions>
         </Dialog>
+        <Dialog
+          open={reservationAnswerDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleReservationAnswerDialogClose}
+          onBackdropClick={this.handleReservationAnswerDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="headline">Reserva WgManagement</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Typography
+              variant="overline"
+              style={{ marginTop: '3vh', fontSize: '0.8em' }}
+            >
+              {reservationAnswerText}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={this.handleReservationAnswerDialogClose}
+              color="primary"
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-        <Snackbar 
-          anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
+        <Snackbar
+          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
           open={snackOpen}
           onClose={this.eatSnack}
           message={<span id="snackMessage">{this.state.snackMessage}</span>}
@@ -771,7 +925,7 @@ class MainPage extends React.PureComponent {
               onClick={this.eatSnack}
             >
               <Close />
-            </IconButton>
+            </IconButton>,
           ]}
         />
       </div>

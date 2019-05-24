@@ -12,6 +12,7 @@ import { compose } from 'redux';
 import StockCard from '../../components/StockCard/Loadable'
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
+import Charts from '../../components/Charts/Loadable';
 import GuestList from '../../components/GuestTable/Loadable';
 import { getRadioData, getProductData } from './actions';
 import {
@@ -79,7 +80,7 @@ const styles = {
     color: '#71D1C5',
   },
   radioGroup: {
-    marginLeft: '15vw',
+    marginLeft: '24vw',
     marginTop: '4vh',
   },
   radio: {
@@ -101,9 +102,12 @@ const styles = {
     color: '#BAB392',
   },
   roomTextField: {
-    marginRight: '20vw',
-    marginLeft: '45vw',
+    marginTop: '15vh',
+    marginLeft: '44vw',
     color: '#BAB392',
+  },
+  usrRegisterBtn:{
+    marginLeft: '2vw'
   },
   roomBtn: {
     marginTop: '15vh',
@@ -359,13 +363,13 @@ export class MngrPage extends React.Component {
                 aria-label="Estoque"
                 color="primary"
               />
-              <FormLabel className={classes.radio}>Estacionamento</FormLabel>
+              <FormLabel className={classes.radio}>BI</FormLabel>
               <Radio
-                checked={selectedValue === 'parking'}
+                checked={selectedValue === 'charts'}
                 onChange={this.handleRadioChange}
-                value="parking"
-                name="Estacionamento"
-                aria-label="Estacionamento"
+                value="charts"
+                name="BI"
+                aria-label="BI"
                 color="primary"
               />
             </div>
@@ -447,6 +451,8 @@ export class MngrPage extends React.Component {
                     variant="outlined"
                     color="default"
                     onClick={this.handleUsrRegisterDialogOpen}
+                    className={classes.usrRegisterBtn}
+                    color="primary"
                   >
                     Registrar Usuário
                   </Button>
@@ -806,7 +812,7 @@ export class MngrPage extends React.Component {
               </div>
               
             )}
-            {selectedValue === 'parking' && <Typography>Parking</Typography>}
+            {selectedValue === 'charts' && <Charts />}
           </div>
         </div>
       </div>
