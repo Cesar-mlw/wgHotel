@@ -11,6 +11,7 @@ import {
   GET_PRODUCT_DATA,
   GET_PRODUCT_DATA_SUCCESS,
   GET_PRODUCT_DATA_ERROR, 
+  GET_OCCUPATION_LIST
 } from './constants';
 
 export function getRadioData(selectedValue) {
@@ -46,5 +47,10 @@ export function getProductDataError(error){
   return{
     type:GET_PRODUCT_DATA_ERROR,
     error
+  }
+}
+export function getOccupationList(){
+  return{
+    type:GET_OCCUPATION_LIST
   }
 }

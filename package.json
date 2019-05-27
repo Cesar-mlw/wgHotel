@@ -93,6 +93,7 @@
     "recharts": "^1.6.2",
     "redux": "4.0.1",
     "redux-immutable": "4.0.0",
+    "request": "^2.88.0",
     "reselect": "4.0.0",
     "sanitize.css": "4.1.0",
     "styled-components": "4.0.2",

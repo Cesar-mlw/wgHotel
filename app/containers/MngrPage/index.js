@@ -14,6 +14,7 @@ import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
 import Charts from '../../components/Charts/Loadable';
 import GuestList from '../../components/GuestTable/Loadable';
+import DinerStock from '../../components/DinerStock/Loadable'
 import { getRadioData, getProductData } from './actions';
 import {
   AppBar,
@@ -125,6 +126,12 @@ const styles = {
   restaurantTable: {
     marginTop: '3vh'
   },
+  roomRegisterButton: {
+    marginLeft: '-41vw',
+  },
+  roomSearchTextField:{
+    marginLeft: '30vw',
+  }
 
 };
 
@@ -164,6 +171,12 @@ export class MngrPage extends React.Component {
     itemRegisterName: '',
     itemRegisterPrice: 0,
     //----------------
+    //Room Register
+    roomRegisterDialog: false,
+    roomRegisterType: '',
+    roomRegisterNumber: '',
+    roomRegisterPrice: '',
+    //----------------
   };
 
   handleMenu = event => {
@@ -197,6 +210,14 @@ export class MngrPage extends React.Component {
 
   handleStockTabChange = (event, value) => {
     this.setState({stockTabValue: value})
+  }
+
+  handleRoomRegisterChange = name => event => {
+    this.setState({[name]: event.target.value})
+  }
+
+  handleOccupationCall = () => {
+    
   }
 
   handleUsrRegisterTextChange = name => event => {
@@ -244,6 +265,14 @@ export class MngrPage extends React.Component {
     this.setState({[name] : event.target.value})
   }
 
+  handleRoomRegisterDialogOpen = () => {
+    this.setState({roomRegisterDialog: true})
+  }
+
+  handleRoomRegisterDialogClose = () => {
+    this.setState({roomRegisterDialog: false})
+  }
+
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
@@ -278,7 +307,11 @@ export class MngrPage extends React.Component {
       itemRequestSelect,
       itemRequestQtde,
       itemRegisterName,
-      itemRegisterPrice
+      itemRegisterPrice,
+      roomRegisterDialog,
+      roomRegisterNumber,
+      roomRegisterPrice,
+      roomRegisterType,
     } = this.state;
     const open = Boolean(anchorEl);
     console.log(this.props.roomData)
@@ -378,12 +411,16 @@ export class MngrPage extends React.Component {
             {selectedValue === 'room' && (
               <div>
                 <div className={classes.roomTextField}>
+                  <Button variant="outlined" color="primary" onClick={this.handleRoomRegisterDialogOpen} className={classes.roomRegisterButton}>
+                    Registrar Quarto
+                  </Button> 
                   <TextField
                     id="roomSearchTextField"
                     label="Número do Quarto"
                     placeholder="1101"
                     value={roomTextField}
                     onChange={this.handleRoomTextFieldChange}
+                    className={classes.roomSearchTextField}
                   />
                 </div>
                 <div className={classes.hotelCard}>
@@ -442,6 +479,45 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                 </div>
+                <Dialog
+                  open={roomRegisterDialog}
+                  onClose={this.handleRoomRegisterDialogClose}
+                  onBackdropClick={this.handleRoomRegisterDialogClose}
+                  fullWidth
+                  maxWidth="md"
+                  keepMounted
+                  TransitionComponent={this.Transition}
+                >
+                  <DialogTitle>
+                    <Typography variant="headline">Registrar Quarto</Typography>
+                  </DialogTitle>
+                  <DialogContent>
+                    <TextField 
+                      open={roomRegisterNumber}
+                      label="Número do quarto"
+                      id="roomRegisterNumber"
+                      placeholder="C1101"
+                      onChange={this.handleRoomRegisterChange}
+                    />
+                    <div style={{ marginTop: '1vh' }}>
+                      <InputLabel htmlFor="roomRegisterType">Tipo de Acomodação</InputLabel>
+                      <Select
+                        id="roomRegisterType"
+                        value={roomRegisterType}
+                        onChange={this.handleRoomRegisterChange}
+                        placeholder="Milan"
+                        fullWidth
+                      >
+                        <MenuItem value="standard">New York</MenuItem>
+                        <MenuItem value="lightLuxury">Milan</MenuItem>
+                        <MenuItem value="ultraLuxury">Dubai</MenuItem>
+                      </Select>
+                    </div>
+                  </DialogContent>
+                  <DialogActions>
+
+                  </DialogActions>
+                </Dialog>
               </div>
             )}
             {selectedValue === 'guests' && (
@@ -535,18 +611,19 @@ export class MngrPage extends React.Component {
                       fullWidth
                       placeholder="(11)92222-2222"
                     />
-                    <TextField
-                      margin="normal"
-                      id="profissao"
-                      label="Profissão"
-                      type="text"
-                      value={usrProfissao}
-                      onChange={this.handleUsrRegisterTextChange(
-                        'usrProfissao',
-                      )}
-                      fullWidth
-                      placeholder="Engenheiro"
-                    />
+                    <div style={{ marginTop: '1vh' }}>
+                      <InputLabel htmlFor="occSelect">Profissão</InputLabel>
+                      <Select
+                        id="occSelect"
+                        value={usrProfissao}
+                        onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+                        placeholder="Engenheiro"
+                        fullWidth
+                      >
+                        <MenuItem value="">Choose</MenuItem>
+                        {this.handleOccupationCall}
+                      </Select>
+                    </div>
                     <TextField
                       margin="normal"
                       id="documentoMedico"
@@ -680,7 +757,11 @@ export class MngrPage extends React.Component {
                 </Dialog>
               </div>
             )}
-            {selectedValue === 'diner' && <Typography>Diner</Typography>}
+            {selectedValue === 'diner' && (
+              <div>
+                <DinerStock />
+              </div>
+            )}
             {selectedValue === 'stock' && (
               <div>
                 <div className={classes.stockTab}>
