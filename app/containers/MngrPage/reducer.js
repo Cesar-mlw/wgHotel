@@ -5,6 +5,7 @@
  */
 
 import { fromJS } from 'immutable';
+import axios from 'axios'
 import {
   GET_RADIO_DATA,
   GET_RADIO_DATA_SUCCESS,
@@ -14,6 +15,7 @@ import {
   GET_PRODUCT_DATA_SUCCESS,
   GET_OCCUPATION_LIST
 } from './constants';
+
 
 export const initialState = fromJS({
   roomData: [
@@ -102,7 +104,10 @@ function mngrPageReducer(state = initialState, action) {
     case GET_PRODUCT_DATA_ERROR:
       state.set('loading', false).set('error', action.error)
     case GET_OCCUPATION_LIST:
-      //request
+      axios.get("https://wg-tech-homologacao.herokuapp.com/persons/occupations")
+        .then((response) => {
+          state.set('occupationList', response.return)
+        })
     default:
       return state;
   }

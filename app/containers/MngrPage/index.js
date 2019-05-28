@@ -15,7 +15,7 @@ import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
 import Charts from '../../components/Charts/Loadable';
 import GuestList from '../../components/GuestTable/Loadable';
 import DinerStock from '../../components/DinerStock/Loadable'
-import { getRadioData, getProductData } from './actions';
+import { getRadioData, getProductData, getOccupationList } from './actions';
 import {
   AppBar,
   Toolbar,
@@ -49,6 +49,7 @@ import {
   makeRadioDataSelector,
   makeProductListSelector,
   makeGuestDataSelector,
+  makeOccupationDataSelector
 } from './selectors';
 import reducer from './reducer';
 
@@ -276,6 +277,7 @@ export class MngrPage extends React.Component {
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
+    this.props.getOccupationListDispatcher();
   }
 
   render() {
@@ -314,7 +316,7 @@ export class MngrPage extends React.Component {
       roomRegisterType,
     } = this.state;
     const open = Boolean(anchorEl);
-    console.log(this.props.roomData)
+    console.log(this.props.occupationList)
     return (
       <div>
         <div className={classes.root}>
@@ -905,12 +907,14 @@ MngrPage.propTypes = {
   roomData: PropTypes.array,
   productList: PropTypes.array,
   guestData: PropTypes.array,
+  occupationList: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   roomData: makeRadioDataSelector(),
   productList: makeProductListSelector(),
   guestData: makeGuestDataSelector(),
+  occupationList: makeOccupationDataSelector(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -918,6 +922,7 @@ function mapDispatchToProps(dispatch) {
     getRadioDataDispatcher: selectedValue =>
       dispatch(getRadioData(selectedValue)),
     getProductList: () => dispatch(getProductData()),
+    getOccupationListDispatcher: () => dispatch(getOccupationList())
   };
 }
 

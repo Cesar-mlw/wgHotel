@@ -27,5 +27,8 @@ const makeProductListSelector = () =>
 const makeGuestDataSelector = () =>
   createSelector(selectMngrPageDomain, substate => substate.get('guestData'))
 
+const makeOccupationDataSelector = () => 
+  createSelector(selectMngrPageDomain, substate => substate.get('occupationList'))
+
 export default makeSelectMngrPage;
-export { selectMngrPageDomain, makeRadioDataSelector, makeProductListSelector, makeGuestDataSelector };
+export { selectMngrPageDomain, makeRadioDataSelector, makeProductListSelector, makeGuestDataSelector, makeOccupationDataSelector };
