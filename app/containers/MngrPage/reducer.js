@@ -6,6 +6,7 @@
 
 import { fromJS } from 'immutable';
 import axios from 'axios'
+
 import {
   GET_RADIO_DATA,
   GET_RADIO_DATA_SUCCESS,
@@ -102,12 +103,7 @@ function mngrPageReducer(state = initialState, action) {
         { id:5, nome:"Milano Cookies", preco:15.00, qtde:36 },
       ])
     case GET_PRODUCT_DATA_ERROR:
-      state.set('loading', false).set('error', action.error)
-    case GET_OCCUPATION_LIST:
-      axios.get("https://wg-tech-homologacao.herokuapp.com/persons/occupations")
-        .then((response) => {
-          state.set('occupationList', response.return)
-        })
+      state.set('loading', false).set('error', action.error)      
     default:
       return state;
   }
