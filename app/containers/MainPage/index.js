@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
@@ -247,10 +248,14 @@ class MainPage extends React.PureComponent {
     usrMeioDePagamento: '',
     usrLogin: '',
     usrSenha: '',
+    usrPersonalInfoDialog: false,
     //------
     //Reservation Answer
     reservationAnswerDialog: false,
     reservationAnswerText: '',
+    //------
+    payementMethodsList: [],
+    occupationList: [],
   };
 
   handleMenu = event => {
@@ -358,6 +363,14 @@ class MainPage extends React.PureComponent {
     this.setState({ loginDialog: false, usrRegistertDialog: true });
   };
 
+  handleUsrPersonalInfoDialogOpen = () => {
+    this.setState({ usrPersonalInfoDialog: true });
+  };
+
+  handleUsrPersonalInfoDialogClose = () => {
+    this.setState({ usrPersonalInfoDialog: false });
+  };
+
   handleClickLogin = () => {
     if (
       this.state.loginUsrTextField == 'Cheddar' &&
@@ -375,6 +388,41 @@ class MainPage extends React.PureComponent {
       this.makeSnack('Usuário ou senha incorretos');
     }
   };
+
+  handlePaymentMethodCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/paymentmethods', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ payementMethodsList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
+  handleOccupationCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/persons/occupations', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ occupationList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
+  componentDidMount() {
+    this.handlePaymentMethodCall();
+    this.handleOccupationCall();
+  }
 
   render() {
     const { classes } = this.props;
@@ -405,6 +453,9 @@ class MainPage extends React.PureComponent {
       logged,
       reservationAnswerDialog,
       reservationAnswerText,
+      payementMethodsList,
+      occupationList,
+      usrPersonalInfoDialog,
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -684,16 +735,6 @@ class MainPage extends React.PureComponent {
           </DialogTitle>
           <DialogContent>
             <TextField
-              id="nomeCompleto"
-              type="text"
-              label="Nome Completo"
-              value={usrNomeCompleto}
-              onChange={this.handleUsrRegisterTextChange('usrNomeCompleto')}
-              margin="normal"
-              fullWidth
-              placeholder="Bernardo Favaretto"
-            />
-            <TextField
               id="login"
               type="text"
               label="E-mail"
@@ -711,6 +752,36 @@ class MainPage extends React.PureComponent {
               onChange={this.handleUsrRegisterTextChange('usrSenha')}
               margin="normal"
               fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+              Cadastrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={usrPersonalInfoDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleUsrPersonalInfoDialogClose}
+          onBackdropClick={this.handleUsrPersonalInfoDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="headline">Informações pessoais</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              id="nomeCompleto"
+              type="text"
+              label="Nome Completo"
+              value={usrNomeCompleto}
+              onChange={this.handleUsrRegisterTextChange('usrNomeCompleto')}
+              margin="normal"
+              fullWidth
+              placeholder="Bernardo Favaretto"
             />
             <DatePicker
               margin="normal"
@@ -755,16 +826,22 @@ class MainPage extends React.PureComponent {
               fullWidth
               placeholder="(11)92222-2222"
             />
-            <TextField
-              margin="normal"
-              id="profissao"
-              label="Profissão"
-              type="text"
-              value={usrProfissao}
-              onChange={this.handleUsrRegisterTextChange('usrProfissao')}
-              fullWidth
-              placeholder="Engenheiro"
-            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="profissao">Profissão</InputLabel>
+              <Select
+                id="profissao"
+                value={usrProfissao}
+                onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+                placeholder="Engenheiro"
+                fullWidth
+              >
+                {occupationList.map(occ => (
+                  <MenuItem key={occ.id} value={occ.id}>
+                    {occ.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             <TextField
               margin="normal"
               id="documentoMedico"
@@ -796,11 +873,11 @@ class MainPage extends React.PureComponent {
                 placeholder="Cartão de Crédito"
                 fullWidth
               >
-                <MenuItem value="cartaoCredito">Cartão de Crédito</MenuItem>
-                <MenuItem value="cartaoDebito">Cartão de Débito</MenuItem>
-                <MenuItem value="cheque">Cheque</MenuItem>
-                <MenuItem value="dinheiro">Dinheiro</MenuItem>
-                <MenuItem value="tranferencia">Transferência</MenuItem>
+                {payementMethodsList.map(py => (
+                  <MenuItem key={py.id} value={py.id}>
+                    {py.method}
+                  </MenuItem>
+                ))}
               </Select>
             </div>
             <TextField
@@ -849,8 +926,9 @@ class MainPage extends React.PureComponent {
               </Select>
             </div>
             <div style={{ marginTop: '1vh' }}>
-              <InputLabel htmlFor="sexSelect">Estado</InputLabel>
+              <InputLabel htmlFor="estadoSelect">Estado</InputLabel>
               <Select
+                id="estadoSelect"
                 value={usrEstado}
                 onChange={this.handleUsrRegisterTextChange('usrEstado')}
                 placeholder="São Paulo"
@@ -862,8 +940,9 @@ class MainPage extends React.PureComponent {
               </Select>
             </div>
             <div style={{ marginTop: '1vh' }}>
-              <InputLabel htmlFor="sexSelect">País</InputLabel>
+              <InputLabel htmlFor="paisSelect">País</InputLabel>
               <Select
+                id="paisSelect"
                 value={usrPais}
                 onChange={this.handleUsrRegisterTextChange('usrPais')}
                 placeholder="Brasil"
@@ -876,7 +955,10 @@ class MainPage extends React.PureComponent {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+            <Button
+              onClick={this.handleReservationAnswerDialogClose}
+              color="primary"
+            >
               Cadastrar
             </Button>
           </DialogActions>

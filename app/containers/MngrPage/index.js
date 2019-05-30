@@ -5,18 +5,18 @@
  */
 
 import React from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import StockCard from '../../components/StockCard/Loadable'
+import StockCard from '../../components/StockCard/Loadable';
 import finalLogo from '../../images/logo.png';
 import HotelRoomCard from '../../components/HotelRoomCard/Loadable';
 import Charts from '../../components/Charts/Loadable';
 import GuestList from '../../components/GuestTable/Loadable';
-import DinerStock from '../../components/DinerStock/Loadable'
-import { getRadioData, getProductData} from './actions';
+import DinerStock from '../../components/DinerStock/Loadable';
+import { getRadioData, getProductData } from './actions';
 import {
   AppBar,
   Toolbar,
@@ -41,7 +41,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Slide
+  Slide,
 } from '@material-ui/core';
 import { AccountCircleOutlined } from '@material-ui/icons';
 import { DatePicker } from 'material-ui-pickers';
@@ -108,32 +108,31 @@ const styles = {
     marginLeft: '44vw',
     color: '#BAB392',
   },
-  usrRegisterBtn:{
-    marginLeft: '2vw'
+  usrRegisterBtn: {
+    marginLeft: '2vw',
   },
   roomBtn: {
     marginTop: '15vh',
     marginBottom: '-6vh',
     color: '#BAB392',
   },
-  stockTab:{
-    marginTop: '15vh'
+  stockTab: {
+    marginTop: '15vh',
   },
-  stockSolBtn:{
+  stockSolBtn: {
     marginTop: '2vh',
-    marginLeft: '2vw'
+    marginLeft: '2vw',
   },
-  requestRoot:{},
+  requestRoot: {},
   restaurantTable: {
-    marginTop: '3vh'
+    marginTop: '3vh',
   },
   roomRegisterButton: {
     marginLeft: '-41vw',
   },
-  roomSearchTextField:{
+  roomSearchTextField: {
     marginLeft: '30vw',
-  }
-
+  },
 };
 
 /* eslint-disable react/prefer-stateless-function */
@@ -178,7 +177,8 @@ export class MngrPage extends React.Component {
     roomRegisterNumber: '',
     roomRegisterPrice: '',
     //----------------
-    profissaoList: []
+    profissaoList: [],
+    payementMethodsList: [],
   };
 
   handleMenu = event => {
@@ -186,8 +186,8 @@ export class MngrPage extends React.Component {
   };
 
   Transition = props => {
-    return <Slide direction='up' {...props} />
-  }
+    return <Slide direction="up" {...props} />;
+  };
 
   handleClose = () => {
     this.setState({ anchorEl: null });
@@ -211,21 +211,27 @@ export class MngrPage extends React.Component {
   };
 
   handleStockTabChange = (event, value) => {
-    this.setState({stockTabValue: value})
-  }
+    this.setState({ stockTabValue: value });
+  };
 
   handleRoomRegisterChange = name => event => {
-    this.setState({[name]: event.target.value})
-  }
+    this.setState({ [name]: event.target.value });
+  };
 
   handleOccupationCall = () => {
-    axios("http://wg-tech-homologacao.herokuapp.com/occupations", {method: 'GET', mode:'no-cors', headers: {'Access-Control-Allow-Origin':'*','Content-Type': 'application/json'}, withCredentials: false, credentials: 'same-origin'})
-        .then((response) => {
-          let data = response.data.return
-          this.setState({profissaoList: data})
-        })
-        .catch((err) => console.log(err))
-  }
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/persons/occupations', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ profissaoList: data });
+      })
+      .catch(err => console.log(err));
+  };
 
   handleUsrRegisterTextChange = name => event => {
     if (name == 'usrEnderecoNumero') {
@@ -249,40 +255,57 @@ export class MngrPage extends React.Component {
   };
 
   handleItemRequestDialogClose = () => {
-    this.setState({itemRequestDialog: false})
-  }
+    this.setState({ itemRequestDialog: false });
+  };
 
   handleItemRequestDialogOpen = () => {
-    this.setState({itemRequestDialog: true})
-  }
+    this.setState({ itemRequestDialog: true });
+  };
 
   handleItemRequestTextChange = name => event => {
-    this.setState({[name] : event.target.value})
-  }
+    this.setState({ [name]: event.target.value });
+  };
 
   handleItemRegisterDialogOpen = () => {
-    this.setState({itemRegisterDialog: true})
-  }
+    this.setState({ itemRegisterDialog: true });
+  };
 
   handleItemRegisterDialogClose = () => {
-    this.setState({itemRegisterDialog: false})
-  }
+    this.setState({ itemRegisterDialog: false });
+  };
 
-  handleItemRegisterTextChange = name=> event => {
-    this.setState({[name] : event.target.value})
-  }
+  handleItemRegisterTextChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
 
   handleRoomRegisterDialogOpen = () => {
-    this.setState({roomRegisterDialog: true})
-  }
+    this.setState({ roomRegisterDialog: true });
+  };
 
   handleRoomRegisterDialogClose = () => {
-    this.setState({roomRegisterDialog: false})
-  }
+    this.setState({ roomRegisterDialog: false });
+  };
+
+  handlePaymentMethodCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/paymentmethods', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ payementMethodsList: data });
+      })
+      .catch(err => console.log(err));
+  };
 
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
+    this.handleOccupationCall();
+    this.handlePaymentMethodCall();
   }
 
   render() {
@@ -321,7 +344,7 @@ export class MngrPage extends React.Component {
       roomRegisterType,
     } = this.state;
     const open = Boolean(anchorEl);
-    
+
     return (
       <div>
         <div className={classes.root}>
@@ -418,9 +441,14 @@ export class MngrPage extends React.Component {
             {selectedValue === 'room' && (
               <div>
                 <div className={classes.roomTextField}>
-                  <Button variant="outlined" color="primary" onClick={this.handleRoomRegisterDialogOpen} className={classes.roomRegisterButton}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={this.handleRoomRegisterDialogOpen}
+                    className={classes.roomRegisterButton}
+                  >
                     Registrar Quarto
-                  </Button> 
+                  </Button>
                   <TextField
                     id="roomSearchTextField"
                     label="Número do Quarto"
@@ -499,7 +527,7 @@ export class MngrPage extends React.Component {
                     <Typography variant="headline">Registrar Quarto</Typography>
                   </DialogTitle>
                   <DialogContent>
-                    <TextField 
+                    <TextField
                       open={roomRegisterNumber}
                       label="Número do quarto"
                       id="roomRegisterNumber"
@@ -507,7 +535,9 @@ export class MngrPage extends React.Component {
                       onChange={this.handleRoomRegisterChange}
                     />
                     <div style={{ marginTop: '1vh' }}>
-                      <InputLabel htmlFor="roomRegisterType">Tipo de Acomodação</InputLabel>
+                      <InputLabel htmlFor="roomRegisterType">
+                        Tipo de Acomodação
+                      </InputLabel>
                       <Select
                         id="roomRegisterType"
                         value={roomRegisterType}
@@ -521,9 +551,7 @@ export class MngrPage extends React.Component {
                       </Select>
                     </div>
                   </DialogContent>
-                  <DialogActions>
-
-                  </DialogActions>
+                  <DialogActions />
                 </Dialog>
               </div>
             )}
@@ -623,12 +651,18 @@ export class MngrPage extends React.Component {
                       <Select
                         id="occSelect"
                         value={usrProfissao}
-                        onChange={this.handleUsrRegisterTextChange('usrProfissao')}
+                        onChange={this.handleUsrRegisterTextChange(
+                          'usrProfissao',
+                        )}
                         placeholder="Engenheiro"
                         fullWidth
                       >
                         <MenuItem value="">Choose</MenuItem>
-                        {this.handleOccupationCall}
+                        {this.state.profissaoList.map(occ => (
+                          <MenuItem key={occ.id} value={occ.id}>
+                            {occ.name}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </div>
                     <TextField
@@ -666,15 +700,11 @@ export class MngrPage extends React.Component {
                         placeholder="Cartão de Crédito"
                         fullWidth
                       >
-                        <MenuItem value="cartaoCredito">
-                          Cartão de Crédito
-                        </MenuItem>
-                        <MenuItem value="cartaoDebito">
-                          Cartão de Débito
-                        </MenuItem>
-                        <MenuItem value="cheque">Cheque</MenuItem>
-                        <MenuItem value="dinheiro">Dinheiro</MenuItem>
-                        <MenuItem value="tranferencia">Transferência</MenuItem>
+                        {this.state.payementMethodsList.map(py => (
+                          <MenuItem key={py.id} value={py.id}>
+                            {py.method}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </div>
                     <TextField
@@ -754,10 +784,16 @@ export class MngrPage extends React.Component {
                     </div>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={this.handleUsrRegisterDialogClose} color="secondary">
+                    <Button
+                      onClick={this.handleUsrRegisterDialogClose}
+                      color="secondary"
+                    >
                       Cancelar
                     </Button>
-                    <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+                    <Button
+                      onClick={this.handleUsrRegisterDialogClose}
+                      color="primary"
+                    >
                       Registrar
                     </Button>
                   </DialogActions>
@@ -775,49 +811,88 @@ export class MngrPage extends React.Component {
                   <Tabs
                     value={stockTabValue}
                     onChange={this.handleStockTabChange}
-                    variant='fullWidth'
+                    variant="fullWidth"
                   >
                     <Tab label="Estoque" />
-                    <Tab label="Solicitar Itens"/>
+                    <Tab label="Solicitar Itens" />
                   </Tabs>
                 </div>
-                {stockTabValue == 0 && (
-                  <StockCard />
-                )}
+                {stockTabValue == 0 && <StockCard />}
                 {stockTabValue == 1 && (
                   <div className={classes.requestRoot}>
                     <div className={classes.stockSolBtn}>
-                      <Button variant="outlined" color="primary" onClick={this.handleItemRequestDialogOpen}>Solicitar Item</Button>
-                      <Button variant="outlined" color="primary" style={{marginLeft: '2vw'}} onClick={this.handleItemRegisterDialogOpen}>Cadastrar um Item</Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={this.handleItemRequestDialogOpen}
+                      >
+                        Solicitar Item
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        style={{ marginLeft: '2vw' }}
+                        onClick={this.handleItemRegisterDialogOpen}
+                      >
+                        Cadastrar um Item
+                      </Button>
                     </div>
                     <div className={classes.restaurantTable}>
-                      <Typography variant='headline'>Restaurante</Typography>
+                      <Typography variant="headline">Restaurante</Typography>
                       <Table>
                         <TableHead>
-                          <TableCell><Typography variant='overline'>Produto Solicitado</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Data da Solicitação</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Quantidade Solicitada</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Receber</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Cancelar</Typography></TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Produto Solicitado
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Data da Solicitação
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Quantidade Solicitada
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">Receber</Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">Cancelar</Typography>
+                          </TableCell>
                         </TableHead>
-                        <TableBody>
-
-                        </TableBody>
+                        <TableBody />
                       </Table>
                     </div>
                     <div className={classes.restaurantTable}>
-                      <Typography variant='headline'>Frigobar</Typography>
-                      <Table >
+                      <Typography variant="headline">Frigobar</Typography>
+                      <Table>
                         <TableHead>
-                          <TableCell><Typography variant='overline'>Produto Solicitado</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Data da Solicitação</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Quantidade Solicitada</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Receber</Typography></TableCell>
-                          <TableCell><Typography variant='overline'>Cancelar</Typography></TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Produto Solicitado
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Data da Solicitação
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">
+                              Quantidade Solicitada
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">Receber</Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="overline">Cancelar</Typography>
+                          </TableCell>
                         </TableHead>
-                        <TableBody>
-
-                        </TableBody>
+                        <TableBody />
                       </Table>
                     </div>
                     <Dialog
@@ -827,37 +902,54 @@ export class MngrPage extends React.Component {
                       fullWidth
                       maxWidth="md"
                       TransitionComponent={this.Transition}
-                    > 
-                    <DialogTitle>
-                      <Typography variant='headline'>Solicitar Produto</Typography>
-                    </DialogTitle>
-                    <DialogContent>
-                      <InputLabel htmlFor="requestProduto">Produto</InputLabel>
-                      <Select
-                        id="requestProduto"
-                        value={itemRequestSelect}
-                        onChange={this.handleItemRequestTextChange('itemRequestSelect')}
-                        fullWidth
-                      >
-                        <MenuItem value=""><em>None</em></MenuItem>
-                        <MenuItem value="cocaCola">Coca-Cola</MenuItem>
-                        <MenuItem value="redLabel">Red Label</MenuItem>
-                        <MenuItem value="chocolate">Chocolate Godiva</MenuItem>
-                      </Select>
-                      <TextField 
-                        value={itemRequestQtde}
-                        onChange={this.handleItemRequestTextChange('itemRequestQtde')}
-                        type="number"
-                        margin="normal"
-                        label="Quantidade"
-                        id="itemRequestQtdeTextField"
-                        
-                        placeholde="2"
-                      />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button variant="outlined" color="primary" onClick={this.handleItemRequestDialogCloseDialogClose}>Solicitar</Button>
-                    </DialogActions>
+                    >
+                      <DialogTitle>
+                        <Typography variant="headline">
+                          Solicitar Produto
+                        </Typography>
+                      </DialogTitle>
+                      <DialogContent>
+                        <InputLabel htmlFor="requestProduto">
+                          Produto
+                        </InputLabel>
+                        <Select
+                          id="requestProduto"
+                          value={itemRequestSelect}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemRequestSelect',
+                          )}
+                          fullWidth
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          <MenuItem value="cocaCola">Coca-Cola</MenuItem>
+                          <MenuItem value="redLabel">Red Label</MenuItem>
+                          <MenuItem value="chocolate">
+                            Chocolate Godiva
+                          </MenuItem>
+                        </Select>
+                        <TextField
+                          value={itemRequestQtde}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemRequestQtde',
+                          )}
+                          type="number"
+                          margin="normal"
+                          label="Quantidade"
+                          id="itemRequestQtdeTextField"
+                          placeholde="2"
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={this.handleItemRequestDialogCloseDialogClose}
+                        >
+                          Solicitar
+                        </Button>
+                      </DialogActions>
                     </Dialog>
                     <Dialog
                       open={itemRegisterDialog}
@@ -866,39 +958,50 @@ export class MngrPage extends React.Component {
                       fullWidth
                       maxWidth="md"
                       TransitionComponent={this.Transition}
-                    > 
-                    <DialogTitle>
-                      <Typography variant='headline'>Cadastrar Produto</Typography>
-                    </DialogTitle>
-                    <DialogContent>
-                      <TextField 
-                        value={itemRegisterName}
-                        onChange={this.handleItemRequestTextChange('itemRegisterName')}
-                        type="text"
-                        margin="normal"
-                        id="itemRegisterNameTextField"
-                        placeholde="Coca-Cola"
-                        label="Nome do Produto"
-                        fullWidth
-                      />
-                      <TextField 
-                        value={itemRegisterPrice}
-                        onChange={this.handleItemRequestTextChange('itemRegisterPrice')}
-                        type="number"
-                        margin="normal"
-                        label="Preço por Unidade"
-                        id="itemRegisterPriceTextField"
-                        placeholde="20,00"
-                      />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button variant="outlined" color="primary" onClick={this.handleItemRegisterDialogClose}>Cadastrar</Button>
-                    </DialogActions>
+                    >
+                      <DialogTitle>
+                        <Typography variant="headline">
+                          Cadastrar Produto
+                        </Typography>
+                      </DialogTitle>
+                      <DialogContent>
+                        <TextField
+                          value={itemRegisterName}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemRegisterName',
+                          )}
+                          type="text"
+                          margin="normal"
+                          id="itemRegisterNameTextField"
+                          placeholde="Coca-Cola"
+                          label="Nome do Produto"
+                          fullWidth
+                        />
+                        <TextField
+                          value={itemRegisterPrice}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemRegisterPrice',
+                          )}
+                          type="number"
+                          margin="normal"
+                          label="Preço por Unidade"
+                          id="itemRegisterPriceTextField"
+                          placeholde="20,00"
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={this.handleItemRegisterDialogClose}
+                        >
+                          Cadastrar
+                        </Button>
+                      </DialogActions>
                     </Dialog>
                   </div>
                 )}
               </div>
-              
             )}
             {selectedValue === 'charts' && <Charts />}
           </div>
