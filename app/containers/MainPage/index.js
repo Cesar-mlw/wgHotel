@@ -235,7 +235,7 @@ class MainPage extends React.PureComponent {
     usrProfissao: '', //6
     usrTelefone: '', //5
     usrNacionalidade: '', //8
-    usrDtNascimento: new Date('1999-01-16'), //2
+    usrDtNascimento: null, //2
     usrSexo: '', //4
     usrId: '', //3
     usrDocMed: '', //7
@@ -249,6 +249,14 @@ class MainPage extends React.PureComponent {
     usrLogin: '',
     usrSenha: '',
     usrPersonalInfoDialog: false,
+    usrRegisterTextFieldsComplete: false,
+    usrPaymentInfoDialog: false,
+    usrPaymentInfoTextFieldComplete: false,
+    usrPaymentCardNumber: '',
+    usrPaymentCVV: '',
+    usrPaymentExpMonth: '',
+    usrPaymentExpYear: '',
+    usrPaymentName: '',
     //------
     //Reservation Answer
     reservationAnswerDialog: false,
@@ -276,32 +284,42 @@ class MainPage extends React.PureComponent {
 
   handleClickReserva = () => {
     if (this.state.logged) {
-      let resp = true;
-      if (
-        this.state.acomodacao == '' ||
-        this.state.chegada == null ||
-        this.state.saida == null
-      ) {
-        this.makeSnack('Preencha todos os campos antes de prosseguir');
-      } else {
-        if (!resp) {
-          this.setState({
-            reservationAnswerDialog: true,
-            reservationAnswerText:
-              'Infelizmente o quarto solicitado não está disponível',
-          });
+      let userRegistered = true;
+      if (userRegistered) {
+        let usrPaymentInfo = false;
+        if (usrPaymentInfo) {
+          let resp = true;
+          if (
+            this.state.acomodacao == '' ||
+            this.state.chegada == null ||
+            this.state.saida == null
+          ) {
+            this.makeSnack('Preencha todos os campos antes de prosseguir');
+          } else {
+            if (!resp) {
+              this.setState({
+                reservationAnswerDialog: true,
+                reservationAnswerText:
+                  'Infelizmente o quarto solicitado não está disponível',
+              });
+            } else {
+              this.setState({
+                reservationAnswerDialog: true,
+                reservationAnswerText: `Seu quarto do tipo ${
+                  this.state.acomodacao == 'standard'
+                    ? 'New York'
+                    : this.state.acomodacao == 'lightLuxury'
+                      ? 'Milan'
+                      : 'Dubai'
+                } foi reservado`,
+              });
+            }
+          }
         } else {
-          this.setState({
-            reservationAnswerDialog: true,
-            reservationAnswerText: `Seu quarto do tipo ${
-              this.state.acomodacao == 'standard'
-                ? 'New York'
-                : this.state.acomodacao == 'lightLuxury'
-                  ? 'Milan'
-                  : 'Dubai'
-            } foi reservado`,
-          });
+          this.setState({ usrPaymentInfoDialog: true });
         }
+      } else {
+        this.setState({ usrPersonalInfoDialog: true });
       }
     } else {
       this.makeSnack(
@@ -331,6 +349,14 @@ class MainPage extends React.PureComponent {
     this.setState({ chegada: new Date(event) });
   };
 
+  handleUsrPaymentInfoDialogClose = () => {
+    this.setState({ usrPaymentInfoDialog: false });
+  };
+
+  handleUsrPaymentInfoDialogOpen = () => {
+    this.setState({ usrPaymentInfoDialog: true });
+  };
+
   handleSaidaChange = event => {
     this.setState({ saida: new Date(event) });
   };
@@ -349,6 +375,7 @@ class MainPage extends React.PureComponent {
 
   handleUsrRegisterTextChange = name => event => {
     this.setState({ [name]: event.target.value });
+    this.handleUsrRegisterTextFieldCompletion();
   };
 
   makeSnack = message => {
@@ -369,6 +396,63 @@ class MainPage extends React.PureComponent {
 
   handleUsrPersonalInfoDialogClose = () => {
     this.setState({ usrPersonalInfoDialog: false });
+  };
+
+  handleUsrRegisterTextFieldCompletion = () => {
+    if (
+      this.state.usrNomeCompleto == '' ||
+      this.state.usrDtNascimento == null ||
+      this.state.usrCidade == '' ||
+      this.state.usrEndereco == '' ||
+      this.state.usrEstado == '' ||
+      this.state.usrPais == '' ||
+      this.state.usrSexo == '' ||
+      this.state.usrNacionalidade == '' ||
+      this.state.usrEnderecoNumero == '' ||
+      this.state.usrProfissao == ''
+    ) {
+      this.setState({ usrRegisterTextFieldsComplete: false });
+      //call room reservation complete
+    } else {
+      this.setState({ usrRegisterTextFieldsComplete: true });
+    }
+  };
+
+  handleUsrPersonalInfoRegisterClick = () => {
+    if (this.state.usrRegisterTextFieldsComplete) {
+      this.makeSnack('Dados Registrados com sucesso');
+      this.setState({ usrPersonalInfoDialog: false });
+    } else {
+      this.makeSnack('Preencha todos os dados necessários');
+    }
+  };
+
+  handleUsrPaymentInfoTextChange = name => event => {
+    this.setState({ [name]: event.target.value });
+    this.handleUsrPaymentInfoTextFieldCompletion();
+  };
+
+  handleUsrPaymentInfoTextFieldCompletion = () => {
+    if (
+      this.state.usrPaymentName == '' ||
+      this.state.usrPaymentCVV == '' ||
+      this.state.usrPaymentCardNumber == '' ||
+      this.state.usrPaymentExpMonth == '' ||
+      this.state.usrPaymentExpYear == ''
+    ) {
+      this.setState({ usrPaymentInfoTextFieldComplete: true });
+    } else {
+      this.setState({ usrPaymentInfoTextFieldComplete: false });
+    }
+  };
+
+  handleUsrPaymentInfoRegister = () => {
+    if (this.state.usrPaymentInfoTextFieldComplete) {
+      this.makeSnack('Dados registrados com sucesso');
+      this.setState({ usrPaymentInfoDialog: false });
+    } else {
+      this.makeSnack('Preencha todos os campos antes de prosseguir');
+    }
   };
 
   handleClickLogin = () => {
@@ -456,6 +540,12 @@ class MainPage extends React.PureComponent {
       payementMethodsList,
       occupationList,
       usrPersonalInfoDialog,
+      usrPaymentInfoDialog,
+      usrPaymentCVV,
+      usrPaymentCardNumber,
+      usrPaymentExpMonth,
+      usrPaymentExpYear,
+      usrPaymentName,
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -767,7 +857,6 @@ class MainPage extends React.PureComponent {
           fullWidth
           maxWidth="md"
           onClose={this.handleUsrPersonalInfoDialogClose}
-          onBackdropClick={this.handleUsrPersonalInfoDialogClose}
         >
           <DialogTitle>
             <Typography variant="headline">Informações pessoais</Typography>
@@ -782,6 +871,7 @@ class MainPage extends React.PureComponent {
               margin="normal"
               fullWidth
               placeholder="Bernardo Favaretto"
+              required
             />
             <DatePicker
               margin="normal"
@@ -791,6 +881,7 @@ class MainPage extends React.PureComponent {
               fullWidth
               style={{ marginBottom: '-1vh' }}
               disableFuture
+              required
             />
             <TextField
               margin="normal"
@@ -801,6 +892,7 @@ class MainPage extends React.PureComponent {
               onChange={this.handleUsrRegisterTextChange('usrId')}
               fullWidth
               helperText="Passport number or country Id number"
+              required
             />
             <div style={{ marginTop: '1vh' }}>
               <InputLabel htmlFor="sexSelect">Sexo</InputLabel>
@@ -810,6 +902,7 @@ class MainPage extends React.PureComponent {
                 onChange={this.handleUsrRegisterTextChange('usrSexo')}
                 placeholder="Sexo"
                 fullWidth
+                required
               >
                 <MenuItem value="feminino">Feminino</MenuItem>
                 <MenuItem value="masculino">Masculino</MenuItem>
@@ -825,6 +918,7 @@ class MainPage extends React.PureComponent {
               onChange={this.handleUsrRegisterTextChange('usrTelefone')}
               fullWidth
               placeholder="(11)92222-2222"
+              required
             />
             <div style={{ marginTop: '1vh' }}>
               <InputLabel htmlFor="profissao">Profissão</InputLabel>
@@ -834,6 +928,7 @@ class MainPage extends React.PureComponent {
                 onChange={this.handleUsrRegisterTextChange('usrProfissao')}
                 placeholder="Engenheiro"
                 fullWidth
+                required
               >
                 {occupationList.map(occ => (
                   <MenuItem key={occ.id} value={occ.id}>
@@ -861,7 +956,109 @@ class MainPage extends React.PureComponent {
               onChange={this.handleUsrRegisterTextChange('usrNacionalidade')}
               fullWidth
               placeholder="Brasileiro"
+              required
             />
+            <TextField
+              margin="normal"
+              id="endereco"
+              label="Endereço"
+              type="text"
+              value={usrEndereco}
+              onChange={this.handleUsrRegisterTextChange('usrEndereco')}
+              placeholder="Rua Abobrinha"
+              style={{ width: '23vw' }}
+              required
+            />
+            <TextField
+              margin="normal"
+              id="enderecoNumero"
+              label="Número"
+              type="number"
+              value={usrEnderecoNumero}
+              onChange={this.handleUsrRegisterTextChange('usrEnderecoNumero')}
+              placeholder="25"
+              style={{ width: '5vw', marginLeft: '2vw' }}
+              required
+            />
+            <TextField
+              margin="normal"
+              id="enderecoComplemento"
+              label="Complemento"
+              type="text"
+              value={usrEnderecoComplemento}
+              onChange={this.handleUsrRegisterTextChange(
+                'usrEnderecoComplemento',
+              )}
+              placeholder="ap 22"
+              style={{ width: '12vw', marginLeft: '2vw' }}
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="cidadeSelect">Cidade</InputLabel>
+              <Select
+                value={usrCidade}
+                id="cidadeSelect"
+                onChange={this.handleUsrRegisterTextChange('usrCidade')}
+                placeholder="São Paulo"
+                fullWidth
+                required
+              >
+                <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                <MenuItem value="beloHorizonte">Belo Horizonte</MenuItem>
+              </Select>
+            </div>
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="estadoSelect">Estado</InputLabel>
+              <Select
+                id="estadoSelect"
+                value={usrEstado}
+                onChange={this.handleUsrRegisterTextChange('usrEstado')}
+                placeholder="São Paulo"
+                fullWidth
+                required
+              >
+                <MenuItem value="saoPaulo">São Paulo</MenuItem>
+                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
+                <MenuItem value="minasGerais">Minas Gerais</MenuItem>
+              </Select>
+            </div>
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="paisSelect">País</InputLabel>
+              <Select
+                id="paisSelect"
+                value={usrPais}
+                onChange={this.handleUsrRegisterTextChange('usrPais')}
+                placeholder="Brasil"
+                fullWidth
+                required
+              >
+                <MenuItem value="Brasil">Brasil</MenuItem>
+                <MenuItem value="Canada">Canada</MenuItem>
+                <MenuItem value="russia">Rússia</MenuItem>
+              </Select>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={this.handleUsrPersonalInfoRegisterClick}
+              color="primary"
+            >
+              Cadastrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={usrPaymentInfoDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleUsrPaymentInfoDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="headline">Informações fiscais</Typography>
+          </DialogTitle>
+          <DialogContent>
             <div style={{ marginTop: '1vh' }}>
               <InputLabel htmlFor="meioPagamento">Meio de Pagamento</InputLabel>
               <Select
@@ -880,86 +1077,83 @@ class MainPage extends React.PureComponent {
                 ))}
               </Select>
             </div>
-            <TextField
-              margin="normal"
-              id="endereco"
-              label="Endereço"
-              type="text"
-              value={usrEndereco}
-              onChange={this.handleUsrRegisterTextChange('usrEndereco')}
-              placeholder="Rua Abobrinha"
-              style={{ width: '23vw' }}
-            />
-            <TextField
-              margin="normal"
-              id="enderecoNumero"
-              label="Número"
-              type="number"
-              value={usrEnderecoNumero}
-              onChange={this.handleUsrRegisterTextChange('usrEnderecoNumero')}
-              placeholder="25"
-              style={{ width: '5vw', marginLeft: '2vw' }}
-            />
-            <TextField
-              margin="normal"
-              id="enderecoComplemento"
-              label="Complemento"
-              type="text"
-              value={usrEnderecoComplemento}
-              onChange={this.handleUsrRegisterTextChange(
-                'usrEnderecoComplemento',
-              )}
-              placeholder="ap 22"
-              style={{ width: '12vw', marginLeft: '2vw' }}
-            />
-            <div style={{ marginTop: '1vh' }}>
-              <InputLabel htmlFor="sexSelect">Cidade</InputLabel>
-              <Select
-                value={usrCidade}
-                onChange={this.handleUsrRegisterTextChange('usrCidade')}
-                placeholder="São Paulo"
-                fullWidth
-              >
-                <MenuItem value="saoPaulo">São Paulo</MenuItem>
-                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
-                <MenuItem value="beloHorizonte">Belo Horizonte</MenuItem>
-              </Select>
-            </div>
-            <div style={{ marginTop: '1vh' }}>
-              <InputLabel htmlFor="estadoSelect">Estado</InputLabel>
-              <Select
-                id="estadoSelect"
-                value={usrEstado}
-                onChange={this.handleUsrRegisterTextChange('usrEstado')}
-                placeholder="São Paulo"
-                fullWidth
-              >
-                <MenuItem value="saoPaulo">São Paulo</MenuItem>
-                <MenuItem value="rioDeJaneiro">Rio de Janeiro</MenuItem>
-                <MenuItem value="minasGerais">Minas Gerais</MenuItem>
-              </Select>
-            </div>
-            <div style={{ marginTop: '1vh' }}>
-              <InputLabel htmlFor="paisSelect">País</InputLabel>
-              <Select
-                id="paisSelect"
-                value={usrPais}
-                onChange={this.handleUsrRegisterTextChange('usrPais')}
-                placeholder="Brasil"
-                fullWidth
-              >
-                <MenuItem value="Brasil">Brasil</MenuItem>
-                <MenuItem value="Canada">Canada</MenuItem>
-                <MenuItem value="russia">Rússia</MenuItem>
-              </Select>
-            </div>
+            {this.state.usrMeioDePagamento == 1 ||
+            this.state.usrMeioDePagamento == 2 ? (
+              <div>
+                <TextField
+                  margin="normal"
+                  id="cardNumber"
+                  label="Número do Cartão"
+                  type="text"
+                  value={usrPaymentCardNumber}
+                  onChange={this.handleUsrPaymentInfoTextChange(
+                    'usrPaymentCardNumber',
+                  )}
+                  placeholder="2222333344445555"
+                  fullWidth
+                  required
+                />
+                <TextField
+                  margin="normal"
+                  id="cardName"
+                  label="Nome Impresso no Cartão"
+                  type="text"
+                  value={usrPaymentName}
+                  onChange={this.handleUsrPaymentInfoTextChange(
+                    'usrPaymentName',
+                  )}
+                  placeholder="Bernardo Favaretto"
+                  fullWidth
+                  required
+                />
+                <TextField
+                  margin="normal"
+                  id="cardCVV"
+                  label="CVV"
+                  type="text"
+                  value={usrPaymentCVV}
+                  onChange={this.handleUsrPaymentInfoTextChange(
+                    'usrPaymentCVV',
+                  )}
+                  placeholder="555"
+                  required
+                />
+                <div >
+                  <TextField
+                    id="cardMonth"
+                    label="Mês"
+                    type="text"
+                    value={usrPaymentExpMonth}
+                    onChange={this.handleUsrPaymentInfoTextChange(
+                      'usrPaymentExpMonth',
+                    )}
+                    placeholder="01 - 12"
+                    required
+                  />
+                  <Typography> / </Typography>
+                  <TextField
+                    id="carYear"
+                    label="Ano"
+                    type="text"
+                    value={usrPaymentExpYear}
+                    onChange={this.handleUsrPaymentInfoTextChange(
+                      'usrPaymentExpYear',
+                    )}
+                    placeholder="10 - 27"
+                    required
+                  />
+                </div>
+              </div>
+            ) : (
+              <div />
+            )}
           </DialogContent>
           <DialogActions>
             <Button
               onClick={this.handleReservationAnswerDialogClose}
               color="primary"
             >
-              Cadastrar
+              Ok
             </Button>
           </DialogActions>
         </Dialog>
