@@ -8,6 +8,7 @@ import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Cookies from 'universal-cookie'
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import StockCard from '../../components/StockCard/Loadable';
@@ -134,6 +135,8 @@ const styles = {
     marginLeft: '30vw',
   },
 };
+
+const cookies = new Cookies();
 
 /* eslint-disable react/prefer-stateless-function */
 export class MngrPage extends React.Component {
@@ -355,7 +358,7 @@ export class MngrPage extends React.Component {
               </div>
               <div id="welcomeText" className={classes.welcomeText}>
                 <Typography variant="overline" noWrap>
-                  Bem vindo, Cesar
+                  Bem vindo, {cookies.get('usrName')}
                 </Typography>
               </div>
               <div id="menu">

@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import Cookies from 'universal-cookie'
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
@@ -59,6 +60,8 @@ import infoImage from '../../images/infoImage.jpg';
 
 const restText =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris scelerisque viverra orci sit amet volutpat. Maecenas egestas egestas mi eu tincidunt. Phasellus consectetur velit ultricies dui consequat, ut pretium mi rhoncus. Suspendisse tempus libero in auctor volutpat. Aenean tincidunt leo egestas tellus egestas lacinia. Donec neque augue, porttitor a tincidunt sit amet, posuere id quam. Aenean ultrices lorem orci, non sagittis nunc hendrerit at. Ut tempus tortor eu turpis luctus, a condimentum risus suscipit. Sed quis est sit amet libero convallis lacinia sit amet eu leo. Ut lacinia sollicitudin mauris, sit amet eleifend ante vulputate vitae. Aliquam erat volutpat.';
+
+const cookies = new Cookies()
 
 const styles = {
   root: {
@@ -199,6 +202,10 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
   },
+  monthYearTextField: {
+    width: '6vw',
+    float: 'left',
+  },
 };
 
 const room = [
@@ -224,8 +231,8 @@ class MainPage extends React.PureComponent {
     saida: null,
     logged: false, // TESTING
     loginDialog: false,
-    loginUsrTextField: 'Cheddar',
-    loginPssTextField: '1234',
+    loginUsrTextField: '',
+    loginPssTextField: '',
     snackOpen: false,
     snackMessage: '',
     tpUsuario: '',
@@ -264,6 +271,9 @@ class MainPage extends React.PureComponent {
     //------
     payementMethodsList: [],
     occupationList: [],
+    roomType: [],
+    usrDbId: null,
+    usrDBName: '',
   };
 
   handleMenu = event => {
@@ -282,11 +292,18 @@ class MainPage extends React.PureComponent {
     this.setState({ usrRegistertDialog: true });
   };
 
+  
+
   handleClickReserva = () => {
+    let date = Date.parse(this.state.saida);
+    let arrival = Date.parse(this.state.chegada);
+    if (date < arrival) {
+      this.makeSnack('A data de chegada deve ser depois da de chegada');
+      this.setState({ chegada: null, saida: null });
+      return;
+    }
     if (this.state.logged) {
-      let userRegistered = true;
-      if (userRegistered) {
-        let usrPaymentInfo = false;
+        let usrPaymentInfo = true;
         if (usrPaymentInfo) {
           let resp = true;
           if (
@@ -318,9 +335,7 @@ class MainPage extends React.PureComponent {
         } else {
           this.setState({ usrPaymentInfoDialog: true });
         }
-      } else {
-        this.setState({ usrPersonalInfoDialog: true });
-      }
+      
     } else {
       this.makeSnack(
         'Registre-se ou faça o login antes de efetuar uma reserva',
@@ -345,6 +360,40 @@ class MainPage extends React.PureComponent {
     this.setState({ acomodacao: event.target.value });
   };
 
+  handleRegisterClick = () => {
+    if (this.state.usrLogin != '' && this.state.usrSenha != '') {
+      axios
+        .post(
+          'http://wg-tech-homologacao.herokuapp.com/user',
+          { username: this.state.usrLogin, password: this.state.usrSenha },
+          {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+        .then(response => {
+          let data = response.data;
+          console.log(data);
+          if (data.success) {
+            this.setState({
+              usrSenha: '',
+              usrDbId: data.return.id,
+            });
+            this.makeSnack('Registrado com sucesso');
+          } else {
+            this.makeSnack('Erro ao registrar usuário, tente novamente');
+          }
+        })
+        .catch(err => console.log(err));
+    } else {
+      this.makeSnack('Preencha todos os campos antes prosseguir');
+    }
+
+    this.handleUsrRegisterDialogClose();
+  };
+
   handleChegadaChange = event => {
     this.setState({ chegada: new Date(event) });
   };
@@ -356,6 +405,24 @@ class MainPage extends React.PureComponent {
   handleUsrPaymentInfoDialogOpen = () => {
     this.setState({ usrPaymentInfoDialog: true });
   };
+
+  checkUserInfo = () => {
+    axios.get(`http://wg-tech-homologacao.herokuapp.com/person/user/${this.state.usrDbId}`)
+      .then(response => {
+        let data = response.data
+        if(data.return == null){
+          this.setState({usrPersonalInfoDialog: true})
+        }
+        else if(data.return != null){
+          this.setState({usrDBName: data.return.name})
+          cookies.set('usrName', data.return.name)
+          cookies.set('usrDbId', this.state.usrDbId)
+        }
+        if(data.error){
+          console.error(data.error)
+        }
+      })
+  }
 
   handleSaidaChange = event => {
     this.setState({ saida: new Date(event) });
@@ -375,7 +442,6 @@ class MainPage extends React.PureComponent {
 
   handleUsrRegisterTextChange = name => event => {
     this.setState({ [name]: event.target.value });
-    this.handleUsrRegisterTextFieldCompletion();
   };
 
   makeSnack = message => {
@@ -398,28 +464,40 @@ class MainPage extends React.PureComponent {
     this.setState({ usrPersonalInfoDialog: false });
   };
 
-  handleUsrRegisterTextFieldCompletion = () => {
-    if (
-      this.state.usrNomeCompleto == '' ||
-      this.state.usrDtNascimento == null ||
-      this.state.usrCidade == '' ||
-      this.state.usrEndereco == '' ||
-      this.state.usrEstado == '' ||
-      this.state.usrPais == '' ||
-      this.state.usrSexo == '' ||
-      this.state.usrNacionalidade == '' ||
-      this.state.usrEnderecoNumero == '' ||
-      this.state.usrProfissao == ''
-    ) {
-      this.setState({ usrRegisterTextFieldsComplete: false });
-      //call room reservation complete
-    } else {
-      this.setState({ usrRegisterTextFieldsComplete: true });
-    }
-  };
 
   handleUsrPersonalInfoRegisterClick = () => {
-    if (this.state.usrRegisterTextFieldsComplete) {
+    if (
+      this.state.usrNomeCompleto != '' &&
+      this.state.usrDocMed != '' &&
+      this.state.usrDtNascimento != '' &&
+      this.state.usrNacionalidade != '' &&
+      this.state.usrId != '' &&
+      this.state.usrProfissao != '' &&
+      this.state.usrSexo != ''
+    ) {
+      axios.post("http://wg-tech-homologacao.herokuapp.com/person", {
+        name: this.state.usrNomeCompleto, 
+        document: this.state.usrId, 
+        birth: this.state.usrDtNascimento,
+        nationality: this.state.usrNacionalidade,
+        deficient: this.state.usrDocMed == '' ? false : true,
+        deficientDocument: this.state.usrDocMed,
+        gender: this.state.usrSexo,
+        OccupationId: this.state.usrProfissao,
+        UserId: this.state.usrDbId,
+      })
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          this.makeSnack("Informações pessoais registradas com sucesso")
+          cookies.set('usrName', this.state.usrNomeCompleto)
+          cookies.set('usrDbId', this.state.usrDbId)
+        }
+        else if(data.error){
+          console.error(data.error)
+        }
+      })
+      
       this.makeSnack('Dados Registrados com sucesso');
       this.setState({ usrPersonalInfoDialog: false });
     } else {
@@ -432,7 +510,9 @@ class MainPage extends React.PureComponent {
     this.handleUsrPaymentInfoTextFieldCompletion();
   };
 
-  handleUsrPaymentInfoTextFieldCompletion = () => {
+
+
+  handleUsrPaymentInfoRegister = () => {
     if (
       this.state.usrPaymentName == '' ||
       this.state.usrPaymentCVV == '' ||
@@ -440,36 +520,51 @@ class MainPage extends React.PureComponent {
       this.state.usrPaymentExpMonth == '' ||
       this.state.usrPaymentExpYear == ''
     ) {
-      this.setState({ usrPaymentInfoTextFieldComplete: true });
+      this.makeSnack('Preencha todos os campos antes de prosseguir');
     } else {
-      this.setState({ usrPaymentInfoTextFieldComplete: false });
-    }
-  };
-
-  handleUsrPaymentInfoRegister = () => {
-    if (this.state.usrPaymentInfoTextFieldComplete) {
       this.makeSnack('Dados registrados com sucesso');
       this.setState({ usrPaymentInfoDialog: false });
-    } else {
-      this.makeSnack('Preencha todos os campos antes de prosseguir');
     }
   };
 
   handleClickLogin = () => {
     if (
-      this.state.loginUsrTextField == 'Cheddar' &&
-      this.state.loginPssTextField == '1234'
+      this.state.loginUsrTextField != '' &&
+      this.state.loginPssTextField != ''
     ) {
-      this.setState({
-        logged: true,
-        loginDialog: false,
-        anchorEl: null,
-        tpUsuario: 'admin',
-      });
-      this.makeSnack('Logged as Cesar Moura Leite Westphal');
+      axios
+        .get('http://wg-tech-homologacao.herokuapp.com/user', {
+          params: {
+            email: this.state.loginUsrTextField,
+          },
+        })
+        .then(response => {
+          let data = response.data;
+          if (data.success) {
+            if(data.return == null){
+              this.makeSnack("E-mail ou senha incorreto")
+              this.setState({anchorEl: null, loginDialog: false})
+            }
+            if (data.return.password == this.state.loginPssTextField) {
+              this.setState({
+                logged: true,
+                loginDialog: false,
+                anchorEl: null,
+                tpUsuario: 'admin',
+                usrDbId: data.return.id
+              });
+              this.checkUserInfo();
+            }
+            else{
+              this.setState({anchorEl: null, loginDialog: false})
+              this.makeSnack("E-mail ou senha Incorreta")
+            }
+          } else {
+            this.makeSnack('Falha ao realizar login, tente novamente');
+          }
+        });
     } else {
-      this.setState({ loginDialog: false, anchorEl: null });
-      this.makeSnack('Usuário ou senha incorretos');
+      this.makeSnack('Preencha todos os campos antes de prosseguir');
     }
   };
 
@@ -503,9 +598,25 @@ class MainPage extends React.PureComponent {
       .catch(err => console.log(err));
   };
 
+  handleRoomTypeCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/bedrooms/types', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ roomType: data });
+      })
+      .catch(err => console.log(err));
+  }
+
   componentDidMount() {
     this.handlePaymentMethodCall();
     this.handleOccupationCall();
+    this.handleRoomTypeCall();
   }
 
   render() {
@@ -546,6 +657,8 @@ class MainPage extends React.PureComponent {
       usrPaymentExpMonth,
       usrPaymentExpYear,
       usrPaymentName,
+      usrDbId,
+      usrDBName
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -561,11 +674,11 @@ class MainPage extends React.PureComponent {
             <div className={classes.grow} id="logo">
               <img src={placeholderLogo} className={classes.grow} />
             </div>
-            {this.state.logged ? (
+            {logged ? (
               <div className={classes.appBarRoot}>
                 <div id="welcomeText" className={classes.welcomeText}>
                   <Typography variant="overline" noWrap>
-                    Bem vindo, Cesar
+                    Bem vindo(a), {usrDBName}
                   </Typography>
                 </div>
                 <div id="menu">
@@ -649,13 +762,13 @@ class MainPage extends React.PureComponent {
             margin="normal"
             color="inherit"
           >
-            {room.map(option => (
+            {this.state.roomType.map(option => (
               <MenuItem
-                key={option.value}
-                value={option.value}
+                key={option.id}
+                value={option.id}
                 style={{ textColor: '#00BFDF' }}
               >
-                {option.label}
+                {option.type}
               </MenuItem>
             ))}
           </TextField>
@@ -803,7 +916,7 @@ class MainPage extends React.PureComponent {
               variant="body2"
               onClick={this.handleRegisterClickLink}
             >
-              Cadastre-se!
+              Login
             </Link>
           </DialogContent>
           <DialogActions>
@@ -845,7 +958,7 @@ class MainPage extends React.PureComponent {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+            <Button onClick={this.handleRegisterClick} color="primary">
               Cadastrar
             </Button>
           </DialogActions>
@@ -1079,7 +1192,7 @@ class MainPage extends React.PureComponent {
             </div>
             {this.state.usrMeioDePagamento == 1 ||
             this.state.usrMeioDePagamento == 2 ? (
-              <div>
+              <div style={{ float: 'left' }}>
                 <TextField
                   margin="normal"
                   id="cardNumber"
@@ -1118,7 +1231,7 @@ class MainPage extends React.PureComponent {
                   placeholder="555"
                   required
                 />
-                <div >
+                <div>
                   <TextField
                     id="cardMonth"
                     label="Mês"
@@ -1129,8 +1242,12 @@ class MainPage extends React.PureComponent {
                     )}
                     placeholder="01 - 12"
                     required
+                    className={classes.monthYearTextField}
                   />
-                  <Typography> / </Typography>
+                  <Typography variant="display1" style={{ marginTop: '2vh' }}>
+                    {' '}
+                    /{' '}
+                  </Typography>
                   <TextField
                     id="carYear"
                     label="Ano"
@@ -1141,6 +1258,7 @@ class MainPage extends React.PureComponent {
                     )}
                     placeholder="10 - 27"
                     required
+                    className={classes.monthYearTextField}
                   />
                 </div>
               </div>
