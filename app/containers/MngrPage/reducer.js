@@ -5,6 +5,8 @@
  */
 
 import { fromJS } from 'immutable';
+import axios from 'axios'
+
 import {
   GET_RADIO_DATA,
   GET_RADIO_DATA_SUCCESS,
@@ -12,7 +14,9 @@ import {
   GET_PRODUCT_DATA,
   GET_PRODUCT_DATA_ERROR,
   GET_PRODUCT_DATA_SUCCESS,
+  GET_OCCUPATION_LIST
 } from './constants';
+
 
 export const initialState = fromJS({
   roomData: [
@@ -39,6 +43,7 @@ export const initialState = fromJS({
     {id:2, name:"Bruna Favaretto", hospedado: false, meioPagamento: 'dinheiro'},
     {id:3, name:"Rodrigo Favaretto", hospedado: false, meioPagamento: 'cartaoDebito'},
   ],
+  occupationList: []
 });
 
 function mngrPageReducer(state = initialState, action) {
@@ -98,7 +103,7 @@ function mngrPageReducer(state = initialState, action) {
         { id:5, nome:"Milano Cookies", preco:15.00, qtde:36 },
       ])
     case GET_PRODUCT_DATA_ERROR:
-      state.set('loading', false).set('error', action.error)
+      state.set('loading', false).set('error', action.error)      
     default:
       return state;
   }
