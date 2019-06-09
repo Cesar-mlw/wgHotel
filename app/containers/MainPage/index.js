@@ -226,7 +226,7 @@ const room = [
 class MainPage extends React.PureComponent {
   state = {
     anchorEl: null,
-    acomodacao: '',
+    acomodacao: 0,
     chegada: null,
     saida: null,
     logged: false, // TESTING
@@ -274,6 +274,15 @@ class MainPage extends React.PureComponent {
     roomType: [],
     usrDbId: null,
     usrDBName: '',
+    personId: '',
+    //reservation info
+    usrReservationInfoDialog: false,
+    usrReservationInfoNumberOfChildren: 0,
+    usrReservationInfoNumberOfAdults: 0,
+    usrReservationInfoSelectedRoom: '',
+    usrReservationInfoTotalCost: 0,
+    availableRoomTypes: [],
+    daysStaying: 0,
   };
 
   handleMenu = event => {
@@ -288,59 +297,108 @@ class MainPage extends React.PureComponent {
     this.setState({ usrRegistertDialog: false });
   };
 
+  handleUsrReservationInfoDialogClose = () => {
+    this.setState({usrReservationInfoDialog: false})
+  }
+
+  handleUsrReservationInfoDialogTextChange = name => event => {
+    this.setState({[name]: event.target.value})
+  }
+  
+  handleUsrReservationInfoDialogOpen = () => {
+    this.setState({usrReservationInfoDialog: true})
+  }
+
   handleUsrRegisterDialogOpen = () => {
     this.setState({ usrRegistertDialog: true });
   };
 
-  
+  handleRoomFinalReservationClick = () => {
+    let booking = {
+      valueTotal: parseFloat(this.state.usrReservationInfoTotalCost),
+      childrensQuantity: this.state.usrReservationInfoNumberOfChildren,
+      adultsQuantity: this.state.usrReservationInfoNumberOfAdults,
+      StartDate: Date.parse(this.state.chegada),
+      EndDate: Date.parse(this.state.saida),
+      PaymentMethodId: this.state.usrMeioDePagamento,
+      PersonId: this.state.personId,
+      BedroomId: this.state.usrReservationInfoSelectedRoom,
+      checkIn: false,
+      checkOut: false
+    }
+    console.log(booking);
+    if(this.state.usrReservationInfoSelectedRoom == '' || this.state.usrReservationInfoNumberOfAdults == 0){
+      this.makeSnack('Campo "Número de adultos" e/ou "Quarto" não preenchidos')
+    }
+    else{
+      axios.post('http://wg-tech-homologacao.herokuapp.com/bookings', booking)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          this.makeSnack("Quarto reservado com sucesso")
+          this.setState({usrReservationInfoDialog: false, chegada: null, saida: null})
+          axios.put(`http://wg-tech-homologacao.herokuapp.com/bedrooms/status/${this.state.usrReservationInfoSelectedRoom}/Ocupado`)
+            .then(response => {
+              let data = response.data
+              if(data.success){
+                console.log("Sucesso");
+              }
+              else{
+                console.log(data.error)
+              }
+            })
+        }
+        else{
+          console.error(data)
+        }
+      })
+    }
+  }
+
+  handleAvailableRoomTypeCall = () => {
+    axios.get(`http://wg-tech-homologacao.herokuapp.com/bedrooms/types/available/${this.state.acomodacao}`)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          let totalCost = this.state.daysStaying * data.return[0].dayPrice
+          this.setState({usrReservationInfoTotalCost: totalCost})
+          this.setState({availableRoomTypes: data.return})
+        }
+        else if(data.error){
+          console.error(data.error)
+        }
+      })
+  }
+
+  handleFinanceInformationRegister = () => {
+    this.makeSnack("Informações fiscais registradas com sucesso")
+    this.setState({usrPaymentInfoDialog: false})
+    this.handleAvailableRoomTypeCall();
+    this.handleUsrReservationInfoDialogOpen();
+  }
+
+
 
   handleClickReserva = () => {
-    let date = Date.parse(this.state.saida);
+    let departure = Date.parse(this.state.saida);
     let arrival = Date.parse(this.state.chegada);
-    if (date < arrival) {
+    if (departure < arrival) {
       this.makeSnack('A data de chegada deve ser depois da de chegada');
       this.setState({ chegada: null, saida: null });
       return;
     }
-    if (this.state.logged) {
-        let usrPaymentInfo = true;
-        if (usrPaymentInfo) {
-          let resp = true;
-          if (
-            this.state.acomodacao == '' ||
-            this.state.chegada == null ||
-            this.state.saida == null
-          ) {
-            this.makeSnack('Preencha todos os campos antes de prosseguir');
-          } else {
-            if (!resp) {
-              this.setState({
-                reservationAnswerDialog: true,
-                reservationAnswerText:
-                  'Infelizmente o quarto solicitado não está disponível',
-              });
-            } else {
-              this.setState({
-                reservationAnswerDialog: true,
-                reservationAnswerText: `Seu quarto do tipo ${
-                  this.state.acomodacao == 'standard'
-                    ? 'New York'
-                    : this.state.acomodacao == 'lightLuxury'
-                      ? 'Milan'
-                      : 'Dubai'
-                } foi reservado`,
-              });
-            }
-          }
-        } else {
-          this.setState({ usrPaymentInfoDialog: true });
-        }
-      
-    } else {
-      this.makeSnack(
-        'Registre-se ou faça o login antes de efetuar uma reserva',
-      );
-      this.setState({ loginDialog: true });
+    else if(this.state.acomodacao == 0){
+      this.makeSnack('Selecione uma Acomodação');
+      return;
+    }
+    let numberOfDays = (departure - arrival)/86400000
+    this.setState({daysStaying: numberOfDays})
+    if(this.state.logged){
+      this.setState({usrPaymentInfoDialog: true})
+    } 
+    else{
+      this.makeSnack("Registre-se ou efetue o Login para fazer uma reserva")
+      this.setState({loginDialog: true})
     }
   };
 
@@ -417,6 +475,7 @@ class MainPage extends React.PureComponent {
           this.setState({usrDBName: data.return.name})
           cookies.set('usrName', data.return.name)
           cookies.set('usrDbId', this.state.usrDbId)
+          this.setState({personId: data.return.id})
         }
         if(data.error){
           console.error(data.error)
@@ -468,7 +527,6 @@ class MainPage extends React.PureComponent {
   handleUsrPersonalInfoRegisterClick = () => {
     if (
       this.state.usrNomeCompleto != '' &&
-      this.state.usrDocMed != '' &&
       this.state.usrDtNascimento != '' &&
       this.state.usrNacionalidade != '' &&
       this.state.usrId != '' &&
@@ -492,6 +550,8 @@ class MainPage extends React.PureComponent {
           this.makeSnack("Informações pessoais registradas com sucesso")
           cookies.set('usrName', this.state.usrNomeCompleto)
           cookies.set('usrDbId', this.state.usrDbId)
+          cookies.set('personId', data.return.id)
+          this.setState({personId: data.return.id})
         }
         else if(data.error){
           console.error(data.error)
@@ -613,6 +673,21 @@ class MainPage extends React.PureComponent {
       .catch(err => console.log(err));
   }
 
+  handlePersonCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/bedrooms/types', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ roomType: data });
+      })
+      .catch(err => console.log(err));
+  }
+
   componentDidMount() {
     this.handlePaymentMethodCall();
     this.handleOccupationCall();
@@ -658,7 +733,13 @@ class MainPage extends React.PureComponent {
       usrPaymentExpYear,
       usrPaymentName,
       usrDbId,
-      usrDBName
+      usrDBName,
+      usrReservationInfoDialog,
+      usrReservationInfoNumberOfAdults,
+      usrReservationInfoNumberOfChildren,
+      usrReservationInfoSelectedRoom,
+      usrReservationInfoTotalCost,
+      availableRoomTypes
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -964,12 +1045,86 @@ class MainPage extends React.PureComponent {
           </DialogActions>
         </Dialog>
         <Dialog
+          open={usrReservationInfoDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleUsrReservationInfoDialogClose}
+          disableBackdropClick
+          disableEscapeKeyDown
+        >
+          <DialogTitle>
+            <Typography variant="overline">Informações sobre a Acomodação</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              id="childreQty"
+              type="number"
+              label="Número de Crianças"
+              value={usrReservationInfoNumberOfChildren}
+              onChange={this.handleUsrReservationInfoDialogTextChange('usrReservationInfoNumberOfChildren')}
+              margin="normal"
+              fullWidth
+              placeholder="3"
+              helperText='humanos entre 0 e 12 anos'
+              required
+            />
+            <TextField
+              id="adultQty"
+              type="number"
+              label="Número de Adultos"
+              value={usrReservationInfoNumberOfAdults}
+              onChange={this.handleUsrReservationInfoDialogTextChange('usrReservationInfoNumberOfAdults')}
+              margin="normal"
+              fullWidth
+              placeholder="3"
+              helperText='humanos de 13 anos para cima'
+              required
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="roomSelect">Quarto</InputLabel>
+              <Select
+                id="roomSelect"
+                value={usrReservationInfoSelectedRoom}
+                onChange={this.handleUsrReservationInfoDialogTextChange('usrReservationInfoSelectedRoom')}
+                placeholder="Quarto"
+                fullWidth
+                required
+              >
+                {availableRoomTypes.map(room => (
+                  <MenuItem value={room.id} key={room.id}>{room.number}</MenuItem>
+                ))}
+              </Select>
+            </div>
+            <TextField
+              id="adultQty"
+              type="number"
+              label="Preço Total"
+              value={usrReservationInfoTotalCost}
+              onChange={this.handleUsrReservationInfoDialogTextChange('usrReservationInfoTotalCost')}
+              margin="normal"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleRoomFinalReservationClick} color="primary">
+              Reservar
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
           open={usrPersonalInfoDialog}
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
           maxWidth="md"
           onClose={this.handleUsrPersonalInfoDialogClose}
+          disableBackdropClick
+          disableEscapeKeyDown
         >
           <DialogTitle>
             <Typography variant="headline">Informações pessoais</Typography>
@@ -1167,6 +1322,8 @@ class MainPage extends React.PureComponent {
           fullWidth
           maxWidth="md"
           onClose={this.handleUsrPaymentInfoDialogClose}
+          disableBackdropClick
+          disableEscapeKeyDown
         >
           <DialogTitle>
             <Typography variant="headline">Informações fiscais</Typography>
@@ -1268,7 +1425,7 @@ class MainPage extends React.PureComponent {
           </DialogContent>
           <DialogActions>
             <Button
-              onClick={this.handleReservationAnswerDialogClose}
+              onClick={this.handleFinanceInformationRegister}
               color="primary"
             >
               Ok

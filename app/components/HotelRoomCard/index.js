@@ -182,6 +182,7 @@ class HotelRoomCard extends React.Component {
       roomType: [],
       chedaga: null,
       saida: null,
+      roomId: this.props.id
     };
   }
   Transition = props => {
@@ -309,7 +310,16 @@ class HotelRoomCard extends React.Component {
   };
 
   handleSupAcomodConfirm = () => {
-    //call action to store state inside database
+    axios.put(`https://wg-tech-homologacao.herokuapp.com/bedrooms/${this.state.roomId}/type/${this.state.supAcomodRoomState}`)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          console.log("Sucesso")
+        }
+        else{
+          console.error(data.error)
+        }
+      })
   };
   handleSupAcomodCancel = () => {
     this.setState({ supAcomodRoomState: this.props.tipoQuarto });
@@ -572,9 +582,9 @@ class HotelRoomCard extends React.Component {
                       />
                     }
                   >
-                    <MenuItem value="Milan">Milan</MenuItem>
-                    <MenuItem value="New York">New York</MenuItem>
-                    <MenuItem value="Dubai">Dubai</MenuItem>
+                    {roomType.map(room => (
+                      <MenuItem value={room.id} key={room.id}>{room.type}</MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 <Button

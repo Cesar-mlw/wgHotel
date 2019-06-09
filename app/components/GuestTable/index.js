@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import axios from 'axios'
 import {
   Dialog,
   withStyles,
@@ -45,7 +46,7 @@ class GuestTable extends React.Component {
     usrProfissao: '', //6
     usrTelefone: '', //5
     usrNacionalidade: '', //8
-    usrDtNascimento: new Date('1999-01-16'), //2
+    usrDtNascimento: null, //2
     usrSexo: '', //4
     usrId: '', //3
     usrDocMed: '', //7
@@ -56,6 +57,7 @@ class GuestTable extends React.Component {
     usrEstado: '', //11
     usrPais: '', //12
     usrMeioDePagamento: '',
+    profissaoList: []
   };
   Transition = props => {
     return <Slide direction="up" {...props} />;
@@ -64,12 +66,12 @@ class GuestTable extends React.Component {
     const elements = [];
     this.props.guestList.forEach(gst => {
       elements.push(
-        <TableRow key={gst.id} id={gst.key}>
-          <TableCell>{gst.name}</TableCell>
+        <TableRow key={gst.id} id={gst.id}>
+          <TableCell>{gst.Person.name}</TableCell>
           <TableCell align="right">
-            {gst.hospedado ? 'Hospedado' : 'Não Hospedade'}
+            {gst.checkIn ? 'Hospedado' : 'Não Hospedade'}
           </TableCell>
-          <TableCell align="right">{gst.meioPagamento}</TableCell>
+          <TableCell align="right">{gst.PaymentMethod.method}</TableCell>
           <TableCell align="right">
             <IconButton
               color="primary"
@@ -82,9 +84,9 @@ class GuestTable extends React.Component {
           <TableCell align="right">
             <Button
               variant="outlined"
-              color={gst.hospedado ? 'secondary' : 'primary'}
+              color={gst.checkIn ? 'secondary' : 'primary'}
             >
-              {gst.hospedado ? 'Check-out' : 'Check-in'}
+              {gst.checkIn ? 'Check-out' : 'Check-in'}
             </Button>
           </TableCell>
         </TableRow>,
@@ -94,6 +96,15 @@ class GuestTable extends React.Component {
   };
   handleEditDialogOpen = id => {
     this.setState({ editDialog: true, usrId: id });
+    let gst = this.props.guestList.filter(gst => gst.id == id)
+    this.setState({
+      usrNomeCompleto: gst[0].Person.name,
+      usrId: gst[0].Person.document,
+      usrNacionalidade: gst[0].Person.nationality,
+      usrDtNascimento: gst[0].Person.birth,
+      usrSexo: gst[0].Person.gender,
+      usrProfissao: gst[0].Person.OccupationId
+    })
   };
   handleUsrEditTextChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -101,6 +112,22 @@ class GuestTable extends React.Component {
   handleEditDialogClose = () => {
     this.setState({ editDialog: false, usrId: '' });
   };
+
+  handleOccupationCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/persons/occupations', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ profissaoList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
   handleDeleteDialogOpen = id => {
     this.setState({ deleteDialog: true, usrId: id });
   };
@@ -111,6 +138,9 @@ class GuestTable extends React.Component {
     let usr = this.props.guestList.filter(usr => usr.id == id);
     return usr[0].name;
   };
+  componentDidMount() {
+    this.handleOccupationCall();
+  }
   render() {
     const { classes } = this.props;
     const {
@@ -218,16 +248,24 @@ class GuestTable extends React.Component {
               fullWidth
               placeholder="(11)92222-2222"
             />
-            <TextField
-              margin="normal"
-              id="profissao"
-              label="Profissão"
-              type="text"
-              value={usrProfissao}
-              onChange={this.handleUsrEditTextChange('usrProfissao')}
-              fullWidth
-              placeholder="Engenheiro"
-            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="occSelect">Profissão</InputLabel>
+              <Select
+                id="occSelect"
+                value={usrProfissao}
+                onChange={this.handleUsrEditTextChange(
+                  'usrProfissao',
+                )}
+                placeholder="Engenheiro"
+                fullWidth
+              >
+                {this.state.profissaoList.map(occ => (
+                  <MenuItem key={occ.id} value={occ.id}>
+                    {occ.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             <TextField
               margin="normal"
               id="documentoMedico"
