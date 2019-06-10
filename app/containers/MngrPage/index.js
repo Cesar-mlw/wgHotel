@@ -186,7 +186,9 @@ export class MngrPage extends React.Component {
     roomType: [],
     snackMessage: '',
     snackOpen: false,
-    guestData: []
+    guestData: [],
+    itemLocalSelect:'',
+    productList: [],
   };
 
   handleMenu = event => {
@@ -335,6 +337,42 @@ export class MngrPage extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
+  handleItemRegisterClick = () => {
+    const data = {
+      name: this.state.itemRegisterName,
+      value: this.state.itemRegisterPrice,
+      minQuantity: 25,
+      maxQuantity: 250
+    }
+    axios.post('https://wg-tech-homologacao.herokuapp.com/products', data)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          console.log("Sucesso")
+          this.setState({itemRegisterDialog: false})
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  }
+
+  handleProductCall = () => {
+    axios.get('https://wg-tech-homologacao.herokuapp.com/products')
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          
+          this.setState({
+            productList: data.return
+          })
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  }
+
   handleItemRegisterDialogOpen = () => {
     this.setState({ itemRegisterDialog: true });
   };
@@ -374,6 +412,11 @@ export class MngrPage extends React.Component {
 
   }
 
+  handleItemRequestDialogCloseDialogClose = () =>{
+    this.makeSnack("Produto Solicitado")
+    this.setState({itemRequestDialog: false})
+  }
+
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
@@ -381,6 +424,7 @@ export class MngrPage extends React.Component {
     this.handlePaymentMethodCall();
     this.handleRoomTypeCall();
     this.handleGuestCall();
+    this.handleProductCall();
   }
 
   render() {
@@ -420,7 +464,9 @@ export class MngrPage extends React.Component {
       roomType,
       snackMessage,
       snackOpen,
-      guestData
+      guestData,
+      itemLocalSelect,
+      productList
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -478,12 +524,12 @@ export class MngrPage extends React.Component {
                 aria-label="Quartos"
                 color="primary"
               />
-              <FormLabel className={classes.radio}>Hóspedes</FormLabel>
+              <FormLabel className={classes.radio}>Reservas</FormLabel>
               <Radio
                 checked={selectedValue === 'guests'}
                 onChange={this.handleRadioChange}
                 value="guests"
-                name="Hóspedes"
+                name="Reservas"
                 aria-label="Hóspedes"
                 color="primary"
               />
@@ -679,7 +725,7 @@ export class MngrPage extends React.Component {
                     onChange={this.handleGuestTextFieldChange}
                   />
                 </div>
-                <GuestList guestList={guestData} />
+                <GuestList guestList={guestData} makeSnack={this.makeSnack} handleGuestCall={this.handleGuestCall}/>
                 <Dialog
                   open={usrRegisterDialog}
                   onClose={this.handleUsrRegisterDialogClose}
@@ -1022,14 +1068,23 @@ export class MngrPage extends React.Component {
                           )}
                           fullWidth
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          <MenuItem value="cocaCola">Coca-Cola</MenuItem>
-                          <MenuItem value="redLabel">Red Label</MenuItem>
-                          <MenuItem value="chocolate">
-                            Chocolate Godiva
-                          </MenuItem>
+                          {productList.map(prd => (
+                            <MenuItem key={prd.id} value={prd.id}>{prd.name}</MenuItem>
+                          ))}
+                        </Select>
+                        <InputLabel htmlFor="requestProduto" style={{marginTop: '8vh'}}>
+                          Local
+                        </InputLabel>
+                        <Select
+                          id="requestLocal"
+                          value={itemLocalSelect}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemLocalSelect',
+                          )}
+                          fullWidth
+                        >
+                          <MenuItem value="frigobar">Frigobar</MenuItem>
+                          <MenuItem value="restaurante">Restuarante</MenuItem>
                         </Select>
                         <TextField
                           value={itemRequestQtde}
@@ -1095,7 +1150,7 @@ export class MngrPage extends React.Component {
                         <Button
                           variant="outlined"
                           color="primary"
-                          onClick={this.handleItemRegisterDialogClose}
+                          onClick={this.handleItemRegisterClick}
                         >
                           Cadastrar
                         </Button>
@@ -1106,7 +1161,11 @@ export class MngrPage extends React.Component {
                 )}
               </div>
             )}
-            {selectedValue === 'charts' && <Charts />}
+            {selectedValue === 'charts' && (
+              <div style={{marginTop: '18vh', marginLeft: '2vw'}}>
+                <Charts />
+              </div>
+            )}
           </div>
         </div>
         <Snackbar
