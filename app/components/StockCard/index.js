@@ -46,6 +46,14 @@ const style = {
     marginLeft: '20vw',
   },
 };
+
+const data=[
+  {nome: "Red Label", qtde: 12, status: 'Acabando'},
+  {nome: "Coca-Cola", qtde: 530, status: 'Normal'},
+  {nome: "Chocolates Godiva", qtde: 500, status: 'Normal'},
+  {nome: "Blue Label", qtde: 45, status: 'Acabando'},
+  {nome: "Pringles", qtde: 630, status: 'Normal'},
+]
 //solicitar item vai requisitar confirmação quando o usuário for receber o item
 /* eslint-disable react/prefer-stateless-function */
 class StockCard extends React.Component {
@@ -125,6 +133,15 @@ class StockCard extends React.Component {
               <TableCell><Typography variant="overline">Quantidade em estoque</Typography></TableCell>
               <TableCell><Typography variant="overline">Status</Typography></TableCell>
             </TableHead>
+            <TableBody>
+              {data.map((prd, index) => (
+                <TableRow key={index}>
+                  <TableCell>{prd.nome}</TableCell>
+                  <TableCell>{prd.qtde}</TableCell>
+                  <TableCell>{prd.status}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
             </Table>
           </DialogContent>
         </Dialog>

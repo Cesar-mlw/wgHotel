@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import axios from 'axios';
 import {
   Dialog,
   withStyles,
@@ -40,36 +41,90 @@ class GuestTable extends React.Component {
   state = {
     editDialog: false,
     deleteDialog: false,
-    usrId: '',
-    usrNomeCompleto: '', //1
-    usrProfissao: '', //6
-    usrTelefone: '', //5
-    usrNacionalidade: '', //8
-    usrDtNascimento: new Date('1999-01-16'), //2
-    usrSexo: '', //4
-    usrId: '', //3
-    usrDocMed: '', //7
-    usrEndereco: '', //9
-    usrEnderecoNumero: '', //9
-    usrEnderecoComplemento: '', //9
-    usrCidade: '', //10
-    usrEstado: '', //11
-    usrPais: '', //12
     usrMeioDePagamento: '',
+    profissaoList: [],
+    payementMethodsList: [],
+    usrEndDate: null,
+    reservationId: null,
+    usrEditDialog: false,
+    usrCidade: null,
+    usrEstado: null,
+    usrPais: null,
+    usrNomeCompleto: null,
+    usrDocMed: null,
+    usrEndereco: null,
+    usrEnderecoNumero: null,
+    usrEnderecoComplemento: null,
+    usrNacionalidade: null,
+    usrId: null,
+    usrProfissao: null,
+    usrSexo: null,
+    usrTelefone: null,
+    usrDtNascimento: null,
+    usrDbId: null,
   };
   Transition = props => {
     return <Slide direction="up" {...props} />;
   };
+
+  handlePaymentMethodCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/paymentmethods', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ payementMethodsList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
+  handleUsrEditDialogOpen = () => {
+    this.setState({ usrEditDialog: true, editDialog: false });
+  };
+
+  handleUsrEditDialogClose = () => {
+    this.setState({ usrEditDialog: false });
+  };
+
+  handleCheckInClick = id => {
+    axios
+      .put(`https://wg-tech-homologacao.herokuapp.com/bookings/${id}/checkin`)
+      .then(response => {
+        let data = response.data;
+        if (data.success) {
+          this.props.makeSnack('Check In efetuado');
+          this.props.handleGuestCall();
+        } else console.error(data.error);
+      });
+  };
+
+  handleCheckOutClick = id => {
+    axios
+      .put(`https://wg-tech-homologacao.herokuapp.com/bookings/${id}/checkout`)
+      .then(response => {
+        let data = response.data;
+        if (data.success) {
+          this.props.makeSnack('Check Out efetuado');
+          this.props.handleGuestCall();
+        } else console.error(data.error);
+      });
+  };
+
   handleGuestList = () => {
     const elements = [];
+    console.log(this.props.guestList);
     this.props.guestList.forEach(gst => {
       elements.push(
-        <TableRow key={gst.id} id={gst.key}>
-          <TableCell>{gst.name}</TableCell>
+        <TableRow key={gst.id} id={gst.id}>
+          <TableCell>{gst.Person.name}</TableCell>
           <TableCell align="right">
-            {gst.hospedado ? 'Hospedado' : 'Não Hospedade'}
+            {gst.checkIn ? 'Hospedado' : 'Não Hospedade'}
           </TableCell>
-          <TableCell align="right">{gst.meioPagamento}</TableCell>
+          <TableCell align="right">{gst.PaymentMethod.method}</TableCell>
           <TableCell align="right">
             <IconButton
               color="primary"
@@ -80,12 +135,21 @@ class GuestTable extends React.Component {
             </IconButton>
           </TableCell>
           <TableCell align="right">
-            <Button
-              variant="outlined"
-              color={gst.hospedado ? 'secondary' : 'primary'}
-            >
-              {gst.hospedado ? 'Check-out' : 'Check-in'}
-            </Button>
+            {gst.checkOut ? (
+              <Typography variant="outlined">Finalizado</Typography>
+            ) : (
+              <Button
+                variant="outlined"
+                onClick={
+                  gst.checkIn
+                    ? () => this.handleCheckOutClick(gst.id)
+                    : () => this.handleCheckInClick(gst.id)
+                }
+                color={gst.checkIn ? 'secondary' : 'primary'}
+              >
+                {gst.checkIn ? 'Check-out' : 'Check-in'}
+              </Button>
+            )}
           </TableCell>
         </TableRow>,
       );
@@ -93,7 +157,20 @@ class GuestTable extends React.Component {
     return elements;
   };
   handleEditDialogOpen = id => {
-    this.setState({ editDialog: true, usrId: id });
+    this.setState({ editDialog: true });
+    let gst = this.props.guestList.filter(gst => gst.id == id);
+    this.setState({
+      usrMeioDePagamento: gst[0].PaymentMethodId,
+      usrEndDate: gst[0].EndDate,
+      reservationId: gst[0].id,
+      usrNomeCompleto: gst[0].Person.name,
+      usrDtNascimento: gst[0].Person.birth,
+      usrProfissao: gst[0].Person.OccupationId,
+      usrSexo: gst[0].Person.gender,
+      usrNacionalidade: gst[0].Person.nationality,
+      usrId: gst[0].Person.document,
+      usrDbId: gst[0].Person.UserId
+    });
   };
   handleUsrEditTextChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -101,34 +178,99 @@ class GuestTable extends React.Component {
   handleEditDialogClose = () => {
     this.setState({ editDialog: false, usrId: '' });
   };
-  handleDeleteDialogOpen = id => {
-    this.setState({ deleteDialog: true, usrId: id });
+
+  handleDatNascimento = date => {
+    this.setState({usrDtNascimento: date})
+  }
+
+  handleUsrEditTextChange = name => event => {
+    this.setState({ [name]: event.target.value });
   };
-  handleDeleteDialogClose = () => {
-    this.setState({ deleteDialog: false, usrId: '' });
+
+  handleOccupationCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/persons/occupations', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ profissaoList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
+  handleUsrEditClick = () => {
+    axios.put('')
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          console.log("Sucesso")
+          this.props.makeSnack("Usuário editado com sucesso")
+          this.setState({usrEditDialog: false})
+        }
+      })
+  }
+
+  handleEditDialogClick = () => {
+    if (this.state.usrEndDate == null || this.state.usrMeioDePagamento == '') {
+      this.props.makeSnack('Preencha todos os campos');
+    } else {
+      axios
+        .put(
+          `https://wg-tech-homologacao.herokuapp.com/bookings/${
+            this.state.reservationId
+          }/enddate/${this.state.usrEndDate}/paymentmethodid/${
+            this.state.usrMeioDePagamento
+          }`,
+        )
+        .then(response => {
+          let data = response.data;
+          if (data.success) {
+            this.props.makeSnack('Reserva editada com sucesso');
+            this.handleEditDialogClose();
+            this.props.handleGuestCall();
+          } else {
+            console.error(data.error);
+          }
+        });
+    }
+  };
+
+  handleUsrEndDate = date => {
+    this.setState({ usrEndDate: date });
   };
   getUsuario = id => {
     let usr = this.props.guestList.filter(usr => usr.id == id);
     return usr[0].name;
   };
+  componentDidMount() {
+    this.handlePaymentMethodCall();
+    this.handleOccupationCall();
+  }
   render() {
     const { classes } = this.props;
     const {
-      usrId,
-      usrCidade,
-      usrDocMed,
-      usrDtNascimento,
-      usrEndereco,
-      usrEnderecoComplemento,
-      usrEnderecoNumero,
-      usrEstado,
       usrMeioDePagamento,
-      usrNacionalidade,
-      usrNomeCompleto,
+      payementMethodsList,
+      usrEndDate,
+      usrEditDialog,
+      usrCidade,
+      usrEstado,
       usrPais,
+      usrNomeCompleto,
+      usrDocMed,
+      usrEndereco,
+      usrEnderecoNumero,
+      usrEnderecoComplemento,
+      usrNacionalidade,
+      usrId,
       usrProfissao,
       usrSexo,
       usrTelefone,
+      usrDtNascimento,
     } = this.state;
     return (
       <div>
@@ -153,16 +295,16 @@ class GuestTable extends React.Component {
           <TableBody>{this.handleGuestList()}</TableBody>
         </Table>
         <Dialog
-          open={this.state.editDialog}
+          open={this.state.usrEditDialog}
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
           maxWidth="md"
-          onClose={this.handleEditDialogClose}
-          onBackdropClick={this.handleEditDialogClose}
+          onClose={this.handleUsrEditDialogClose}
+          onBackdropClick={this.handleUsrEditDialogClose}
         >
           <DialogTitle>
-            <Typography variant="overline">Editar Hóspede</Typography>
+            <Typography variant="overline">Editar Reserva</Typography>
           </DialogTitle>
           <DialogContent>
             <TextField
@@ -218,16 +360,22 @@ class GuestTable extends React.Component {
               fullWidth
               placeholder="(11)92222-2222"
             />
-            <TextField
-              margin="normal"
-              id="profissao"
-              label="Profissão"
-              type="text"
-              value={usrProfissao}
-              onChange={this.handleUsrEditTextChange('usrProfissao')}
-              fullWidth
-              placeholder="Engenheiro"
-            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="occSelect">Profissão</InputLabel>
+              <Select
+                id="occSelect"
+                value={usrProfissao}
+                onChange={this.handleUsrEditTextChange('usrProfissao')}
+                placeholder="Engenheiro"
+                fullWidth
+              >
+                {this.state.profissaoList.map(occ => (
+                  <MenuItem key={occ.id} value={occ.id}>
+                    {occ.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             <TextField
               margin="normal"
               id="documentoMedico"
@@ -257,11 +405,11 @@ class GuestTable extends React.Component {
                 placeholder="Cartão de Crédito"
                 fullWidth
               >
-                <MenuItem value="cartaoCredito">Cartão de Crédito</MenuItem>
-                <MenuItem value="cartaoDebito">Cartão de Débito</MenuItem>
-                <MenuItem value="cheque">Cheque</MenuItem>
-                <MenuItem value="dinheiro">Dinheiro</MenuItem>
-                <MenuItem value="tranferencia">Transferência</MenuItem>
+                {this.state.payementMethodsList.map(py => (
+                  <MenuItem key={py.id} value={py.id}>
+                    {py.method}
+                  </MenuItem>
+                ))}
               </Select>
             </div>
             <TextField
@@ -335,13 +483,61 @@ class GuestTable extends React.Component {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={this.handleUsrRegisterDialogClose}
-              color="secondary"
-            >
+            <Button onClick={this.handleUsrEditDialogCloseEditDialogClose} color="secondary">
               Cancelar
             </Button>
-            <Button onClick={this.handleUsrRegisterDialogClose} color="primary">
+            <Button onClick={this.handleUsrEditClick} color="primary">
+              Editar
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={this.state.editDialog}
+          TransitionComponent={this.Transition}
+          keepMounted
+          fullWidth
+          maxWidth="md"
+          onClose={this.handleEditDialogClose}
+          onBackdropClick={this.handleEditDialogClose}
+        >
+          <DialogTitle>
+            <Typography variant="overline">Editar Reserva</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <DatePicker
+              margin="normal"
+              label="Data de término"
+              value={usrEndDate}
+              onChange={this.handleUsrEndDate}
+              fullWidth
+              style={{ marginTop: '4vh' }}
+              disablePast
+            />
+            <div style={{ marginTop: '1vh' }}>
+              <InputLabel htmlFor="meioPagamento">Meio de Pagamento</InputLabel>
+              <Select
+                id="meioPagamento"
+                value={usrMeioDePagamento}
+                onChange={this.handleUsrEditTextChange('usrMeioDePagamento')}
+                placeholder="Cartão de Crédito"
+                fullWidth
+              >
+                {payementMethodsList.map(method => (
+                  <MenuItem value={method.id} key={method.id}>
+                    {method.method}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleUsrEditDialogClose} color="secondary">
+              Cancelar
+            </Button>
+            <Button onClick={this.handleUsrEditDialogOpen} color="primary">
+              Editar Usuário
+            </Button>
+            <Button onClick={this.handleEditDialogClick} color="primary">
               Editar
             </Button>
           </DialogActions>

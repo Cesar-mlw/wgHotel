@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types'
+import axios from 'axios';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardActionArea,
@@ -29,26 +30,34 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-} from '@material-ui/core'
-import hotelRoomImg from '../../images/hotelRoomImg.png'
-import greenBall from '../../images/greenBall.png'
-import redBall from '../../images/redBall.png'
-import yellowBall from '../../images/yellowBall.png'
-import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remove } from '@material-ui/icons'
+  TextField,
+} from '@material-ui/core';
+import hotelRoomImg from '../../images/hotelRoomImg.png';
+import greenBall from '../../images/greenBall.png';
+import redBall from '../../images/redBall.png';
+import yellowBall from '../../images/yellowBall.png';
+import { DatePicker } from 'material-ui-pickers';
+import {
+  MeetingRoom,
+  PriorityHigh,
+  Block,
+  Done,
+  AttachMoney,
+  Palette,
+  Add,
+  Remove,
+} from '@material-ui/icons';
 // import PropTypes from 'prop-types';
 // import styled from 'styled-components';
-
 
 //Notas sobre usuários
 //Camareira - Registra consumo do quarto
 //Atendente - Faz reservas
 //Supervisor de Acomodação - Edita dados do quarto
 
-
 //Quartos
 //Check-in Check-out - Quem fizer a reserva é quem faz o check in e o check out
 //letra indica bloco e o numero o andar
-
 
 //Cores para vacant Status
 //Verde - Disponível
@@ -58,21 +67,18 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remo
 //Hóspedes
 //Somente o atendente poderá manipular os hóspedes
 //Dados do hóspede - CRUD - Dados Pessoais/Pagamento/
-//campo pesquisar cpf 
+//campo pesquisar cpf
 
 //Restaurante
 //somente supervisor do restaurante
-//Estoquista - Solicitar um item / Registrar items consumidos 
+//Estoquista - Solicitar um item / Registrar items consumidos
 //Host - Reservar mesas por quarto / Menu
-
 
 //Estacionamento
 //Só manobrista
 //tarifas extras / visualizar e alterar dados das vagas (carro ocupado qual vaga e hóspede dono do carro)
 
-
 // Listar somente que realizou a reserva
-
 
 //Props taken
 // -- ATENDENTE --
@@ -82,7 +88,7 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remo
 //tipoUsuario
 //precoDiaria
 //ocupUntil
-// -- CAMAREIRA -- 
+// -- CAMAREIRA --
 //Lista de Produtos
 //nomeProduto
 //precoProduto
@@ -90,7 +96,7 @@ import { MeetingRoom, PriorityHigh, Block, Done, AttachMoney, Palette, Add, Remo
 const style = {
   root: {
     marginLeft: '1vw',
-    marginTop: '1vh'
+    marginTop: '1vh',
   },
   card: {
     maxWidth: 345,
@@ -99,16 +105,16 @@ const style = {
     objectFit: 'cover',
   },
   title: {
-    marginBottom: 0.5
+    marginBottom: 0.5,
   },
   cardVacantImg: {
     width: 25,
     height: 25,
     marginLeft: '18.5vw',
-    marginTop: '-8vh'
+    marginTop: '-8vh',
   },
   dialog: {
-    maxWidth: 1500
+    maxWidth: 1500,
   },
   dialogRoot: {
     display: 'flex',
@@ -124,33 +130,41 @@ const style = {
   hotelRoomImgInCard: {
     width: '18vw',
     height: '18vh',
-    marginLeft: '7vw'
+    marginLeft: '7vw',
   },
   btnReservarAtendente: {
-    color: "#BAB392",
-    marginLeft: "12vw",
-    marginTop: "5vh"
+    color: '#BAB392',
+    marginLeft: '12vw',
+    marginTop: '5vh',
   },
   tableAddButton: {
     height: 25,
-    width: 25
+    width: 25,
   },
   btnConfirmar: {
     marginTop: '4vh',
-    marginLeft: '1vw'
+    marginLeft: '1vw',
   },
   supAcomodRoot: {
-    marginTop:'1vh',
+    marginTop: '1vh',
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
-  supAcomodSelect:{
-    width: '40vw'
+  supAcomodSelect: {
+    width: '40vw',
   },
-  supAcomodBtn:{
-    marginLeft: '2vw'
+  supAcomodBtn: {
+    marginLeft: '2vw',
   },
-}
+  datePicker: {
+    marginLeft: '2vw',
+    marginTop: '6vh'
+  },
+  reservarButton: {
+    marginTop: '20vh',
+    marginLeft: '-4vw'
+  }
+};
 
 class HotelRoomCard extends React.Component {
   constructor(props) {
@@ -163,90 +177,197 @@ class HotelRoomCard extends React.Component {
       listaProduto: JSON.parse(JSON.stringify(this.props.listaProduto)),
       confirmBtn: true,
       supAcomodRoomState: this.props.tipoQuarto,
-      
-    }
+      atendenteReservaDialog: false,
+      tpAcomocao: '',
+      roomType: [],
+      chedaga: null,
+      saida: null,
+      roomId: this.props.id
+    };
   }
   Transition = props => {
-    return <Slide direction='up' {...props} />
-  }
+    return <Slide direction="up" {...props} />;
+  };
   handleDialogClose = () => {
-    this.setState({ dialogOpen: false })
-  }
+    this.setState({ dialogOpen: false });
+  };
   handleDialogOpen = () => {
-    this.setState({ dialogOpen: true })
-  }
+    this.setState({ dialogOpen: true });
+  };
   handleItemAdd = id => {
-    let newLista = this.state.listaProduto
-    if(this.state.confirmBtn){
-      this.setState({confirmBtn: false})
+    let newLista = this.state.listaProduto;
+    if (this.state.confirmBtn) {
+      this.setState({ confirmBtn: false });
     }
     newLista.forEach(prd => {
-      if(prd.id == id) prd.qtde ++
-    })
-    this.setState({ listaProduto: newLista })
+      if (prd.id == id) prd.qtde++;
+    });
+    this.setState({ listaProduto: newLista });
     //Still need to find a way to compare both lists to enable or disable confirm buttons
-  }
+  };
   handleItemRemove = id => {
-    let newLista = this.state.listaProduto
-    if(this.state.confirmBtn){
-      this.setState({confirmBtn: false})
+    let newLista = this.state.listaProduto;
+    if (this.state.confirmBtn) {
+      this.setState({ confirmBtn: false });
     }
     newLista.forEach(prd => {
       if (prd.id == id && prd.qtde - 1 >= 0) {
-        prd.qtde -= 1
+        prd.qtde -= 1;
       }
-    })
-    this.setState({ listaProduto: newLista })
-  }
+    });
+    this.setState({ listaProduto: newLista });
+  };
   handleCancelarItem = () => {
-    this.setState({listaProduto: JSON.parse(JSON.stringify(this.props.listaProduto)), confirmBtn: true})
-  }
+    this.setState({
+      listaProduto: JSON.parse(JSON.stringify(this.props.listaProduto)),
+      confirmBtn: true,
+    });
+  };
+
+  handleAtendenteReservaDialogClose = () => {
+    this.setState({ atendenteReservaDialog: false });
+  };
+
+  handleAtendenteReservaDialogOpen = () => {
+    this.setState({ atendenteReservaDialog: true });
+  };
+
+  handleRoomTypeCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/bedrooms/types', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ roomType: data });
+      })
+      .catch(err => console.log(err));
+  };
+
   handleConfirmarItem = () => {
     //chamar api para registrar no banco
+  };
+
+  handleAcomodacaoChange = event => {
+    this.setState({ tpAcomocao: event.target.value });
+  };
+
+  componentDidMount() {
+    this.handleRoomTypeCall();
   }
+
   handleProductList = listaProduto => {
-    const elements = []
+    const elements = [];
     listaProduto.map(prd => {
       elements.push(
         <TableRow key={prd.id} id={prd.key}>
           <TableCell>{prd.nome}</TableCell>
-          <TableCell align="right" ref={`qtde${prd.id}`}>{prd.qtde}</TableCell>
-          <TableCell align="right" ref={`preco${prd.id}`}>{prd.preco}</TableCell>
-          <TableCell align="right" ref={`total${prd.id}`}>{prd.preco * prd.qtde}</TableCell>
-          <TableCell align="right"><IconButton color="primary" size="small" onClick={() => this.handleItemAdd(prd.id)}><Add /></IconButton></TableCell>
-          <TableCell align="right"><IconButton color="secondary" size="small" onClick={() => this.handleItemRemove(prd.id)}><Remove /></IconButton></TableCell>
-        </TableRow>
-      )
-    })
-    return elements
-  }
+          <TableCell align="right" ref={`qtde${prd.id}`}>
+            {prd.qtde}
+          </TableCell>
+          <TableCell align="right" ref={`preco${prd.id}`}>
+            {prd.preco}
+          </TableCell>
+          <TableCell align="right" ref={`total${prd.id}`}>
+            {prd.preco * prd.qtde}
+          </TableCell>
+          <TableCell align="right">
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() => this.handleItemAdd(prd.id)}
+            >
+              <Add />
+            </IconButton>
+          </TableCell>
+          <TableCell align="right">
+            <IconButton
+              color="secondary"
+              size="small"
+              onClick={() => this.handleItemRemove(prd.id)}
+            >
+              <Remove />
+            </IconButton>
+          </TableCell>
+        </TableRow>,
+      );
+    });
+    return elements;
+  };
   handleRoomStateChange = event => {
-    this.setState({ supAcomodRoomState: event.target.value })
-  }
+    this.setState({ supAcomodRoomState: event.target.value });
+  };
+
+  handleChegadaChange = event => {
+    this.setState({ chegada: new Date(event) });
+  };
+
+  handleSaidaChange = event => {
+    this.setState({ saida: new Date(event) });
+  };
+
   handleSupAcomodConfirm = () => {
-    //call action to store state inside database
-  }
+    axios.put(`https://wg-tech-homologacao.herokuapp.com/bedrooms/${this.state.roomId}/type/${this.state.supAcomodRoomState}`)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          console.log("Sucesso")
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  };
   handleSupAcomodCancel = () => {
-    this.setState({supAcomodRoomState: this.props.tipoQuarto})
-  }
+    this.setState({ supAcomodRoomState: this.props.tipoQuarto });
+  };
   render() {
-    const { classes } = this.props
-    const { dialogOpen, confirmBtn, supAcomodRoomState } = this.state
+    const { classes } = this.props;
+    const {
+      dialogOpen,
+      confirmBtn,
+      supAcomodRoomState,
+      atendenteReservaDialog,
+      tpAcomocao,
+      roomType,
+      chegada,
+      saida,
+    } = this.state;
     return (
       <div className={classes.root}>
         <Card className={classes.card} onClick={this.handleDialogOpen}>
           <CardActionArea>
             <CardMedia
-              component='img'
-              alt='Interior do Quarto'
-              height='140'
+              component="img"
+              alt="Interior do Quarto"
+              height="140"
               image={hotelRoomImg}
-              title='Interior do Quarto'
+              title="Interior do Quarto"
             />
             <CardContent>
-              <Typography className={classes.title} gutterBottom variant='overline' >Número do Quarto: {this.props.numeroQuarto}</Typography>
-              <Typography variant='caption'>Tipo do Quarto: {this.props.tipoQuarto}</Typography>
-              <img src={(this.props.vacant == "disp") ? greenBall : (this.props.vacant == "ocup") ? redBall : yellowBall} className={classes.cardVacantImg} />
+              <Typography
+                className={classes.title}
+                gutterBottom
+                variant="overline"
+              >
+                Número do Quarto: {this.props.numeroQuarto}
+              </Typography>
+              <Typography variant="caption">
+                Tipo do Quarto: {this.props.tipoQuarto}
+              </Typography>
+              <img
+                src={
+                  this.props.vacant == 'disp'
+                    ? greenBall
+                    : this.props.vacant == 'ocup'
+                      ? redBall
+                      : yellowBall
+                }
+                className={classes.cardVacantImg}
+              />
             </CardContent>
           </CardActionArea>
         </Card>
@@ -255,64 +376,200 @@ class HotelRoomCard extends React.Component {
           TransitionComponent={this.Transition}
           keepMounted
           fullWidth
-          maxWidth={(this.props.tipoUsuario == "atendente") ? "sm" : "lg"}
+          maxWidth={this.props.tipoUsuario == 'atendente' ? 'sm' : 'lg'}
           onClose={this.handlDialogClose}
           onBackdropClick={this.handleDialogClose}
           className={classes.dialog}
         >
           <DialogTitle>
-            <Typography variant="overline" style={{ fontSize: "0.9em" }}> Informações Adicionais </Typography>
+            <Typography variant="overline" style={{ fontSize: '0.9em' }}>
+              {' '}
+              Informações Adicionais{' '}
+            </Typography>
           </DialogTitle>
           <DialogContent>
-            {this.props.tipoUsuario == "atendente" && (
+            {this.props.tipoUsuario == 'atendente' && (
               <div className={classes.dialogRoot}>
                 <div>
-                  <Typography className={classes.dialogInfoText} variant='overline'><MeetingRoom /> {this.props.numeroQuarto}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "inter") ? <PriorityHigh /> : (this.props.vacant == "ocup") ? <Block /> : <Done />} {(this.props.vacant == 'disp') ? 'Disponível' : (this.props.vacant == 'ocup') ? "Ocupado" : (this.props.vacant == 'inter') ? "Interditado" : "Limpando"}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'><Palette /> {this.props.tipoQuarto}</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'><AttachMoney /> {this.props.precoDiaria},00 / Dia</Typography>
-                  <Typography className={classes.dialogInfoText} variant='overline'>{(this.props.vacant == "disp") ? "Próxima reserva:" : "Ocupado até:"} {this.props.ocupUntil}</Typography>
+                  <Typography
+                    className={classes.dialogInfoText}
+                    variant="overline"
+                  >
+                    <MeetingRoom /> {this.props.numeroQuarto}
+                  </Typography>
+                  <Typography
+                    className={classes.dialogInfoText}
+                    variant="overline"
+                  >
+                    {this.props.vacant == 'inter' ? (
+                      <PriorityHigh />
+                    ) : this.props.vacant == 'ocup' ? (
+                      <Block />
+                    ) : (
+                      <Done />
+                    )}{' '}
+                    {this.props.vacant == 'disp'
+                      ? 'Disponível'
+                      : this.props.vacant == 'ocup'
+                        ? 'Ocupado'
+                        : this.props.vacant == 'inter'
+                          ? 'Interditado'
+                          : 'Limpando'}
+                  </Typography>
+                  <Typography
+                    className={classes.dialogInfoText}
+                    variant="overline"
+                  >
+                    <Palette /> {this.props.tipoQuarto}
+                  </Typography>
+                  <Typography
+                    className={classes.dialogInfoText}
+                    variant="overline"
+                  >
+                    <AttachMoney /> {this.props.precoDiaria}
+                    ,00 / Dia
+                  </Typography>
+                  <Typography
+                    className={classes.dialogInfoText}
+                    variant="overline"
+                  >
+                    {this.props.vacant == 'disp'
+                      ? 'Próxima reserva:'
+                      : 'Ocupado até:'}{' '}
+                    {this.props.ocupUntil}
+                  </Typography>
                 </div>
                 <div>
                   <Button
                     variant="outlined"
                     className={classes.btnReservarAtendente}
+                    onClick={this.handleAtendenteReservaDialogOpen}
                   >
                     Efetuar Reserva
                   </Button>
                 </div>
+                <Dialog
+                  open={atendenteReservaDialog}
+                  onClose={this.handleAtendenteReservaDialogClose}
+                  onBackdropClick={this.handleAtendenteReservaDialogClose}
+                  keepMounted
+                  fullWidth
+                  maxWidth="md"
+                  TransitionComponent={this.Transition}
+                >
+                  <DialogTitle>
+                    <Typography variant="display2">Efetuar Reserva</Typography>
+                  </DialogTitle>
+                  <DialogContent>
+                    <div className={classes.reservationDialog}>
+                      <TextField
+                        id="tpAcomodacao"
+                        select
+                        label="Acomodação"
+                        value={tpAcomocao}
+                        onChange={this.handleAcomodacaoChange}
+                        helperText="Selecione o tipo de acomodação"
+                        margin="normal"
+                        color="inherit"
+                        fullWidth
+                      >
+                        {this.state.roomType.map(option => (
+                          <MenuItem
+                            key={option.id}
+                            value={option.id}
+                            style={{ textColor: '#00BFDF' }}
+                          >
+                            {option.type}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <DatePicker
+                        autoOk
+                        label="Data de Chegada"
+                        clearable
+                        disablePast
+                        value={chegada}
+                        onChange={this.handleChegadaChange}
+                        className={classes.datePicker}
+                        color="inherit"
+                      />
+                      <DatePicker
+                        autoOk
+                        label="Data de Saída"
+                        clearable
+                        disablePast
+                        value={saida}
+                        onChange={this.handleSaidaChange}
+                        className={classes.datePicker}
+                        color="inherit"
+                      />
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        className={classes.reservationButton}
+                        onClick={this.handleClickReserva}
+                        className={classes.reservarButton}
+                      >
+                        Reservar
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
-            {this.props.tipoUsuario == "camareira" && (
-              <div >
+            {this.props.tipoUsuario == 'camareira' && (
+              <div>
                 <Table>
                   <TableHead>
-                    <TableCell><Typography variant="overline">Produto</Typography></TableCell>
-                    <TableCell align='right'><Typography variant="overline">Quantidade Consumida</Typography></TableCell>
-                    <TableCell align='right'><Typography variant="overline">Preço</Typography></TableCell>
-                    <TableCell align='right'><Typography variant="overline">Preço Total</Typography></TableCell>
-                    <TableCell align='right'><Typography variant="overline">Adicionar</Typography></TableCell>
-                    <TableCell align='right'><Typography variant="overline">Remover</Typography></TableCell>
+                    <TableCell>
+                      <Typography variant="overline">Produto</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="overline">
+                        Quantidade Consumida
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="overline">Preço</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="overline">Preço Total</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="overline">Adicionar</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="overline">Remover</Typography>
+                    </TableCell>
                   </TableHead>
                   <TableBody>
                     {this.handleProductList(this.state.listaProduto)}
                   </TableBody>
                 </Table>
-                <Button variant="outlined" disabled={confirmBtn} onClick={this.handleConfirmarItem} color="primary" className={classes.btnConfirmar}>
+                <Button
+                  variant="outlined"
+                  disabled={confirmBtn}
+                  onClick={this.handleConfirmarItem}
+                  color="primary"
+                  className={classes.btnConfirmar}
+                >
                   Confirmar
                 </Button>
-                <Button variant="outlined" disabled={confirmBtn} onClick={this.handleCancelarItem} color="secondary" className={classes.btnConfirmar}>
+                <Button
+                  variant="outlined"
+                  disabled={confirmBtn}
+                  onClick={this.handleCancelarItem}
+                  color="secondary"
+                  className={classes.btnConfirmar}
+                >
                   Cancelar
                 </Button>
               </div>
             )}
-            {this.props.tipoUsuario == "supAcomod" && (
+            {this.props.tipoUsuario == 'supAcomod' && (
               <div className={classes.supAcomodRoot}>
-                <FormControl variant="outlined" style={{minWidth:120}}>
-                  <InputLabel
-                  >
-                    Tipo de Quarto
-              </InputLabel>
+                <FormControl variant="outlined" style={{ minWidth: 120 }}>
+                  <InputLabel>Tipo de Quarto</InputLabel>
                   <Select
                     value={supAcomodRoomState}
                     onChange={this.handleRoomStateChange}
@@ -325,16 +582,32 @@ class HotelRoomCard extends React.Component {
                       />
                     }
                   >
-                    <MenuItem value="Milan">Milan</MenuItem>
-                    <MenuItem value="New York">New York</MenuItem>
-                    <MenuItem value="Dubai">Dubai</MenuItem>
+                    {roomType.map(room => (
+                      <MenuItem value={room.id} key={room.id}>{room.type}</MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
-                <Button variant="outlined" onClick={this.handleSupAcomodConfirm} className={classes.supAcomodBtn} color="primary" disabled={(this.state.supAcomodRoomState == this.props.tipoQuarto)}>
-                    Confirmar
+                <Button
+                  variant="outlined"
+                  onClick={this.handleSupAcomodConfirm}
+                  className={classes.supAcomodBtn}
+                  color="primary"
+                  disabled={
+                    this.state.supAcomodRoomState == this.props.tipoQuarto
+                  }
+                >
+                  Confirmar
                 </Button>
-                <Button variant="outlined" onClick={this.handleSupAcomodCancel} className={classes.supAcomodBtn} color="secondary" disabled={(this.state.supAcomodRoomState == this.props.tipoQuarto)}>
-                    Cancelar
+                <Button
+                  variant="outlined"
+                  onClick={this.handleSupAcomodCancel}
+                  className={classes.supAcomodBtn}
+                  color="secondary"
+                  disabled={
+                    this.state.supAcomodRoomState == this.props.tipoQuarto
+                  }
+                >
+                  Cancelar
                 </Button>
               </div>
             )}
@@ -346,14 +619,14 @@ class HotelRoomCard extends React.Component {
 }
 // Organizar por numero de quarto
 // Busca pelo quarto
-// 
+//
 HotelRoomCard.propTypes = {
   numeroQuarto: PropTypes.string.isRequired,
   tipoQuarto: PropTypes.string.isRequired,
   vacant: PropTypes.string,
   tipoUsuario: PropTypes.string.isRequired,
   precoDiaria: PropTypes.string,
-  listaProduto: PropTypes.array.isRequired
+  listaProduto: PropTypes.array.isRequired,
 };
 
 export default withStyles(style)(HotelRoomCard);

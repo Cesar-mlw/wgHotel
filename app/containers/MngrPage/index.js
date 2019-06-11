@@ -43,8 +43,9 @@ import {
   TableBody,
   TableCell,
   Slide,
+  Snackbar
 } from '@material-ui/core';
-import { AccountCircleOutlined } from '@material-ui/icons';
+import { AccountCircleOutlined, Close } from '@material-ui/icons';
 import { DatePicker } from 'material-ui-pickers';
 import injectReducer from 'utils/injectReducer';
 import {
@@ -182,10 +183,24 @@ export class MngrPage extends React.Component {
     //----------------
     profissaoList: [],
     payementMethodsList: [],
+    roomType: [],
+    snackMessage: '',
+    snackOpen: false,
+    guestData: [],
+    itemLocalSelect:'',
+    productList: [],
   };
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
+  };
+
+  makeSnack = message => {
+    this.setState({ snackOpen: true, snackMessage: message });
+  };
+
+  eatSnack = () => {
+    this.setState({ snackOpen: false, snackMessage: '' });
   };
 
   Transition = props => {
@@ -195,6 +210,31 @@ export class MngrPage extends React.Component {
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
+
+  handleRoomRegisterClick = () => {
+    if (this.state.roomRegisterNumber == '' || this.state.roomRegisterType == '' || this.state.roomRegisterPrice == '') {
+      this.makeSnack('Preencha todos os campos')
+    }
+    else {
+      let room = {
+        number: this.state.roomRegisterNumber,
+        BedroomTypeId: this.state.roomRegisterType,
+        dayPrice: this.state.roomRegisterPrice,
+        status: 'Disponível'
+      }
+      axios.post('https://wg-tech-homologacao.herokuapp.com/bedrooms', room)
+        .then(response => {
+          let data = response.data
+          if(data.success){
+            this.makeSnack("Quarto registrado com sucesso")
+            this.setState({roomRegisterDialog: false})
+          }
+          else{
+            console.error(data.error)
+          }
+        })
+    }
+  }
 
   handleManageChange = event => {
     this.setState({ managingDate: new Date(event) });
@@ -221,6 +261,19 @@ export class MngrPage extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
+  handleGuestCall = () => {
+    axios.get('https://wg-tech-homologacao.herokuapp.com/bookings')
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          this.setState({guestData: data.return})
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  }
+
   handleOccupationCall = () => {
     axios
       .get('https://wg-tech-homologacao.herokuapp.com/persons/occupations', {
@@ -232,6 +285,21 @@ export class MngrPage extends React.Component {
       .then(response => {
         let data = response.data.return;
         this.setState({ profissaoList: data });
+      })
+      .catch(err => console.log(err));
+  };
+
+  handleRoomTypeCall = () => {
+    axios
+      .get('https://wg-tech-homologacao.herokuapp.com/bedrooms/types', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        let data = response.data.return;
+        this.setState({ roomType: data });
       })
       .catch(err => console.log(err));
   };
@@ -269,6 +337,42 @@ export class MngrPage extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
+  handleItemRegisterClick = () => {
+    const data = {
+      name: this.state.itemRegisterName,
+      value: this.state.itemRegisterPrice,
+      minQuantity: 25,
+      maxQuantity: 250
+    }
+    axios.post('https://wg-tech-homologacao.herokuapp.com/products', data)
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          console.log("Sucesso")
+          this.setState({itemRegisterDialog: false})
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  }
+
+  handleProductCall = () => {
+    axios.get('https://wg-tech-homologacao.herokuapp.com/products')
+      .then(response => {
+        let data = response.data
+        if(data.success){
+          
+          this.setState({
+            productList: data.return
+          })
+        }
+        else{
+          console.error(data.error)
+        }
+      })
+  }
+
   handleItemRegisterDialogOpen = () => {
     this.setState({ itemRegisterDialog: true });
   };
@@ -304,11 +408,23 @@ export class MngrPage extends React.Component {
       .catch(err => console.log(err));
   };
 
+  handleRoomCall = () => {
+
+  }
+
+  handleItemRequestDialogCloseDialogClose = () =>{
+    this.makeSnack("Produto Solicitado")
+    this.setState({itemRequestDialog: false})
+  }
+
   componentDidMount() {
     this.props.getRadioDataDispatcher('room');
     this.props.getProductList();
     this.handleOccupationCall();
     this.handlePaymentMethodCall();
+    this.handleRoomTypeCall();
+    this.handleGuestCall();
+    this.handleProductCall();
   }
 
   render() {
@@ -345,6 +461,12 @@ export class MngrPage extends React.Component {
       roomRegisterNumber,
       roomRegisterPrice,
       roomRegisterType,
+      roomType,
+      snackMessage,
+      snackOpen,
+      guestData,
+      itemLocalSelect,
+      productList
     } = this.state;
     const open = Boolean(anchorEl);
 
@@ -402,12 +524,12 @@ export class MngrPage extends React.Component {
                 aria-label="Quartos"
                 color="primary"
               />
-              <FormLabel className={classes.radio}>Hóspedes</FormLabel>
+              <FormLabel className={classes.radio}>Reservas</FormLabel>
               <Radio
                 checked={selectedValue === 'guests'}
                 onChange={this.handleRadioChange}
                 value="guests"
-                name="Hóspedes"
+                name="Reservas"
                 aria-label="Hóspedes"
                 color="primary"
               />
@@ -463,6 +585,7 @@ export class MngrPage extends React.Component {
                 </div>
                 <div className={classes.hotelCard}>
                   <HotelRoomCard
+                    id="1"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="disp"
@@ -472,6 +595,7 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
+                    id="2"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="ocup"
@@ -481,6 +605,7 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
+                    id="3"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="inter"
@@ -490,6 +615,7 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
+                    id="4"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="clean"
@@ -499,6 +625,7 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
+                    id="5"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="disp"
@@ -508,6 +635,7 @@ export class MngrPage extends React.Component {
                     listaProduto={this.props.productList}
                   />
                   <HotelRoomCard
+                    id="6"
                     numeroQuarto="1101"
                     tipoQuarto="Milan"
                     vacant="ocup"
@@ -535,26 +663,43 @@ export class MngrPage extends React.Component {
                       label="Número do quarto"
                       id="roomRegisterNumber"
                       placeholder="C1101"
-                      onChange={this.handleRoomRegisterChange}
+                      onChange={this.handleRoomRegisterChange('roomRegisterNumber')}
                     />
-                    <div style={{ marginTop: '1vh' }}>
+                    <div style={{ marginTop: '4vh' }}>
                       <InputLabel htmlFor="roomRegisterType">
                         Tipo de Acomodação
                       </InputLabel>
                       <Select
                         id="roomRegisterType"
                         value={roomRegisterType}
-                        onChange={this.handleRoomRegisterChange}
+                        onChange={this.handleRoomRegisterChange('roomRegisterType')}
                         placeholder="Milan"
                         fullWidth
                       >
-                        <MenuItem value="standard">New York</MenuItem>
-                        <MenuItem value="lightLuxury">Milan</MenuItem>
-                        <MenuItem value="ultraLuxury">Dubai</MenuItem>
+                        {roomType.map(room => (
+                          <MenuItem value={room.id} key={room.id}>{room.type}</MenuItem>
+                        ))}
                       </Select>
                     </div>
+                    <TextField
+                      open={roomRegisterPrice}
+                      label="Preço da Diária"
+                      id="roomRegisterPrice"
+                      placeholder="1250.00"
+                      onChange={this.handleRoomRegisterChange('roomRegisterPrice')}
+                      style={{marginTop: '2vh'}}
+                    />
                   </DialogContent>
-                  <DialogActions />
+                  <DialogActions>
+                    <Button
+                      variant="outlined"
+                      color="default"
+                      onClick={this.handleRoomRegisterClick}
+                      color="primary"
+                    >
+                      Registrar Quarto
+                  </Button>
+                  </DialogActions>
                 </Dialog>
               </div>
             )}
@@ -580,7 +725,7 @@ export class MngrPage extends React.Component {
                     onChange={this.handleGuestTextFieldChange}
                   />
                 </div>
-                <GuestList guestList={this.props.guestData} />
+                <GuestList guestList={guestData} makeSnack={this.makeSnack} handleGuestCall={this.handleGuestCall}/>
                 <Dialog
                   open={usrRegisterDialog}
                   onClose={this.handleUsrRegisterDialogClose}
@@ -923,14 +1068,23 @@ export class MngrPage extends React.Component {
                           )}
                           fullWidth
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          <MenuItem value="cocaCola">Coca-Cola</MenuItem>
-                          <MenuItem value="redLabel">Red Label</MenuItem>
-                          <MenuItem value="chocolate">
-                            Chocolate Godiva
-                          </MenuItem>
+                          {productList.map(prd => (
+                            <MenuItem key={prd.id} value={prd.id}>{prd.name}</MenuItem>
+                          ))}
+                        </Select>
+                        <InputLabel htmlFor="requestProduto" style={{marginTop: '8vh'}}>
+                          Local
+                        </InputLabel>
+                        <Select
+                          id="requestLocal"
+                          value={itemLocalSelect}
+                          onChange={this.handleItemRequestTextChange(
+                            'itemLocalSelect',
+                          )}
+                          fullWidth
+                        >
+                          <MenuItem value="frigobar">Frigobar</MenuItem>
+                          <MenuItem value="restaurante">Restuarante</MenuItem>
                         </Select>
                         <TextField
                           value={itemRequestQtde}
@@ -996,19 +1150,41 @@ export class MngrPage extends React.Component {
                         <Button
                           variant="outlined"
                           color="primary"
-                          onClick={this.handleItemRegisterDialogClose}
+                          onClick={this.handleItemRegisterClick}
                         >
                           Cadastrar
                         </Button>
                       </DialogActions>
                     </Dialog>
+
                   </div>
                 )}
               </div>
             )}
-            {selectedValue === 'charts' && <Charts />}
+            {selectedValue === 'charts' && (
+              <div style={{marginTop: '18vh', marginLeft: '2vw'}}>
+                <Charts />
+              </div>
+            )}
           </div>
         </div>
+        <Snackbar
+          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+          open={snackOpen}
+          onClose={this.eatSnack}
+          message={<span id="snackMessage">{this.state.snackMessage}</span>}
+          autoHideDuration={2000}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.eatSnack}
+            >
+              <Close />
+            </IconButton>,
+          ]}
+        />
       </div>
     );
   }
